@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">TFG_DnD</string>
+    <string name="titleMain">DnD TFG Project</string>
+    <string name="btn_goMaster">Master</string>
+    <string name="btn_goParties">Parties</string>
+    <string name="btn_goCharacters">Characters</string>
+    <string name="btn_logGoogle">LogIn</string>
+    <string name="btn_goback">Go Back</string>
+    <string name="titleSignIn">Sign In</string>
+    <string name="titleSignUp">Sign Up</string>
+    <string name="hintmail">mail...</string>
+    <string name="hintpass">password...</string>
+    <string name="hintuser">username...</string>
+    <string name="hintlevel">Select the level</string>
+    <string name="select">Choose</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tittle_characters_screen">Characters</string>
+    <string name="createnewcharacter">Create a new character</string>
+</resources>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".usecases.user.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="391dp"
+        android:layout_height="360dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleLogin"
+            android:layout_width="221dp"
+            android:layout_height="53dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/titleSignIn"
+            android:textSize="35sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="27dp" />
+
+        <EditText
+            android:id="@+id/usercredentials"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:ems="10"
+            android:hint="@string/hintmail"
+            android:inputType="textEmailAddress"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <EditText
+            android:id="@+id/passcredentials"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:ems="10"
+            android:hint="@string/hintpass"
+            android:inputType="textPassword" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="17dp" />
+
+        <Button
+            android:id="@+id/signInAccept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:layout_gravity="center"
+            android:text="@string/titleSignIn" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <Button
+            android:id="@+id/btn_google_login"
+            android:layout_width="60dp"
+            android:layout_height="65dp"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_goback"
+        android:layout_width="75dp"
+        android:layout_height="69dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="@string/btn_goback" />
+
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="75dp"
+        android:layout_height="69dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="@string/titleSignIn" />
+
+</RelativeLayout>

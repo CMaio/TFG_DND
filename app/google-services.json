@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "401490271458",
+    "project_id": "tfg-dnd-4101b",
+    "storage_bucket": "tfg-dnd-4101b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401490271458:android:0a20333bbcbe73587192bb",
+        "android_client_info": {
+          "package_name": "com.claudiomaiorana.tfg_dnd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401490271458-21d52gtnrjnpttj4d3oour5gnbn7htg1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf4M9Ev7THSJrrvpHc3tIGWrT6MhoqaCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "401490271458-21d52gtnrjnpttj4d3oour5gnbn7htg1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

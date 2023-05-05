@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,10 +15,29 @@ import androidx.fragment.app.DialogFragment;
 import java.io.IOError;
 
 public class PopUpCustom extends DialogFragment {
-    View view;
+    View v;
+    String tittle,message,yesButtonText, noButtonText;
+    Boolean yesButton, noButton;
 
-    public PopUpCustom(/*lo que me apetece controlar, titulo, mensaje, view,tipopregunta, inlcuso si se ve botones de aceptar y de cancelar*/){
+    /*lo que me apetece controlar, titulo, mensaje, view,tipopregunta, inlcuso si se ve botones de aceptar y de cancelar*/
+    public PopUpCustom(View view){
+        this.v = view;
+        this.tittle = "";
+        this.message = "";
+        this.yesButtonText = "";
+        this.noButtonText = "";
+        this.yesButton = false;
+        this.noButton = false;
+    }
 
+    public PopUpCustom(View view, String tittle,String message,String yesButtonText,String noButtonText){
+        this.v = view;
+        this.tittle = tittle;
+        this.message = message;
+        this.yesButtonText = yesButtonText;
+        this.noButtonText = noButtonText;
+        this.yesButton = yesButtonText != "" && yesButtonText != null? true : false;
+        this.noButton = noButtonText != "" && noButtonText != null? true : false;
     }
 
 
@@ -26,20 +46,30 @@ public class PopUpCustom extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         /* aqui poner if de los elementos !tittle.equal("") para que lo ponga en caso de que este, sino no lo pone*/
 
-        //builder.setView(view);
+        builder.setView(v);
 
-        builder.setPositiveButton("", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        if(!tittle.equals("")){builder.setTitle(tittle);}
+        if(!message.equals("")){builder.setMessage(message);}
 
-            }
-        });
-        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        if(yesButton){
+            builder.setPositiveButton(yesButtonText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //Aqui hay que hacer algo:TODO
 
-            }
-        });
+                }
+            });
+        }
+
+        if(noButton){
+            builder.setNegativeButton(noButtonText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    //aqui hay que hacer algo:TODO
+                }
+            });
+        }
+
 
         return super.onCreateDialog(savedInstanceState);
     }
@@ -54,8 +84,8 @@ public class PopUpCustom extends DialogFragment {
         super.onAttach(context);
         try{
             //listener = (IDialogListener) context;
-        }catch (IOError e){
-            //throw new Exception(e);
+        }catch (Exception e){
+
         }
     }
 }

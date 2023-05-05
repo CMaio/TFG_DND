@@ -113,11 +113,11 @@ public class CharacterManagerActivity extends AppCompatActivity implements Adapt
         finish();
     }
 
-    public void callPopUp(){
+    public void callPopUp(String tag){
         View view = getLayoutInflater().inflate(R.layout.row_new_character,null);
 
-        PopUpCustom popUp = new PopUpCustom();
-        popUp.show(getSupportFragmentManager(),"identificarpopup");
+        PopUpCustom popUp = new PopUpCustom(view);
+        popUp.show(getSupportFragmentManager(),tag);
 
     }
 }

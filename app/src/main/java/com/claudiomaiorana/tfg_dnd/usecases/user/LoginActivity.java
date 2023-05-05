@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -72,10 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         b_goback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("source","login");
-                setResult(RESULT_CANCELED,intent);
-                finish();
+                goMainMenu(RESULT_CANCELED);
             }
         });
 
@@ -114,11 +112,12 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             Toast.makeText(LoginActivity.this, "Successful.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent();
+                            goMainMenu(RESULT_OK);
+                            /*Intent intent = new Intent();
                             intent.putExtra("source","login");
                             intent.putExtra("user",mAuth.getCurrentUser().getDisplayName());
                             setResult(RESULT_OK,intent);
-                            finish();
+                            startActivity(intent);*/
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -126,6 +125,14 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+
+    private void goMainMenu(int intentResult){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("source","login");
+        setResult(intentResult,intent);
+        startActivity(intent);
     }
 
 

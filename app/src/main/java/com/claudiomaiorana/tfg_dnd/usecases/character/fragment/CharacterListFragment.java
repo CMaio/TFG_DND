@@ -56,7 +56,7 @@ public class CharacterListFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_list.setLayoutManager(layoutManager);
         db = FirebaseFirestore.getInstance();
-        //generateCharacter();
+
         if (dataSet == null) getData();
 
         System.out.println("hola--------------------"+dataSet);
@@ -68,7 +68,7 @@ public class CharacterListFragment extends Fragment {
 
         return fragmentV;
     }
-
+/*
     private void generateCharacter() {
         Character tmpCharacter = new Character(User.getInstance(), "Pablo", "Male", "He/Him", "Tiefling", "Wizard", "LAWFUL_GOOD", 20);
         db.collection("characters").document("XzdxPSp9IWT3SK9KqBe").collection("maio").document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -79,7 +79,7 @@ public class CharacterListFragment extends Fragment {
             }
         });
     }
-
+*/
 
     private void getData() {
         dataSet = new ArrayList<>();

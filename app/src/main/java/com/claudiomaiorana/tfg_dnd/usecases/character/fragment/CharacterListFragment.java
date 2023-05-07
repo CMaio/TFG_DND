@@ -13,8 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +30,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 
-public class CharacterListFragment extends Fragment {
+public class CharacterListFragment extends Fragment implements AdapterCharacters.OnItemClickListener {
     private RecyclerView rv_list;
     private AdapterCharacters adapter;
     private ArrayList<Character> dataSet;
@@ -49,6 +51,8 @@ public class CharacterListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         // Inflate the layout for this fragment
         View fragmentV = inflater.inflate(R.layout.fragment_character_list, container, false);
         rv_list = fragmentV.findViewById(R.id.RV_listCharacters);
@@ -96,6 +100,11 @@ public class CharacterListFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onItemClick(Character character) {
+        ((CharacterManagerActivity)getActivity()).changeFragment("sheet");
     }
 
    /* public void callPopUp(){

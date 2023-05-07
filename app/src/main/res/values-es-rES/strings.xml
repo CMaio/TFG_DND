@@ -17,5 +17,38 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tittle_characters_screen">Personajes</string>
     <string name="createnewcharacter">Crear un nuevo personaje</string>
-
+    <string name="cancelButton">Cancelar</string>
+    <string-array name="racesName">
+        <item>Dracónido</item>
+        <item>Enano</item>
+        <item>Elfo</item>
+        <item>Gnomo</item>
+        <item>Semielfo</item>
+        <item>Semiorco</item>
+        <item>Mediano</item>
+        <item>Humano</item>
+        <item>Tiefling</item>
+    </string-array>
+    <string-array name="classNames">
+        <item>Bárbaro</item>
+        <item>Bardo</item>
+        <item>Clerigo</item>
+        <item>Guerrero</item>
+        <item>Paladín</item>
+        <item>Explorador</item>
+        <item>Pícaro</item>
+        <item>Hechicero</item>
+        <item>Mago</item>
+    </string-array>
+    <string-array name="alignmentsNames">
+        <item>Legal Bueno</item>
+        <item>Legal Neutral</item>
+        <item>Legal Malvado</item>
+        <item>Neutral Bueno</item>
+        <item>Neutral</item>
+        <item>Neutral Malvado</item>
+        <item>Caótico bueno</item>
+        <item>Caótico Neutral</item>
+        <item>Caótico Malvado</item>
+    </string-array>
 </resources>

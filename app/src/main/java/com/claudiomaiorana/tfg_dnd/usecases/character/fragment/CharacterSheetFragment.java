@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,6 +52,12 @@ public class CharacterSheetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentV = inflater.inflate(R.layout.fragment_character_sheet, container, false);
+
+        Bundle bundle = getArguments();
+        if (bundle != null){
+            RCAInfo rcaInfo = (RCAInfo) bundle.getSerializable("rcainfo");
+            //TODO aqui añadir el valor a la pantalla y tambien añadirlo al character
+        }
 
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override

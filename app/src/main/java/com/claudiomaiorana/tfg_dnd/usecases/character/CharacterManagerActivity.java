@@ -26,7 +26,7 @@ import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class CharacterManagerActivity extends AppCompatActivity implements AdapterCharacters.OnItemClickListener {
+public class CharacterManagerActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private User user;
@@ -67,13 +67,13 @@ public class CharacterManagerActivity extends AppCompatActivity implements Adapt
             case "listCharacters":
                 if(fragment == null || !(fragment instanceof CharacterListFragment)){
                     CharacterListFragment listFragment = CharacterListFragment.newInstance();
-                    ft.replace(R.id.Fr_characterManager,listFragment);
+                    ft.replace(R.id.Fr_characterManager,listFragment,"fr_listFragment");
                 }
                 break;
             case "sheet":
                 if(!(fragment instanceof CharacterSheetFragment)) {
                     CharacterSheetFragment sheetFragment = CharacterSheetFragment.newInstance();
-                    ft.replace(R.id.Fr_characterManager, sheetFragment);
+                    ft.replace(R.id.Fr_characterManager, sheetFragment,"fr_sheetFragment");
                 }
                 break;
             case "rca":
@@ -96,14 +96,10 @@ public class CharacterManagerActivity extends AppCompatActivity implements Adapt
                 break;
 
         }
-        ft.addToBackStack(null).commit();
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
-    @Override
-    public void onItemClick(Character character) {
-
-        showFragment("sheet");
-    }
 
 
     private void backToMainActivity(int result){

@@ -18,6 +18,7 @@ public class PopUpCustom extends DialogFragment {
     View v;
     String tittle,message,yesButtonText, noButtonText;
     Boolean yesButton, noButton;
+    private IDialogListener listener;
 
     /*lo que me apetece controlar, titulo, mensaje, view,tipopregunta, inlcuso si se ve botones de aceptar y de cancelar*/
     public PopUpCustom(View view){
@@ -36,8 +37,8 @@ public class PopUpCustom extends DialogFragment {
         this.message = message;
         this.yesButtonText = yesButtonText;
         this.noButtonText = noButtonText;
-        this.yesButton = yesButtonText != "" && yesButtonText != null? true : false;
-        this.noButton = noButtonText != "" && noButtonText != null? true : false;
+        this.yesButton = (!yesButtonText.equals("")) && yesButtonText != null? true : false;
+        this.noButton = (!noButtonText.equals("")) && noButtonText != null? true : false;
     }
 
 
@@ -83,7 +84,7 @@ public class PopUpCustom extends DialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try{
-            //listener = (IDialogListener) context;
+            listener = (IDialogListener) context;
         }catch (Exception e){
 
         }

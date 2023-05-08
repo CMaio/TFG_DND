@@ -14,7 +14,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="55dp"
         app:spanCount="3"/>
 
 
@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="@string/cancelButton"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp" />
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp" />
 
 </FrameLayout>

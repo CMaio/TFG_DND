@@ -67,20 +67,20 @@ public class CharacterSheetFragment extends Fragment {
             if(type != null && rcaInfo != null){
                 switch (type){
                     case Constants.RACES_SELECTED:
-                        txt_race.setText(rcaInfo.getTittleText());
                         rcaInfoSaved[0] = rcaInfo;
                         break;
                     case Constants.CLASS_SELECTED:
-                        txt_class.setText(rcaInfo.getTittleText());
                         rcaInfoSaved[1] = rcaInfo;
                         break;
                     case Constants.ALIGNMENT_SELECTED:
-                        txt_alignment.setText(rcaInfo.getTittleText());
                         rcaInfoSaved[2] = rcaInfo;
                         break;
                 }
+                changeTittlesText();
+
             }
         }
+
 
         btn_race.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +105,21 @@ public class CharacterSheetFragment extends Fragment {
         });
 
         return fragmentV;
+    }
+
+    private void changeTittlesText() {
+        for(int i=0;i<rcaInfoSaved.length;i++){
+            if (rcaInfoSaved[i] != null){
+                if(i == 0){
+                    txt_race.setText((!rcaInfoSaved[i].getTittleText().equals(""))? rcaInfoSaved[i].getTittleText() : "Select Race");
+                } else if (i == 1) {
+                    txt_class.setText((!rcaInfoSaved[i].getTittleText().equals("")) ? rcaInfoSaved[i].getTittleText() : "Select Class");
+                }else {
+                    txt_alignment.setText((!rcaInfoSaved[i].getTittleText().equals(""))? rcaInfoSaved[i].getTittleText() : "Select Alignment");
+                }
+            }
+
+        }
     }
 
 

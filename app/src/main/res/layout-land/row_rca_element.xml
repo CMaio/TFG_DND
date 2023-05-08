@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="0dp"
     android:layout_weight="1"
     android:foregroundGravity="center_vertical"
     android:layout_gravity="center|top"
@@ -16,15 +16,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:text="hola"
-        android:textSize="40sp" />
+        android:textSize="15sp" />
 
     <ImageView
         android:id="@+id/img_faceRCAElement"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginBottom="28dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="10dp"
         android:visibility="visible"
         app:srcCompat="@drawable/ic_launcher_background"
         tools:ignore="ImageContrastCheck"

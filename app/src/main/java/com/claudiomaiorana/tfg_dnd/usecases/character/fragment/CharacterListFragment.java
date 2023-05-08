@@ -67,8 +67,8 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         adapter = new AdapterCharacters(dataSet, this, getActivity());
         rv_list.setAdapter(adapter);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new CharacterListFragment.MyRunneable(this),0);
+       /* Handler handler = new Handler();
+        handler.postDelayed(new CharacterListFragment.MyRunneable(this),0);*/
 
         return fragmentV;
     }

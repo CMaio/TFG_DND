@@ -57,7 +57,7 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
         rv_rca.setLayoutManager(layoutManager);
-        if(data== null){
+        if(data == null){
             generateData();
         }
 

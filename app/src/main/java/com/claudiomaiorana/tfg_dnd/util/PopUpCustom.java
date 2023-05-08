@@ -44,6 +44,7 @@ public class PopUpCustom extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        //super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         /* aqui poner if de los elementos !tittle.equal("") para que lo ponga en caso de que este, sino no lo pone*/
 
@@ -70,9 +71,9 @@ public class PopUpCustom extends DialogFragment {
                 }
             });
         }
-
-
-        return super.onCreateDialog(savedInstanceState);
+        builder.setCancelable(true);
+        AlertDialog alertDialog = builder.create();
+        return alertDialog;
     }
 
     public interface IDialogListener{

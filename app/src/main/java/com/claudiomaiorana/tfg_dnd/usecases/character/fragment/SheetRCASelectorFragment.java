@@ -21,11 +21,11 @@ import java.util.ArrayList;
 
 public class SheetRCASelectorFragment extends Fragment implements AdapterRCASelector.OnItemClickListener{
 
-    private static final String TYPE_SELECTOR = "typeSelector";
+    private static String TYPE_SELECTOR = "typeSelector";
 
     private String selector;
     private RecyclerView rv_rca;
-    private ArrayList<RCAInfo> data;
+    private ArrayList<RCAInfo> data = new ArrayList<RCAInfo>();
     private AdapterRCASelector adapter;
 
     public SheetRCASelectorFragment() {}
@@ -33,8 +33,11 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
     public static SheetRCASelectorFragment newInstance(String selector) {
         SheetRCASelectorFragment fragment = new SheetRCASelectorFragment();
         Bundle args = new Bundle();
+        System.out.println(TYPE_SELECTOR +"-----------------aqui ta type");
+        System.out.println(selector +"-----------------aqui ta type2");
         args.putString(TYPE_SELECTOR,selector);
         fragment.setArguments(args);
+        TYPE_SELECTOR = selector;
         return fragment;
     }
 
@@ -54,8 +57,11 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
         rv_rca.setLayoutManager(layoutManager);
+        if(data== null){
+            generateData();
+        }
 
-        adapter = new AdapterRCASelector(getActivity(),data);
+        adapter = new AdapterRCASelector(getActivity(),this,data);
         rv_rca.setAdapter(adapter);
 
         Handler handler = new Handler();
@@ -67,6 +73,7 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
     private void generateData(){
         String[] tmpArray = null;
         String[] tmpCode=null;
+
         switch (TYPE_SELECTOR){
             case Constants.RACES_SELECTED:
                 tmpArray = getResources().getStringArray(R.array.racesName);

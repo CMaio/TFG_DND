@@ -21,18 +21,18 @@ public class AdapterRCASelector extends RecyclerView.Adapter<AdapterRCASelector.
     private OnItemClickListener listener;
 
 
-    public AdapterRCASelector(Context context, ArrayList<RCAInfo> type){
+    public AdapterRCASelector(Context context,OnItemClickListener listener, ArrayList<RCAInfo> type){
         this.context = context;
         this.type = type;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdapterRCASelector.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_rca_element,parent,false);
-        AdapterRCASelector.ViewHolder viewHolder = new AdapterRCASelector.ViewHolder(view);
 
-        return viewHolder;
+        return new AdapterRCASelector.ViewHolder(view);
     }
 
     @Override

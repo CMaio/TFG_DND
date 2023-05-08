@@ -64,7 +64,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         if (dataSet == null) getData();
 
         System.out.println("hola--------------------"+dataSet);
-        adapter = new AdapterCharacters(dataSet, (AdapterCharacters.OnItemClickListener) getActivity(), getActivity());
+        adapter = new AdapterCharacters(dataSet, this, getActivity());
         rv_list.setAdapter(adapter);
 
         Handler handler = new Handler();

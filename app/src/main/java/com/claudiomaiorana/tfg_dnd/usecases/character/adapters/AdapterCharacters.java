@@ -17,7 +17,7 @@ import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 import java.util.ArrayList;
 
-public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.ViewHolder> {
+public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.ViewHolder> implements View.OnClickListener {
 
     private ArrayList<Character> data;
     private Context context;
@@ -82,6 +82,11 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
         } else {
             return Constants.TYPE_FILLED;
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+        System.out.println("hola");
     }
 
 

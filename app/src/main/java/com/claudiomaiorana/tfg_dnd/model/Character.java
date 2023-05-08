@@ -23,20 +23,25 @@ public class Character implements Parcelable {
     private String Pronoun;
 
     private String ClassPlayer;
+    private String codeClassPlayer;
+
     private String Race;
+    private String codeRace;
+
+    private String Alignment;
+    private String codeAlignment;
+
     private int Level = 0;
     private int ArmorClass;
     private int Initiative;
     private int Speed;
-    private String Alignment;
 
     private List<String> Items;
     Map<String,Integer> Skills;
 
     public Character(){}
 
-
-    public Character(User user, String characterName,String gender,String pronoun, String Race, String classPlayer, String alignment, int level, Image imgPlayer){
+    public Character(User user,String characterName,String gender,String pronoun,RCAInfo[] rcaInfo,int level,Image imgPlayer){
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();
         this.Skills = new TreeMap<String,Integer>();
@@ -44,12 +49,21 @@ public class Character implements Parcelable {
         this.Name = characterName;
         this.Gender = gender;
         this.Pronoun = pronoun;
-        this.Race = Race;
-        this.ClassPlayer = classPlayer;
-        this.Alignment = alignment;
+        saveRCAInfo(rcaInfo);
         this.Level = level;
         this.imgPlayer = imgPlayer;
     }
+
+    private void saveRCAInfo(RCAInfo[] rcaInfo) {
+        this.Race = rcaInfo[0].getTittleText();
+        this.codeRace = rcaInfo[0].getCodeApiSearch();
+        this.ClassPlayer = rcaInfo[1].getTittleText();
+        this.codeClassPlayer = rcaInfo[1].getCodeApiSearch();
+        this.Alignment = rcaInfo[2].getTittleText();
+        this.codeAlignment = rcaInfo[2].getCodeApiSearch();
+    }
+
+
     public Character(User user, String characterName,String gender,String pronoun, String Race, String classPlayer, String alignment, int level){
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();

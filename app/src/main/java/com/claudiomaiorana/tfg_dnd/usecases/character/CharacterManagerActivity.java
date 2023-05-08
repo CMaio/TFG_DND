@@ -22,6 +22,7 @@ import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFra
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterStatsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
+import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -59,6 +60,14 @@ public class CharacterManagerActivity extends AppCompatActivity {
         showFragment(state);
     }
 
+    public void changeToRCA(String type){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft =  fm.beginTransaction();
+        SheetRCASelectorFragment raceClassSelectorFragment = SheetRCASelectorFragment.newInstance(type);
+        ft.replace(R.id.Fr_characterManager, raceClassSelectorFragment);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
     private void showFragment(String state){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.Fr_characterManager);
@@ -78,7 +87,7 @@ public class CharacterManagerActivity extends AppCompatActivity {
                 break;
             case "rca":
                 if(!(fragment instanceof SheetRCASelectorFragment)) {
-                    SheetRCASelectorFragment raceClassSelectorFragment = SheetRCASelectorFragment.newInstance("R");
+                    SheetRCASelectorFragment raceClassSelectorFragment = SheetRCASelectorFragment.newInstance(Constants.RACES_SELECTED);
                     ft.replace(R.id.Fr_characterManager, raceClassSelectorFragment);
                 }
                 break;

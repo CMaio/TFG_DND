@@ -18,7 +18,7 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="28dp"
             android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/btn_google_login"
+            app:layout_constraintStart_toEndOf="@+id/btn_raceSelector"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -50,7 +50,7 @@
             android:layout_marginTop="32dp"
             android:text="Button"
             app:layout_constraintStart_toEndOf="@+id/txv_alignmentSelected"
-            app:layout_constraintTop_toBottomOf="@+id/btn_google_login"
+            app:layout_constraintTop_toBottomOf="@+id/btn_raceSelector"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <ImageView
@@ -79,7 +79,7 @@
             app:layout_constraintTop_toBottomOf="@+id/img_character" />
 
         <Button
-            android:id="@+id/btn_google_login"
+            android:id="@+id/btn_raceSelector"
             android:layout_width="44dp"
             android:layout_height="41dp"
             android:layout_marginStart="20dp"
@@ -121,7 +121,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txv_classSelected" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName"
+            android:id="@+id/txt_genderSelector"
             android:layout_width="201dp"
             android:layout_height="47dp"
             android:layout_marginStart="16dp"
@@ -133,7 +133,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txv_alignmentSelected" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName2"
+            android:id="@+id/txt_pronounSelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="28dp"
@@ -141,7 +141,7 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
-            app:layout_constraintStart_toEndOf="@+id/editTextTextPersonName"
+            app:layout_constraintStart_toEndOf="@+id/txt_genderSelector"
             app:layout_constraintTop_toBottomOf="@+id/txns_levelSelector" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,10 +31,13 @@ public class Character implements Parcelable {
     private String Alignment;
     private String codeAlignment;
 
-    private int Level = 0;
+    private int[]stats;
+
+    private int Level;
     private int ArmorClass;
     private int Initiative;
     private int Speed;
+
 
     private List<String> Items;
     Map<String,Integer> Skills;
@@ -224,5 +227,9 @@ public class Character implements Parcelable {
         dest.writeString(Pronoun);
         dest.writeString(Gender);
 
+    }
+
+    public void setStats(int[] stats) {
+        this.stats = stats;
     }
 }

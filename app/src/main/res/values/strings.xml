@@ -17,6 +17,9 @@
     <string name="tittle_characters_screen">Characters</string>
     <string name="createnewcharacter">Create a new character</string>
     <string name="cancelButton">Cancel</string>
+    <string name="continueButton">Continue</string>
+    <string name="addStat">Throw a D20 \nand write the result for the <b>@sTat@</b> stat.</string>
+    <string name="errorStat">You need to add a number between 1 and 20</string>
     <string-array name="racesName">
         <item>Dragonborn</item>
         <item>Dwarf</item>
@@ -50,4 +53,13 @@
         <item>Chaotic Neutral</item>
         <item>Chaotic Evil</item>
     </string-array>
+    <string-array name="statsNames">
+        <item>Strength</item>
+        <item>Dexterity</item>
+        <item>Constitution</item>
+        <item>Intelligence</item>
+        <item>Wisdom</item>
+        <item>Charisma</item>
+    </string-array>
+
 </resources>

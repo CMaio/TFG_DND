@@ -28,4 +28,6 @@ public class Constants {
     public static final String CLASS_SELECTED = "C";
     public static final String ALIGNMENT_SELECTED = "A";
 
+    public static final String[] TYPE_OF_STATS= {"str","dex","con","int","wis","cha"};
+
 }

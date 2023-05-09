@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.claudiomaiorana.tfg_dnd.R;
 
 import java.io.IOError;
 
@@ -19,6 +22,7 @@ public class PopUpCustom extends DialogFragment {
     String tittle,message,yesButtonText, noButtonText;
     Boolean yesButton, noButton;
     private IDialogListener listener;
+
 
     /*lo que me apetece controlar, titulo, mensaje, view,tipopregunta, inlcuso si se ve botones de aceptar y de cancelar*/
     public PopUpCustom(View view){
@@ -31,7 +35,18 @@ public class PopUpCustom extends DialogFragment {
         this.noButton = false;
     }
 
-    public PopUpCustom(View view, String tittle,String message,String yesButtonText,String noButtonText){
+    public PopUpCustom(View view,IDialogListener listener){
+        this.v = view;
+        this.tittle = "";
+        this.message = "";
+        this.yesButtonText = "";
+        this.noButtonText = "";
+        this.yesButton = false;
+        this.noButton = false;
+        this.listener = listener;
+    }
+
+    public PopUpCustom(View view,IDialogListener listener, String tittle,String message,String yesButtonText,String noButtonText){
         this.v = view;
         this.tittle = tittle;
         this.message = message;
@@ -46,7 +61,6 @@ public class PopUpCustom extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //super.onCreateDialog(savedInstanceState);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        /* aqui poner if de los elementos !tittle.equal("") para que lo ponga en caso de que este, sino no lo pone*/
 
         builder.setView(v);
 
@@ -57,8 +71,7 @@ public class PopUpCustom extends DialogFragment {
             builder.setPositiveButton(yesButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //Aqui hay que hacer algo:TODO
-
+                    listener.clickedYes(i,v);
                 }
             });
         }
@@ -67,13 +80,13 @@ public class PopUpCustom extends DialogFragment {
             builder.setNegativeButton(noButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    //aqui hay que hacer algo:TODO
+                    listener.clickedNo(i);
                 }
             });
         }
-        builder.setCancelable(true);
-        AlertDialog alertDialog = builder.create();
-        return alertDialog;
+        builder.setCancelable(false);
+        return builder.create();
+
     }
 
     public interface IDialogListener{

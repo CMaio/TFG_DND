@@ -11,31 +11,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center|center_vertical">
+        android:gravity="center|top"
+        android:layout_gravity="center|center_horizontal">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/txt_statToThrow"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment" />
+            android:text="@string/addStat"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <EditText
+            android:id="@+id/txt_numberStat"
+            android:layout_width="100dp"
+            android:layout_height="90dp"
+            android:ems="10"
+            android:gravity="center_horizontal"
+            android:inputType="number"
+            android:textSize="60sp"
+            android:layout_marginBottom="20dp"/>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_continue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Butdton" />
-
-        <Button
-            android:id="@+id/butto2n"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Buwtton" />
+            android:text="@string/continueButton"
+            android:layout_marginBottom="5dp"/>
     </LinearLayout>
 
 </FrameLayout>

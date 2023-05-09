@@ -18,6 +18,10 @@
     <string name="tittle_characters_screen">Personajes</string>
     <string name="createnewcharacter">Crear un nuevo personaje</string>
     <string name="cancelButton">Cancelar</string>
+    <string name="continueButton">Continuar</string>
+    <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
+    <string name="errorStat">Tienes que escribir un numero entre 1 y 20</string>
+
     <string-array name="racesName">
         <item>Dracónido</item>
         <item>Enano</item>
@@ -50,5 +54,13 @@
         <item>Caótico bueno</item>
         <item>Caótico Neutral</item>
         <item>Caótico Malvado</item>
+    </string-array>
+    <string-array name="statsNames">
+        <item>Fuerza</item>
+        <item>desrteza</item>
+        <item>Constitución</item>
+        <item>Inteligencia</item>
+        <item>Sabiduria</item>
+        <item>Carisma</item>
     </string-array>
 </resources>

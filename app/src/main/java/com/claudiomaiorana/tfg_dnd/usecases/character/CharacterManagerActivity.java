@@ -118,11 +118,5 @@ public class CharacterManagerActivity extends AppCompatActivity {
         finish();
     }
 
-    public void callPopUp(String tag){
-        View view = getLayoutInflater().inflate(R.layout.fragment_character_stats,null);
 
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getSupportFragmentManager(),tag);
-
-    }
 }

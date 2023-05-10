@@ -29,5 +29,11 @@ public class Constants {
     public static final String ALIGNMENT_SELECTED = "A";
 
     public static final String[] TYPE_OF_STATS= {"str","dex","con","int","wis","cha"};
+    public static final int STAT_STR = 0;
+    public static final int STAT_DEX = 1;
+    public static final int STAT_CON = 2;
+    public static final int STAT_INT = 3;
+    public static final int STAT_WIS = 4;
+    public static final int STAT_CHA = 5;
 
 }

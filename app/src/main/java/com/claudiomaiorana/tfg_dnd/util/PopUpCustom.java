@@ -54,6 +54,7 @@ public class PopUpCustom extends DialogFragment {
         this.noButtonText = noButtonText;
         this.yesButton = (!yesButtonText.equals("")) && yesButtonText != null? true : false;
         this.noButton = (!noButtonText.equals("")) && noButtonText != null? true : false;
+        this.listener = listener;
     }
 
 

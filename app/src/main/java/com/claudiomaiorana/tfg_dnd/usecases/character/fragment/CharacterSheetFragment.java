@@ -4,6 +4,8 @@ import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,12 +25,16 @@ import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSkills;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class CharacterSheetFragment extends Fragment{
 
@@ -46,9 +52,13 @@ public class CharacterSheetFragment extends Fragment{
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-    //Custom pop up components
+    //Custom pop up stats components
     Button btn_Continue;
     TextView txt_text,txt_value;
+
+    //Custom pop up skills
+    RecyclerView rv;
+    AdapterSkills adapter;
 
     public CharacterSheetFragment() {
     }
@@ -119,7 +129,7 @@ public class CharacterSheetFragment extends Fragment{
             public void onClick(View view) {
                 indexStats = 0;
                 String stat = stats[indexStats];
-                callPopUp("CreateCharacter",stat);
+                callPopUpStats("CreateCharacter",stat);
             }
         });
 
@@ -164,14 +174,12 @@ public class CharacterSheetFragment extends Fragment{
         if(indexStats+1<stats.length) {
             Stats[indexStats] = valueStat;
             String stat = stats[indexStats+1];
-            callPopUp("CreateCharacter", stat);
-            Log.d("stat","stat actual  " + indexStats);
-            //System.out.println("hemo llegao" + indexStats);
+            callPopUpStats("CreateCharacter", stat);
             indexStats++;
         }else{
             System.out.println("hemos terminado " + Stats);
             indexStats = 0;
-            createCharacter();
+            //createCharacter();
         }
     }
 
@@ -203,12 +211,13 @@ public class CharacterSheetFragment extends Fragment{
         queue.add(jsonArrayRequest);
     }
 
-    public void callPopUp(String tag,String stat) {
+    public void callPopUpStats(String tag,String stat) {
         View view = getLayoutInflater().inflate(R.layout.fragment_character_stats, null);
+
         btn_Continue = view.findViewById(R.id.btn_continue);
         txt_text = view.findViewById(R.id.txt_statToThrow);
         txt_value = view.findViewById(R.id.txt_numberStat);
-        final int[] result = {0};
+
         PopUpCustom popUp = new PopUpCustom(view);
         popUp.show(getParentFragmentManager(), tag);
         popUp.setCancelable(false);
@@ -224,7 +233,6 @@ public class CharacterSheetFragment extends Fragment{
                     if(0<tmpValue && tmpValue<21){
                         showNextStat(tmpValue);
                         popUp.dismiss();
-                        //System.out.println(result[0] + "entrado al result");
                     }else{
                         txt_value.setError(getResources().getString(R.string.errorStat));
                     }
@@ -233,10 +241,45 @@ public class CharacterSheetFragment extends Fragment{
                 }
             }
         });
-        System.out.println(result[0] + "entrado al result");
+    }
+
+    void callPopUpSkills(String tag){
+        ArrayList<String> dataSet = new ArrayList<String>();
+        View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
+        rv = view.findViewById(R.id.rv_skillsSelector);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        rv.setLayoutManager(layoutManager);
+        //Create data
+        dataSet = generateSkills();
+        adapter = new AdapterSkills(dataSet, getActivity());
+        rv.setAdapter(adapter);
+
+        PopUpCustom popUp = new PopUpCustom(view);
+        popUp.show(getParentFragmentManager(), tag);
+        popUp.setCancelable(false);
+
+        btn_Continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*if(!txt_value.getText().toString().equals("")){
+                    int tmpValue = Integer.parseInt(txt_value.getText().toString());
+                    if(0<tmpValue && tmpValue<21){
+                        createCharacter();
+                        popUp.dismiss();
+                    }else{
+                        txt_value.setError(getResources().getString(R.string.errorStat));
+                    }
+                }else{
+                    txt_value.setError(getResources().getString(R.string.errorStat));
+                }*/
+            }
+        });
+    }
+
+    private ArrayList<String> generateSkills() {
 
 
-        //return result[0];
+        return null;
     }
 
     void setElements(View fragmentV) {

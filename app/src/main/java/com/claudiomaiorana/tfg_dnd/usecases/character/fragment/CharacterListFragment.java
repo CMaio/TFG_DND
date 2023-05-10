@@ -12,19 +12,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
+import com.claudiomaiorana.tfg_dnd.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -72,18 +78,9 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
 
         return fragmentV;
     }
-/*
-    private void generateCharacter() {
-        Character tmpCharacter = new Character(User.getInstance(), "Pablo", "Male", "He/Him", "Tiefling", "Wizard", "LAWFUL_GOOD", 20);
-        db.collection("characters").document("XzdxPSp9IWT3SK9KqBe").collection("maio").document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                System.out.println("aqui llego*---------------------------");
 
-            }
-        });
-    }
-*/
+
+
 
     private void getData() {
         dataSet = new ArrayList<>();
@@ -106,14 +103,6 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
     public void onItemClick(Character character) {
         ((CharacterManagerActivity)getActivity()).changeFragment("sheet");
     }
-
-   /* public void callPopUp(){
-        View view = getLayoutInflater().inflate(R.layout.row_new_character,null);
-
-        PopUpCustom popUp = new PopUpCustom();
-        popUp.show(getParentFragmentManager(),"identificarpopup");
-
-    }*/
 
     public static class MyRunneable implements Runnable{
 
@@ -138,3 +127,24 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
 
 }
 
+
+/*
+    private void generateCharacter() {
+        Character tmpCharacter = new Character(User.getInstance(), "Pablo", "Male", "He/Him", "Tiefling", "Wizard", "LAWFUL_GOOD", 20);
+        db.collection("characters").document("XzdxPSp9IWT3SK9KqBe").collection("maio").document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                System.out.println("aqui llego*---------------------------");
+
+            }
+        });
+    }
+*/
+
+   /* public void callPopUp(){
+        View view = getLayoutInflater().inflate(R.layout.row_new_character,null);
+
+        PopUpCustom popUp = new PopUpCustom();
+        popUp.show(getParentFragmentManager(),"identificarpopup");
+
+    }*/

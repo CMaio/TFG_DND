@@ -21,6 +21,7 @@
     <string name="continueButton">Continuar</string>
     <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
     <string name="errorStat">Tienes que escribir un numero entre 1 y 20</string>
+    <string name="quantitySkills">Puedes elegir <b>@numToCh@</b> habilidades entre estas.</string>
 
     <string-array name="racesName">
         <item>Dracónido</item>
@@ -62,5 +63,25 @@
         <item>Inteligencia</item>
         <item>Sabiduria</item>
         <item>Carisma</item>
+    </string-array>
+    <string-array name="generalSkills">
+        <item>Acrobacias (Des)</item>
+        <item>Manejo de animales (Sab)</item>
+        <item>Arcanos (Int)</item>
+        <item>Atletismo (Fue)</item>
+        <item>Engaño (Car)</item>
+        <item>Historia (Int)</item>
+        <item>Percepción (Sab)</item>
+        <item>Intimidación (Car)</item>
+        <item>Investigación (Int)</item>
+        <item>Medicina (Sab)</item>
+        <item>Naturaleza (Int)</item>
+        <item>Insight (Sab)</item>
+        <item>Actuación (Car)</item>
+        <item>Persuasión (Car)</item>
+        <item>Religión (Int)</item>
+        <item>Trucos de mano (Des)</item>
+        <item>Furtividad (Des)</item>
+        <item>Supervivencia (Sab)</item>
     </string-array>
 </resources>

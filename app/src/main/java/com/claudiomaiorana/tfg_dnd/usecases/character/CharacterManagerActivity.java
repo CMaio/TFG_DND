@@ -43,7 +43,7 @@ public class CharacterManagerActivity extends AppCompatActivity {
         user = User.getInstance();
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        state = "listCharacters";
+        state = "sheet";
 
         myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override

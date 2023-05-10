@@ -15,11 +15,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.user.LoginActivity;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
+import com.claudiomaiorana.tfg_dnd.util.Util;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -124,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+
 
     private void logOut() {
         FirebaseAuth.getInstance().signOut();

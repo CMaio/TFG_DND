@@ -3,6 +3,7 @@ package com.claudiomaiorana.tfg_dnd.usecases.character.fragment;
 import android.media.Image;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,14 +29,24 @@ import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSkills;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
+import com.claudiomaiorana.tfg_dnd.util.Util;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CharacterSheetFragment extends Fragment{
 
@@ -58,7 +70,10 @@ public class CharacterSheetFragment extends Fragment{
 
     //Custom pop up skills
     RecyclerView rv;
+    TextView txt_quantitySkills;
     AdapterSkills adapter;
+    Button btn_selecSkills;
+    String quantityToChoose;
 
     public CharacterSheetFragment() {
     }
@@ -129,6 +144,7 @@ public class CharacterSheetFragment extends Fragment{
             public void onClick(View view) {
                 indexStats = 0;
                 String stat = stats[indexStats];
+                quantityToChoose = quantityChoose();
                 callPopUpStats("CreateCharacter",stat);
             }
         });
@@ -151,23 +167,12 @@ public class CharacterSheetFragment extends Fragment{
         }
     }
 
-
     void goSelectorRCA(String type) {
         ((CharacterManagerActivity) getActivity()).changeToRCA(type);
     }
 
 
-    void createCharacter() {
-        Character character = new Character(User.getInstance(), txt_name.getText().toString(),
-                txt_gender.getText().toString(), txt_pronoun.getText().toString(), rcaInfoSaved,
-                Integer.parseInt(txt_level.getText().toString()), null);
 
-        character.setStats(Stats);
-
-        //TODO:hacer que se acabe esto
-
-
-    }
 
 
     void showNextStat(int valueStat){
@@ -178,8 +183,10 @@ public class CharacterSheetFragment extends Fragment{
             indexStats++;
         }else{
             System.out.println("hemos terminado " + Stats);
+
             indexStats = 0;
             //createCharacter();
+            callPopUpSkills("skills");
         }
     }
 
@@ -247,8 +254,13 @@ public class CharacterSheetFragment extends Fragment{
         ArrayList<String> dataSet = new ArrayList<String>();
         View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
         rv = view.findViewById(R.id.rv_skillsSelector);
+        txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
+        btn_selecSkills = view.findViewById(R.id.btn_continueSkills);
+
+        txt_quantitySkills.setText(getResources().getText(R.string.quantitySkills).toString().replace("@numToCh@",quantityToChoose));
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv.setLayoutManager(layoutManager);
+
         //Create data
         dataSet = generateSkills();
         adapter = new AdapterSkills(dataSet, getActivity());
@@ -258,9 +270,13 @@ public class CharacterSheetFragment extends Fragment{
         popUp.show(getParentFragmentManager(), tag);
         popUp.setCancelable(false);
 
-        btn_Continue.setOnClickListener(new View.OnClickListener() {
+        btn_selecSkills.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ArrayList<CheckBox> ckBox = adapter.allChecks();
+                for (CheckBox ck:ckBox) {
+                    Log.d("skill",ck.getText().toString());
+                }
                 /*if(!txt_value.getText().toString().equals("")){
                     int tmpValue = Integer.parseInt(txt_value.getText().toString());
                     if(0<tmpValue && tmpValue<21){
@@ -276,11 +292,127 @@ public class CharacterSheetFragment extends Fragment{
         });
     }
 
-    private ArrayList<String> generateSkills() {
+    private String quantityChoose() {
+        final String[] result = {""};
+        Util.apiGETRequest("classes/bard/", new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try {
+                    result[0] = String.valueOf(jsonObject.getJSONArray("proficiency_choices").
+                            getJSONObject(0).getInt("choose"));
 
+                }catch (Exception e){}
+            }
+            @Override
+            public void onError(VolleyError error) {
 
-        return null;
+            }
+        },getActivity());
+        System.out.println(result[0] + "-------");
+        return result[0];
+
     }
+
+    private ArrayList<String> generateSkills() {
+        ArrayList<String> result = new ArrayList<>();
+        Util.apiGETRequest("classes/bard/", new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try {
+                    JSONArray jsonArray = jsonObject.getJSONArray("proficiency_choices").
+                            getJSONObject(0).getJSONObject("from").getJSONArray("options");
+                    for (int i = 0;i<jsonArray.length();i++){
+                        result.add(jsonArray.getJSONObject(i).getJSONObject("item").getString("name"));
+                    }
+                    adapter.notifyDataSetChanged();
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+
+        return result;
+    }
+    private ArrayList<String> getSavingThrows(){
+        ArrayList<String> result = new ArrayList<>();
+        Util.apiGETRequest("classes/bard/", new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try {
+                    JSONArray jsonArray = jsonObject.getJSONArray("saving_throws");
+                    for (int i = 0;i<jsonArray.length();i++){
+                        result.add(jsonArray.getJSONObject(i).getString("index"));
+                    }
+
+
+                }catch (Exception e){}
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+
+        return result;
+    }
+
+    private int getTypeOfDice(){
+        int[] result = {0};
+        Util.apiGETRequest("classes/bard/", new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try {
+                    result[0] = jsonObject.getInt("hit_die");
+                }catch (Exception e){}
+            }
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+        return result[0];
+    }
+
+    void createCharacter(ArrayList<String> skillsResult, Map<String, String> proficienciesAndLanguagesResult) {
+        ArrayList<String> savingThrows = getSavingThrows();
+        ArrayList<String> skills = skillsResult;
+        Map<String, String> proficienciesAndLanguages = proficienciesAndLanguagesResult;
+        int speed = 0;
+        int quantityHitDice = 1;
+        int typeHitDice = getTypeOfDice();
+
+
+
+
+
+        Character character = new Character(User.getInstance(),txt_name.getText().toString(),profile_img.getDrawable(),
+                rcaInfoSaved,Integer.parseInt(txt_level.getText().toString()),txt_gender.getText().toString(),
+                txt_pronoun.getText().toString(),Stats,savingThrows,skills,proficienciesAndLanguages,
+                speed,quantityHitDice,typeHitDice);
+
+        saveCharacter(character);
+
+
+    }
+
+    private void saveCharacter(Character character) {
+        db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
+                .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        finishCreation();
+                    }
+                });
+    }
+
+    void finishCreation(){
+
+    }
+
 
     void setElements(View fragmentV) {
         txt_name = fragmentV.findViewById(R.id.txt_nameSelector);
@@ -296,17 +428,4 @@ public class CharacterSheetFragment extends Fragment{
         txt_gender = fragmentV.findViewById(R.id.txt_genderSelector);
         txt_pronoun = fragmentV.findViewById(R.id.txt_pronounSelector);
     }
-
 }
- /*private void createCharacter() {
-        Character tmpCharacter = new Character(mAuth.getCurrentUser(),txt_name.getText().toString(),txt_race.getText().toString(),
-                txt_class.getText().toString(),0,Integer.parseInt((String) txt_level.getText()),null);
-
-        db.collection("character").document(tmpCharacter.getID()).set(tmpCharacter);
-
-
-        Intent intent = new Intent();
-        intent.putExtra("source","characters");
-        setResult(RESULT_CANCELED,intent);
-        finish();
-    }*/

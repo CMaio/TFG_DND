@@ -1,5 +1,6 @@
 package com.claudiomaiorana.tfg_dnd.model;
 
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,7 +19,7 @@ public class Character {
     private String ID, userID, partyID;
 
     private String name;
-    private Image imgPlayer;
+    private Drawable imgPlayer;
     private String classPlayer, race, alignment;
     private String codeClass, codeRace, codeAlignment;
     private int level;
@@ -31,7 +32,7 @@ public class Character {
     private int profBonus;
 
     private ArrayList<String> savingThrows;
-    private Map<String, Integer> skills;
+    private ArrayList<String> skills;
     private Map<String, String> proficienciesAndLanguages;
 
     private int armorClass;
@@ -55,9 +56,11 @@ public class Character {
     }
 
     //Para crear un personaje nuevo
-    public Character(User user, String characterName, String gender, String pronoun, RCAInfo[] rcaInfo,
-                      int level, Image imgPlayer, int[] stats, ArrayList<String> savingThrows, Map<String, Integer> skills,
-                      Map<String, String> proficienciesAndLanguages, int speed, int quantityHitDice, int typeHitDice) {
+    public Character(User user, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
+                     int level, String gender, String pronoun, int[] stats,
+                     ArrayList<String> savingThrows, ArrayList<String> skills,
+                     Map<String, String> proficienciesAndLanguages, int speed, int quantityHitDice,
+                     int typeHitDice) {
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();
         this.partyID = "";
@@ -91,9 +94,9 @@ public class Character {
     }
 
     //Para cuando ya hay un personaje creado y tengo toda la info
-    private Character(User user, String partyID, String characterName, Image imgPlayer, RCAInfo[] rcaInfo,
+    private Character(User user, String partyID, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
                       int level, String gender, String pronoun, int[] stats, int[] stats_mod, Boolean inspiration,
-                      int profBonus,ArrayList<String> savingThrows, Map<String, Integer> skills,
+                      int profBonus,ArrayList<String> savingThrows, ArrayList<String> skills,
                       Map<String, String> proficienciesAndLanguages, int armorClass, int initiative,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<String> weapons, ArrayList<String> spells, ArrayList<String> equipment,
@@ -180,7 +183,7 @@ public class Character {
         return name;
     }
 
-    public Image getImgPlayer() {
+    public Drawable getImgPlayer() {
         return imgPlayer;
     }
 
@@ -260,11 +263,11 @@ public class Character {
         this.savingThrows = savingThrows;
     }
 
-    public Map<String, Integer> getSkills() {
+    public ArrayList<String> getSkills() {
         return skills;
     }
 
-    public void setSkills(Map<String, Integer> skills) {
+    public void setSkills(ArrayList<String> skills) {
         this.skills = skills;
     }
 

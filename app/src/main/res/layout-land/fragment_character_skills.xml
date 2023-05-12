@@ -26,13 +26,13 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_skillsSelector"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:text="@string/cancelButton"
-            app:spanCount="3">
+            app:spanCount="2">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -42,7 +42,8 @@
             android:layout_height="wrap_content"
             android:text="@string/select"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
 
     </LinearLayout>
 

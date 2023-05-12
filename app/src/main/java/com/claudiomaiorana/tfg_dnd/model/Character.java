@@ -25,15 +25,15 @@ public class Character {
     private int level;
     private String gender, pronoun;
 
-    private int[] stats;
-    private int[] stats_mod;
+    private List<Integer> stats;
+    private List<Integer> stats_mod;
 
     private boolean inspiration;
     private int profBonus;
 
     private ArrayList<String> savingThrows;
-    private ArrayList<String> skills;
-    private Map<String, String> proficienciesAndLanguages;
+    private ArrayList<Skill> skills;
+    private ArrayList<ProfLang> proficienciesAndLanguages;
 
     private int armorClass;
     private int initiative;
@@ -57,9 +57,9 @@ public class Character {
 
     //Para crear un personaje nuevo
     public Character(User user, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
-                     int level, String gender, String pronoun, int[] stats,
-                     ArrayList<String> savingThrows, ArrayList<String> skills,
-                     Map<String, String> proficienciesAndLanguages, int speed, int quantityHitDice,
+                     int level, String gender, String pronoun, List<Integer> stats,
+                     ArrayList<String> savingThrows, ArrayList<Skill> skills,
+                     ArrayList<ProfLang> proficienciesAndLanguages, int speed, int quantityHitDice,
                      int typeHitDice) {
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();
@@ -71,19 +71,19 @@ public class Character {
         this.gender = gender;
         this.pronoun = pronoun;
         this.stats = stats;
-        this.stats_mod = new int[6];
+        this.stats_mod = new ArrayList<>();
         createMod(stats);
         this.inspiration = false;
         this.profBonus = getProfBonus();
         this.savingThrows = savingThrows;
         this.skills = skills;
         this.proficienciesAndLanguages = proficienciesAndLanguages;
-        this.armorClass = 10 + stats_mod[Constants.STAT_CON];
-        this.initiative = stats_mod[Constants.STAT_DEX];
+        this.armorClass = 10 + stats_mod.get(Constants.STAT_CON);
+        this.initiative = stats_mod.get(Constants.STAT_DEX);
         this.speed = speed;
         this.quantityHitDice = quantityHitDice;
         this.typeHitDice = typeHitDice;
-        this.maxHitPoints = typeHitDice + stats_mod[Constants.STAT_CON];
+        this.maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
         this.currentHitPoints = this.maxHitPoints;
         this.weapons = new ArrayList<String>();
         this.spells = new ArrayList<String>();
@@ -95,9 +95,9 @@ public class Character {
 
     //Para cuando ya hay un personaje creado y tengo toda la info
     private Character(User user, String partyID, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
-                      int level, String gender, String pronoun, int[] stats, int[] stats_mod, Boolean inspiration,
-                      int profBonus,ArrayList<String> savingThrows, ArrayList<String> skills,
-                      Map<String, String> proficienciesAndLanguages, int armorClass, int initiative,
+                      int level, String gender, String pronoun, List<Integer> stats, List<Integer> stats_mod, Boolean inspiration,
+                      int profBonus,ArrayList<String> savingThrows, ArrayList<Skill> skills,
+                      ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<String> weapons, ArrayList<String> spells, ArrayList<String> equipment,
                       ArrayList<String> featuresAndTraits, int money) {
@@ -140,11 +140,11 @@ public class Character {
         this.codeAlignment = rcaInfo[2].getCodeApiSearch();
     }
 
-    private void createMod(int[] stats) {
+    private void createMod(List<Integer> stats) {
         int mod = -6;
-        for (int i = 0; i < stats.length; i++) {
-            mod = (int) Math.floor((stats[i] - 10) / 2.0);
-            stats_mod[i] = mod;
+        for (int i = 0; i < stats.size(); i++) {
+            mod = (int) Math.floor((stats.get(i) - 10) / 2.0);
+            stats_mod.add(mod);
         }
     }
 
@@ -227,19 +227,19 @@ public class Character {
         return pronoun;
     }
 
-    public int[] getStats() {
+    public List<Integer> getStats() {
         return stats;
     }
 
-    public void setStats(int[] stats) {
+    public void setStats(List<Integer> stats) {
         this.stats = stats;
     }
 
-    public int[] getStats_mod() {
+    public List<Integer> getStats_mod() {
         return stats_mod;
     }
 
-    public void setStats_mod(int[] stats_mod) {
+    public void setStats_mod(List<Integer> stats_mod) {
         this.stats_mod = stats_mod;
     }
 
@@ -263,19 +263,19 @@ public class Character {
         this.savingThrows = savingThrows;
     }
 
-    public ArrayList<String> getSkills() {
+    public ArrayList<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(ArrayList<String> skills) {
+    public void setSkills(ArrayList<Skill> skills) {
         this.skills = skills;
     }
 
-    public Map<String, String> getProficienciesAndLanguages() {
+    public ArrayList<ProfLang> getProficienciesAndLanguages() {
         return proficienciesAndLanguages;
     }
 
-    public void setProficienciesAndLanguages(Map<String, String> proficienciesAndLanguages) {
+    public void setProficienciesAndLanguages(ArrayList<ProfLang> proficienciesAndLanguages) {
         this.proficienciesAndLanguages = proficienciesAndLanguages;
     }
 

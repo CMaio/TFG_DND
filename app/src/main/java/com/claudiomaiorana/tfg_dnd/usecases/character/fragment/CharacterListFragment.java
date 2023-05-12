@@ -34,12 +34,13 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class CharacterListFragment extends Fragment implements AdapterCharacters.OnItemClickListener {
     private RecyclerView rv_list;
     private AdapterCharacters adapter;
-    private ArrayList<Character> dataSet;
+    private static ArrayList<Character> dataSet;
     private FirebaseFirestore db;
 
 
@@ -66,34 +67,58 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_list.setLayoutManager(layoutManager);
         db = FirebaseFirestore.getInstance();
-
-        if (dataSet == null) getData();
+        //generateCharacter();
+        loadingBar(View.VISIBLE);
+        getData();
 
         System.out.println("hola--------------------"+dataSet);
         adapter = new AdapterCharacters(dataSet, this, getActivity());
         rv_list.setAdapter(adapter);
 
        /* Handler handler = new Handler();
-        handler.postDelayed(new CharacterListFragment.MyRunneable(this),0);*/
+        handler.postDelayed(new CharacterListFragment.MyRunneable(this),100);*/
 
         return fragmentV;
     }
 
+    private void generateCharacter() {
+        RCAInfo[] rca = new RCAInfo[3];
+        rca[0] = new RCAInfo("Human",null,"human");
+        rca[1] = new RCAInfo("Bard",null,"bard");
+        rca[2] = new RCAInfo("hi",null,"hi");
+        //Integer[] stats = {0,0,0,0,0,0};
+        List<Integer> stats = new ArrayList<>();
+        stats.add(0);
+        stats.add(0);
+        stats.add(0);
+        stats.add(0);
+        stats.add(0);
+        stats.add(0);
+        Character tmpCharacter = new Character(User.getInstance(),"Pablo",null,rca,1,"male","him",stats,null,null,null,0,1,8);
+        db.collection("characters").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                System.out.println("aqui llego*---------------------------");
 
+            }
+        });
+    }
 
 
     private void getData() {
         dataSet = new ArrayList<>();
         dataSet.add(new Character());
-        db.collection("characters").document("XzdxPSp9IWT3SK9KqBe").collection("maio")
+        db.collection("characters").document(User.getInstance().getId()).collection(User.getInstance().getUserName())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 dataSet.add(document.toObject(Character.class));
+
                             }
                             adapter.notifyDataSetChanged();
+                            loadingBar(View.INVISIBLE);
                         }
                     }
                 });
@@ -104,7 +129,16 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         ((CharacterManagerActivity)getActivity()).changeFragment("sheet");
     }
 
-    public static class MyRunneable implements Runnable{
+    void loadingBar(int visibility){
+        ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
+    }
+}
+
+
+
+
+
+   /* public static class MyRunneable implements Runnable{
 
         private final WeakReference<CharacterListFragment> runFragment;
 
@@ -116,35 +150,13 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         public void run() {
             CharacterListFragment rFragment = runFragment.get();
             if(rFragment != null){
+                System.out.println("nosoco null------------");
                 //Para cuando acaba de cargar la data que aparezca
                 rFragment.getData();
                 //quitar lo que sea que tape too
+                rFragment.adapter.notifyDataSetChanged();
 
 
             }
         }
-    }
-
-}
-
-
-/*
-    private void generateCharacter() {
-        Character tmpCharacter = new Character(User.getInstance(), "Pablo", "Male", "He/Him", "Tiefling", "Wizard", "LAWFUL_GOOD", 20);
-        db.collection("characters").document("XzdxPSp9IWT3SK9KqBe").collection("maio").document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                System.out.println("aqui llego*---------------------------");
-
-            }
-        });
-    }
-*/
-
-   /* public void callPopUp(){
-        View view = getLayoutInflater().inflate(R.layout.row_new_character,null);
-
-        PopUpCustom popUp = new PopUpCustom();
-        popUp.show(getParentFragmentManager(),"identificarpopup");
-
     }*/

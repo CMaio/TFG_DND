@@ -54,6 +54,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
 
                 break;
             case Constants.TYPE_FILLED:
+                System.out.println("------------------------------------------d");
                 Character current = data.get(position);
                 //TODO: Llenar con todo lo necesario de una linea
 

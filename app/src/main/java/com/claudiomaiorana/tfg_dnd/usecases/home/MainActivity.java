@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.user.LoginActivity;
 import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
+            createUserInstance(user);
             tx_nameUser.setText(user.getDisplayName());
         } else {
             gotToLogIn();
@@ -131,8 +133,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
+    private void createUserInstance(FirebaseUser user) {
+        User userD = User.getInstance();
+        if(userD.getUserName() == null ||userD.getUserName() != user.getDisplayName()){
+            userD.fillUser(user.getUid(),user.getDisplayName(),user.getEmail());
+        }
+    }
 
 
     private void logOut() {
@@ -141,17 +147,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            //gotToLogIn();
-        }else{
-            //tx_nameUser.setText(user.getDisplayName());
-        }
-    }
 
     private void gotToLogIn(){
         Intent intent = new Intent(this, LoginActivity.class);

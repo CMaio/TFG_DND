@@ -13,4 +13,21 @@
         tools:layout="@layout/fragment_character_list"
         tools:layout_editor_absoluteX="-2dp"
         tools:layout_editor_absoluteY="0dp" />
+
+    <LinearLayout
+        android:id="@+id/ly_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

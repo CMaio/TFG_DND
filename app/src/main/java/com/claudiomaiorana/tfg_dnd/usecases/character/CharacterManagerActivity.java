@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
@@ -34,6 +35,7 @@ public class CharacterManagerActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> myActivityResultLauncher;
 
     String state ="";
+    private LinearLayout ly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,8 @@ public class CharacterManagerActivity extends AppCompatActivity {
         user = User.getInstance();
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        state = "sheet";
+        state = "listCharacters";
+        ly = findViewById(R.id.ly_loading);
 
         myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -109,7 +112,11 @@ public class CharacterManagerActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    public void changeLoadingVisibility(int visible){
 
+        ly.setVisibility(visible);
+
+    }
 
     private void backToMainActivity(int result){
         Intent intent = new Intent();

@@ -15,21 +15,32 @@
             android:id="@+id/txv_classSelected"
             android:layout_width="157dp"
             android:layout_height="42dp"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="124dp"
             android:layout_marginTop="28dp"
             android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/btn_raceSelector"
+            app:layout_constraintStart_toEndOf="@+id/txv_raceSelected"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_classSelector"
+            android:layout_width="106dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="168dp"
+            android:layout_marginTop="4dp"
+            android:text="Button"
+            app:layout_constraintStart_toEndOf="@+id/btn_raceSelector"
+            app:layout_constraintTop_toBottomOf="@+id/txv_classSelected"
+            tools:ignore="DuplicateSpeakableTextCheck" />
+
+        <Button
+            android:id="@+id/btn_alignmentSelector"
             android:layout_width="44dp"
             android:layout_height="41dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="28dp"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="8dp"
             android:text="Button"
-            app:layout_constraintStart_toEndOf="@+id/txv_classSelected"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/txt_nameSelector"
+            app:layout_constraintTop_toBottomOf="@+id/txv_alignmentSelected"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <TextView
@@ -37,21 +48,22 @@
             android:layout_width="157dp"
             android:layout_height="42dp"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="104dp"
+            android:layout_marginTop="132dp"
             android:text="TextView"
             app:layout_constraintStart_toEndOf="@+id/img_character"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btn_alignmentSelector"
-            android:layout_width="44dp"
-            android:layout_height="41dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="32dp"
-            android:text="Button"
+        <EditText
+            android:id="@+id/txns_levelSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="60dp"
+            android:ems="10"
+            android:hint="@string/hintlevel"
+            android:inputType="numberSigned"
             app:layout_constraintStart_toEndOf="@+id/txv_alignmentSelected"
-            app:layout_constraintTop_toBottomOf="@+id/btn_raceSelector"
-            tools:ignore="DuplicateSpeakableTextCheck" />
+            app:layout_constraintTop_toBottomOf="@+id/txv_classSelected" />
 
         <ImageView
             android:id="@+id/img_character"
@@ -70,8 +82,8 @@
             android:id="@+id/txt_nameSelector"
             android:layout_width="202dp"
             android:layout_height="50dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="84dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
@@ -80,13 +92,13 @@
 
         <Button
             android:id="@+id/btn_raceSelector"
-            android:layout_width="44dp"
-            android:layout_height="41dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="28dp"
+            android:layout_width="134dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="8dp"
             android:text="Button"
-            app:layout_constraintStart_toEndOf="@+id/txv_raceSelected"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_character"
+            app:layout_constraintTop_toBottomOf="@+id/txv_raceSelected"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <TextView
@@ -103,41 +115,29 @@
             android:id="@+id/btn_createCharacter"
             android:layout_width="204dp"
             android:layout_height="52dp"
-            android:text="Button"
+            android:text="@string/createCharacter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <EditText
-            android:id="@+id/txns_levelSelector"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="34dp"
-            android:ems="10"
-            android:hint="@string/hintlevel"
-            android:inputType="numberSigned"
-            app:layout_constraintStart_toEndOf="@+id/btn_alignmentSelector"
-            app:layout_constraintTop_toBottomOf="@+id/txv_classSelected" />
-
-        <EditText
+        <Spinner
             android:id="@+id/txt_genderSelector"
-            android:layout_width="201dp"
-            android:layout_height="47dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="48dp"
+            android:layout_width="194dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="88dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
             app:layout_constraintStart_toEndOf="@+id/txt_nameSelector"
             app:layout_constraintTop_toBottomOf="@+id/txv_alignmentSelected" />
 
-        <EditText
+        <Spinner
             android:id="@+id/txt_pronounSelector"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="44dp"
+            android:layout_width="207dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="84dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"

@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
@@ -27,6 +28,7 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
     private RecyclerView rv_rca;
     private ArrayList<RCAInfo> data = new ArrayList<RCAInfo>();
     private AdapterRCASelector adapter;
+    private Button btn_cancel;
 
     public SheetRCASelectorFragment() {}
 
@@ -54,6 +56,7 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
                              Bundle savedInstanceState) {
         View fragmentV = inflater.inflate(R.layout.fragment_sheet_rca_selector, container, false);
         rv_rca = fragmentV.findViewById(R.id.rv_rcaselector);
+        btn_cancel = fragmentV.findViewById(R.id.cancel_go_back_to_sheet);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
         rv_rca.setLayoutManager(layoutManager);
@@ -64,6 +67,12 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
         adapter = new AdapterRCASelector(getActivity(),this,data);
         rv_rca.setAdapter(adapter);
 
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goBack();
+            }
+        });
         Handler handler = new Handler();
         handler.postDelayed(new SheetRCASelectorFragment.MyRunneable(this),0);
 
@@ -112,6 +121,11 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
         if(characterSheetFragment != null){
             characterSheetFragment.setArguments(bundle);
         }
+    }
+
+    void goBack(){
+        getActivity().getSupportFragmentManager().popBackStack();
+
     }
 
 

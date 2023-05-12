@@ -18,12 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -34,6 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView txt_mail;
     private TextView txt_pass;
     ActivityResultLauncher<Intent> myActivityResultLauncher;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +92,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "createUserWithEmail:success");
                                         Toast.makeText(RegisterActivity.this, "Authentication successful.", Toast.LENGTH_LONG).show();
+                                        saveUserDatabase(user);
+
                                         Intent intent = new Intent();
                                         intent.putExtra("mailRegistered",mAuth.getCurrentUser().getEmail());
                                         setResult(RESULT_OK,intent);
@@ -108,5 +114,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void saveUserDatabase(FirebaseUser user){
+        Log.d(TAG,"here start user database");
+        User localUser = new User(user.getUid(),user.getDisplayName(),user.getEmail());
+        db.collection("users").document(localUser.getId()).set(localUser);
     }
 }

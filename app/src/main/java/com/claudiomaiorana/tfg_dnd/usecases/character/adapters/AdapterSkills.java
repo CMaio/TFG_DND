@@ -1,6 +1,7 @@
 package com.claudiomaiorana.tfg_dnd.usecases.character.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +12,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.Skill;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder> {
+public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder>{
 
-    private ArrayList<String> data;
+    private ArrayList<Skill> data;
     private Context context;
-    private ArrayList<CheckBox> ck;
 
-    public AdapterSkills(ArrayList<String> data, Context context) {
+
+
+    public AdapterSkills(ArrayList<Skill> data, Context context) {
         this.data = data;
         this.context = context;
-        ck = new ArrayList<>();
     }
 
     @NonNull
@@ -35,14 +39,19 @@ public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String current = data.get(position);
-        holder.chx_.setText(current);
-        holder.chx_.setTag(position);
-        //ck.add(holder.chx_);
-    }
-    public ArrayList<CheckBox> allChecks (){
-        return ck;
+    public void onBindViewHolder(@NonNull ViewHolder holder,int position) {
+        Skill current = data.get(position);
+
+        holder.chx_.setText(current.getName());
+        holder.chx_.setOnCheckedChangeListener(null);
+        holder.chx_.setChecked(data.get(position).isSelected());
+        holder.chx_.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                data.get(holder.getAbsoluteAdapterPosition()).setSelected(isChecked);
+            }
+        });
     }
 
     @Override
@@ -50,8 +59,11 @@ public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder
         return data.size();
     }
 
+    public ArrayList<Skill> getData(){return data;}
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
         CheckBox chx_;
 
         //TODO:Incluir todos los elementos de una fila
@@ -59,21 +71,7 @@ public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder
             super(itemView);
             chx_ = itemView.findViewById(R.id.ck_skill);
 
-            chx_.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    int position = getAbsoluteAdapterPosition();
-                    if(position!=RecyclerView.NO_POSITION){
-                        if(chx_.isChecked()){
-                            ck.add(chx_);
-                        }else{
-                            ck.remove(chx_);
-                        }
-                    }
-                }
-            });
         }
-
-
     }
+
 }

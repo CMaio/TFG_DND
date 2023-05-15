@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
 import com.claudiomaiorana.tfg_dnd.model.Skill;
 
 import java.util.ArrayList;
@@ -20,12 +21,12 @@ import java.util.Collections;
 
 public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder>{
 
-    private ArrayList<Skill> data;
+    private ArrayList<OptionsCharacter> data;
     private Context context;
 
 
 
-    public AdapterSkills(ArrayList<Skill> data, Context context) {
+    public AdapterSkills(ArrayList<OptionsCharacter> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -40,7 +41,7 @@ public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder,int position) {
-        Skill current = data.get(position);
+        OptionsCharacter current = data.get(position);
 
         holder.chx_.setText(current.getName());
         holder.chx_.setOnCheckedChangeListener(null);
@@ -59,7 +60,7 @@ public class AdapterSkills extends RecyclerView.Adapter<AdapterSkills.ViewHolder
         return data.size();
     }
 
-    public ArrayList<Skill> getData(){return data;}
+    public ArrayList<OptionsCharacter> getData(){return data;}
 
 
 

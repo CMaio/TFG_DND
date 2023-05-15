@@ -2,16 +2,19 @@ package com.claudiomaiorana.tfg_dnd.model;
 
 import java.util.Objects;
 
-public class Skill {
+public class OptionsCharacter {
     private String code;
     private String name;
     private boolean isSelected;
+    private int bonus;
 
-    public Skill(){}
-    public Skill(String code, String name) {
+    public OptionsCharacter(){}
+
+    public OptionsCharacter(String code, String name) {
         this.code = code;
         this.name = name;
         this.isSelected = false;
+        this.bonus = 0;
     }
 
     public String getCode() {
@@ -30,13 +33,20 @@ public class Skill {
         isSelected = selected;
     }
 
+    public int getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(int bonus) {
+        this.bonus = bonus;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Skill sk = (Skill) o;
-        return code == sk.code;
+        OptionsCharacter optChar = (OptionsCharacter) o;
+        return code == optChar.code;
     }
 
     @Override

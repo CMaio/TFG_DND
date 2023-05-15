@@ -22,10 +22,11 @@
     <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
     <string name="errorStat">Tienes que escribir un numero entre 1 y 20</string>
     <string name="quantitySkills">Puedes elegir <b>@numToCh@</b> habilidades entre estas.</string>
-    <string name="quantityLanguage">You can choose <b>@numToCh@</b> languages between this ones.</string>
+    <string name="quantityLanguage">Puedes elegir <b>@numToCh@</b> lenguajes mas entre estos.</string>
+    <string name="quantityAbilityBonus">Puedes elegir <b>@numToCh@</b> bonus para subir entre estos.</string>
 
     <string name="createCharacter">Crear Personaje</string>
-
+    <string name="languageAdd">Idioma</string>
     <string-array name="racesName">
         <item>Dracónido</item>
         <item>Enano</item>

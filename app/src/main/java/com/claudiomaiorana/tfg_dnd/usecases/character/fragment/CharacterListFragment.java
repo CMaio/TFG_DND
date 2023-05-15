@@ -1,43 +1,35 @@
 package com.claudiomaiorana.tfg_dnd.usecases.character.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
-import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
-import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
-import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
-import com.claudiomaiorana.tfg_dnd.util.Util;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
 
 
-public class CharacterListFragment extends Fragment implements AdapterCharacters.OnItemClickListener {
+public class CharacterListFragment extends Fragment implements AdapterCharacters.OnItemClickListener{
     private RecyclerView rv_list;
     private AdapterCharacters adapter;
     private static ArrayList<Character> dataSet;
@@ -81,7 +73,9 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         return fragmentV;
     }
 
-    private void generateCharacter() {
+
+
+    /*private void generateCharacter() {
         RCAInfo[] rca = new RCAInfo[3];
         rca[0] = new RCAInfo("Human",null,"human");
         rca[1] = new RCAInfo("Bard",null,"bard");
@@ -102,7 +96,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
 
             }
         });
-    }
+    }*/
 
 
     private void getData() {
@@ -132,6 +126,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
     void loadingBar(int visibility){
         ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
     }
+
 }
 
 

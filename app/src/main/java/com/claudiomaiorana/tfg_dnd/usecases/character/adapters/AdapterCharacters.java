@@ -129,6 +129,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
     }
 
     public interface OnItemClickListener {
+
         void onItemClick(Character character);
     }
 }

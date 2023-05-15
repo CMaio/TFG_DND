@@ -20,9 +20,11 @@
     <string name="continueButton">Continue</string>
     <string name="addStat">Throw a D20 \nand write the result for the <b>@sTat@</b> stat.</string>
     <string name="errorStat">You need to add a number between 1 and 20</string>
-    <string name="quantitySkills">You can choose <b>@numToCh@</b> skills between this ones.</string>
+    <string name="quantitySkills">You can choose <b>@numToCh@</b> skill/s between this ones.</string>
     <string name="quantityLanguage">You can choose <b>@numToCh@</b> languages between this ones.</string>
+    <string name="quantityAbilityBonus">You can choose <b>@numToCh@</b> stat bonus between this ones.</string>
     <string name="createCharacter">Create Character</string>
+    <string name="languageAdd">Language</string>
     <string-array name="racesName">
         <item>Dragonborn</item>
         <item>Dwarf</item>

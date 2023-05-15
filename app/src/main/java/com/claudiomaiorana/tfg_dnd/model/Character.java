@@ -19,7 +19,7 @@ public class Character {
     private String ID, userID, partyID;
 
     private String name;
-    private Drawable imgPlayer;
+    private String imgPlayerName;
     private String classPlayer, race, alignment;
     private String codeClass, codeRace, codeAlignment;
     private int level;
@@ -47,7 +47,7 @@ public class Character {
     private ArrayList<String> weapons;
     private ArrayList<String> spells;
     private ArrayList<String> equipment;
-    private ArrayList<String> featuresAndTraits;
+    private ArrayList<ProfLang> featuresAndTraits;
 
     private int money;
 
@@ -56,16 +56,16 @@ public class Character {
     }
 
     //Para crear un personaje nuevo
-    public Character(User user, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
+    public Character(User user, String characterName, String imgPlayer, RCAInfo[] rcaInfo,
                      int level, String gender, String pronoun, List<Integer> stats,
                      ArrayList<String> savingThrows, ArrayList<Skill> skills,
                      ArrayList<ProfLang> proficienciesAndLanguages, int speed, int quantityHitDice,
-                     int typeHitDice) {
+                     int typeHitDice,ArrayList<ProfLang> traits) {
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();
         this.partyID = "";
         this.name = characterName;
-        this.imgPlayer = imgPlayer;
+        this.imgPlayerName = imgPlayer;
         saveRCAInfo(rcaInfo);
         this.level = level;
         this.gender = gender;
@@ -88,24 +88,24 @@ public class Character {
         this.weapons = new ArrayList<String>();
         this.spells = new ArrayList<String>();
         this.equipment = new ArrayList<String>();
-        this.featuresAndTraits = new ArrayList<String>();
+        this.featuresAndTraits = traits;
         this.money = 0;
 
     }
 
     //Para cuando ya hay un personaje creado y tengo toda la info
-    private Character(User user, String partyID, String characterName, Drawable imgPlayer, RCAInfo[] rcaInfo,
+    private Character(User user, String partyID, String characterName, String imgPlayer, RCAInfo[] rcaInfo,
                       int level, String gender, String pronoun, List<Integer> stats, List<Integer> stats_mod, Boolean inspiration,
                       int profBonus,ArrayList<String> savingThrows, ArrayList<Skill> skills,
                       ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<String> weapons, ArrayList<String> spells, ArrayList<String> equipment,
-                      ArrayList<String> featuresAndTraits, int money) {
+                      ArrayList<ProfLang> featuresAndTraits, int money) {
         this.ID = user.getUserName() + "_" + characterName;
         this.userID = user.getId();
         this.partyID = partyID;
         this.name = characterName;
-        this.imgPlayer = imgPlayer;
+        this.imgPlayerName = imgPlayer;
         saveRCAInfo(rcaInfo);
         this.level = level;
         this.gender = gender;
@@ -183,8 +183,8 @@ public class Character {
         return name;
     }
 
-    public Drawable getImgPlayer() {
-        return imgPlayer;
+    public String getImgPlayerName() {
+        return imgPlayerName;
     }
 
     public String getClassPlayer() {
@@ -359,11 +359,11 @@ public class Character {
         this.equipment = equipment;
     }
 
-    public ArrayList<String> getFeaturesAndTraits() {
+    public ArrayList<ProfLang> getFeaturesAndTraits() {
         return featuresAndTraits;
     }
 
-    public void setFeaturesAndTraits(ArrayList<String> featuresAndTraits) {
+    public void setFeaturesAndTraits(ArrayList<ProfLang> featuresAndTraits) {
         this.featuresAndTraits = featuresAndTraits;
     }
 

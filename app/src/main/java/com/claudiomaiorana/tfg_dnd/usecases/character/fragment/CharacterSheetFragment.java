@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.Skill;
@@ -66,10 +67,32 @@ public class CharacterSheetFragment extends Fragment {
     List<Integer> Stats =new ArrayList<>();
     String[] stats;
     int indexStats;
-    RequestQueue queue;
-    String url = "https://www.dnd5eapi.co/api/";
-    private FirebaseAuth mAuth;
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    //Info needed from Race of Player
+    String quantity_ProficiencyChoices_Race;
+    ArrayList<OptionsCharacter> dataSetProficiencyChoicesRace = new ArrayList<>();
+    String quantity_abilityBonusChoices;
+    ArrayList<OptionsCharacter> dataSetAbilityBonus = new ArrayList<>();
+    String quantity_languagesChoices;
+    ArrayList<OptionsCharacter> dataLanguagesChoices = new ArrayList<>();
+    ArrayList<ProfLang> dataTraitsChoices = new ArrayList<>();
+
+
+    //Info needed from Class of Player
+    String quantity_ProficiencyChoices_Class;
+    ArrayList<OptionsCharacter> dataSetSkills = new ArrayList<>();
+    ArrayList<Skill> finalSkills = new ArrayList<>();
+    ArrayList<String> dataSavingThrows = new ArrayList<>();
+
+
+    //Info needed in both Race and Class
+    ArrayList<ProfLang> proficienciesAndLanguages = new ArrayList<>();
+    ArrayList<Skill> allSkillsPlayer = new ArrayList<>();
+
+
 
 
     //Custom pop up stats components
@@ -81,20 +104,16 @@ public class CharacterSheetFragment extends Fragment {
     TextView txt_quantitySkills;
     AdapterSkills adapter;
     Button btn_selectSkills;
-    String quantityToChoose="0";
+
     int typeDice = 0;
-    ArrayList<Skill> dataSetSkills = new ArrayList<>();
-    ArrayList<String> dataSavingThrows = new ArrayList<>();
-    ArrayList<ProfLang> proficienciesAndLanguages = new ArrayList<>();
-    ArrayList<ProfLang> dataLanguages = new ArrayList<>();
-    String quantityLangToChoose="0";
+
+    int speed = 0;
 
     //Spinner selecteds
     String genderSelected = "";
     String pronounSelected = "";
 
-    public CharacterSheetFragment() {
-    }
+    public CharacterSheetFragment() {}
 
     public static CharacterSheetFragment newInstance() {
         return new CharacterSheetFragment();
@@ -110,42 +129,13 @@ public class CharacterSheetFragment extends Fragment {
                              Bundle savedInstanceState) {
         View fragmentV = inflater.inflate(R.layout.fragment_character_sheet, container, false);
         setElements(fragmentV);
+        generateSpinners();
+
         stats = getResources().getStringArray(R.array.statsNames);
         indexStats = 0;
-        ArrayList<String> arrayList = new ArrayList<>();
-        for (String gender:getResources().getStringArray(R.array.genders)) {
-            arrayList.add(gender);
-        }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, arrayList);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn_gender.setAdapter(arrayAdapter);
-        spn_gender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                genderSelected = parent.getItemAtPosition(position).toString();
 
-            }
-            @Override
-            public void onNothingSelected(AdapterView <?> parent) {
-            }
-        });
-        ArrayList<String> pronounList = new ArrayList<>();
-        for (String gender:getResources().getStringArray(R.array.pronouns)) {
-            pronounList.add(gender);
-        }
-        ArrayAdapter<String> arrayAdapterPronoun = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, pronounList);
-        arrayAdapterPronoun.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn_pronoun.setAdapter(arrayAdapterPronoun);
-        spn_pronoun.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                pronounSelected = parent.getItemAtPosition(position).toString();
 
-            }
-            @Override
-            public void onNothingSelected(AdapterView <?> parent) {
-            }
-        });
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             String type = bundle.getString("typaRCA");
@@ -194,12 +184,49 @@ public class CharacterSheetFragment extends Fragment {
             public void onClick(View view) {
                 indexStats = 0;
                 String stat = stats[indexStats];
-
+System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*-------------------------------------");
                 callPopUpStats("CreateCharacter",stat);
             }
         });
 
         return fragmentV;
+    }
+
+    private void generateSpinners(){
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (String gender:getResources().getStringArray(R.array.genders)) {
+            arrayList.add(gender);
+        }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, arrayList);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spn_gender.setAdapter(arrayAdapter);
+        spn_gender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                genderSelected = parent.getItemAtPosition(position).toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView <?> parent) {
+            }
+        });
+        ArrayList<String> pronounList = new ArrayList<>();
+        for (String gender : getResources().getStringArray(R.array.pronouns)) {
+            pronounList.add(gender);
+        }
+        ArrayAdapter<String> arrayAdapterPronoun = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, pronounList);
+        arrayAdapterPronoun.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spn_pronoun.setAdapter(arrayAdapterPronoun);
+        spn_pronoun.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pronounSelected = parent.getItemAtPosition(position).toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView <?> parent) {
+            }
+        });
     }
 
     private void changeRCAText() {
@@ -221,28 +248,6 @@ public class CharacterSheetFragment extends Fragment {
         ((CharacterManagerActivity) getActivity()).changeToRCA(type);
     }
 
-
-
-
-
-    void showNextStat(int valueStat){
-        if(indexStats+1<stats.length) {
-            Stats.add(valueStat);
-            String stat = stats[indexStats+1];
-            callPopUpStats("CreateCharacter", stat);
-            indexStats++;
-        }else{
-            System.out.println("hemos terminado " + Stats);
-
-            indexStats = 0;
-            //createCharacter();
-            //callPopUpSkills("skills");
-            loadingBar(View.VISIBLE);
-            quantityChoose();
-        }
-    }
-
-
     public void callPopUpStats(String tag,String stat) {
         View view = getLayoutInflater().inflate(R.layout.fragment_character_stats, null);
 
@@ -263,8 +268,8 @@ public class CharacterSheetFragment extends Fragment {
                 if(!txt_value.getText().toString().equals("")){
                     int tmpValue = Integer.parseInt(txt_value.getText().toString());
                     if(0<tmpValue && tmpValue<21){
-                        showNextStat(tmpValue);
                         popUp.dismiss();
+                        showNextStat(tmpValue);
                     }else{
                         txt_value.setError(getResources().getString(R.string.errorStat));
                     }
@@ -275,30 +280,176 @@ public class CharacterSheetFragment extends Fragment {
         });
     }
 
-    void prepareSkillPopUp(){
+    void callPopUpStatsBonus(String tag){
+
+        if(!quantity_abilityBonusChoices.equals("")){
+            Log.d("popup","entering StatsBonus");
+            View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
+            rv = view.findViewById(R.id.rv_skillsSelector);
+            txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
+            btn_selectSkills = view.findViewById(R.id.btn_continueSkills);
+            String quantityToChoose = quantity_abilityBonusChoices;
+
+            txt_quantitySkills.setText(getResources().getText(R.string.quantityAbilityBonus).toString().replace("@numToCh@",quantityToChoose));
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
+            rv.setLayoutManager(layoutManager);
+            //Create data
+
+            adapter = new AdapterSkills(dataSetAbilityBonus, getActivity());
+            rv.setAdapter(adapter);
+
+            loadingBar(View.INVISIBLE);
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), tag);
+            popUp.setCancelable(false);
+
+            btn_selectSkills.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    btn_selectSkills.setError(null);
+                    ArrayList<OptionsCharacter> tmpData = adapter.getData();
+                    int quantity = 0;
+                    for (OptionsCharacter op: tmpData) {
+                        if(op.isSelected()){
+                            quantity ++;
+                        }
+                    }
+
+                    if (quantity==Integer.parseInt(quantityToChoose)){
+                        addBonus(tmpData);
+                        loadingBar(View.VISIBLE);
+                        popUp.dismiss();
+                        callPopUpProficienciesRace("skillsRace");
+                    } else if (quantity==Integer.parseInt(quantityToChoose)) {
+                        btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
+                    }
+                }
+            });
+        }else{
+            callPopUpProficienciesRace("skillsRace");
+
+        }
 
     }
 
-    void loadingBar(int visibility){
-        ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
+    void callPopUpProficienciesRace(String tag){
+        if(!quantity_ProficiencyChoices_Race.equals("")){
+            Log.d("popup","entering proficiencie races");
+            View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
+            rv = view.findViewById(R.id.rv_skillsSelector);
+            txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
+            btn_selectSkills = view.findViewById(R.id.btn_continueSkills);
+            String quantityToChoose = quantity_ProficiencyChoices_Race;
+
+            txt_quantitySkills.setText(getResources().getText(R.string.quantitySkills).toString().replace("@numToCh@",quantityToChoose));
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
+            rv.setLayoutManager(layoutManager);
+            //Create data
+
+            adapter = new AdapterSkills(dataSetProficiencyChoicesRace, getActivity());
+            rv.setAdapter(adapter);
+
+            loadingBar(View.INVISIBLE);
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), tag);
+            popUp.setCancelable(false);
+
+            btn_selectSkills.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    btn_selectSkills.setError(null);
+                    ArrayList<OptionsCharacter> tmpData = adapter.getData();
+                    int quantity = 0;
+                    for (OptionsCharacter op: tmpData) {
+                        if(op.isSelected()){
+                            quantity ++;
+                        }
+                    }
+                    if(quantity==Integer.parseInt(quantityToChoose)){
+                        addProficiencies(tmpData);
+                        loadingBar(View.VISIBLE);
+                        popUp.dismiss();
+                        callPopUpLanguages("langPopUp");
+                    }else{
+                        btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
+                    }
+                }
+            });
+        }else{
+            callPopUpLanguages("langPopUp");
+        }
+
     }
 
+    void callPopUpLanguages(String tag){
+        if(!quantity_languagesChoices.equals("")){
+            Log.d("popup","entering languages");
+
+            View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
+            rv = view.findViewById(R.id.rv_skillsSelector);
+            txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
+            btn_selectSkills = view.findViewById(R.id.btn_continueSkills);
+            String quantityToChoose = quantity_languagesChoices;
 
 
-    void callPopUpSkills(String tag){
+            txt_quantitySkills.setText(getResources().getText(R.string.quantityLanguage).toString().replace("@numToCh@",quantityToChoose));
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
+            rv.setLayoutManager(layoutManager);
+            //Create data
+
+            adapter = new AdapterSkills(dataLanguagesChoices, getActivity());
+            rv.setAdapter(adapter);
+            loadingBar(View.INVISIBLE);
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), tag);
+            popUp.setCancelable(false);
+
+            btn_selectSkills.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    btn_selectSkills.setError(null);
+                    ArrayList<OptionsCharacter> tmpData = adapter.getData();
+                    int quantity = 0;
+                    for (OptionsCharacter sk: tmpData) {
+                        if(sk.isSelected()){
+                            quantity ++;
+                        }
+                    }
+
+                    if(quantity==Integer.parseInt(quantityToChoose)){
+                        addProficiencies(tmpData);
+                        loadingBar(View.VISIBLE);
+                        popUp.dismiss();
+                        callPopUpSkillsClass("skillsClass");
+                    }else{
+                        btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
+                    }
+                }
+            });
+        }else{
+            callPopUpSkillsClass("skillsClass");
+        }
+
+    }
+
+    void callPopUpSkillsClass(String tag){
+        Log.d("popup","entering skillclass");
 
         View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
         rv = view.findViewById(R.id.rv_skillsSelector);
         txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
         btn_selectSkills = view.findViewById(R.id.btn_continueSkills);
+        String quantityToChoose = quantity_ProficiencyChoices_Class;
+
 
         txt_quantitySkills.setText(getResources().getText(R.string.quantitySkills).toString().replace("@numToCh@",quantityToChoose));
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
         rv.setLayoutManager(layoutManager);
         //Create data
-
+        dataSetSkills = checkCorrectData();
         adapter = new AdapterSkills(dataSetSkills, getActivity());
         rv.setAdapter(adapter);
+
         loadingBar(View.INVISIBLE);
         PopUpCustom popUp = new PopUpCustom(view);
         popUp.show(getParentFragmentManager(), tag);
@@ -308,161 +459,209 @@ public class CharacterSheetFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 btn_selectSkills.setError(null);
-                ArrayList<Skill> tmpData = adapter.getData();
+                ArrayList<OptionsCharacter> tmpData = adapter.getData();
                 int quantity = 0;
-                for (Skill sk: tmpData) {
+                for (OptionsCharacter sk: tmpData) {
                     if(sk.isSelected()){
-                        Log.d("Skill selected",sk.getName());
+                        finalSkills.add(new Skill(sk.getCode(),sk.getName()));
                         quantity ++;
                     }
                 }
-                if(quantity>Integer.parseInt(quantityToChoose)){
+
+                if(quantity==Integer.parseInt(quantityToChoose)){
+                    loadingBar(View.VISIBLE);
+                    popUp.dismiss();
+                    createCharacter(finalSkills);
+
+                } else if (quantity>Integer.parseInt(quantityToChoose)) {
                     btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
-                } else if (quantity==Integer.parseInt(quantityToChoose)) {
-
-                    createCharacter(tmpData);
-
+                    finalSkills.removeAll(finalSkills);
+                    finalSkills = new ArrayList<>();
                 }
             }
         });
     }
 
-    void callPopUpLanguages(String tag){
-        //TODO:Acabar lenguages
-        View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
-        rv = view.findViewById(R.id.rv_skillsSelector);
-        txt_quantitySkills = view.findViewById(R.id.txv_skillsToSelect);
-        btn_selectSkills = view.findViewById(R.id.btn_continueSkills);
-
-        txt_quantitySkills.setText(getResources().getText(R.string.quantityLanguage).toString().replace("@numToCh@",quantityToChoose));
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
-        rv.setLayoutManager(layoutManager);
-        //Create data
-
-        adapter = new AdapterSkills(dataSetSkills, getActivity());
-        rv.setAdapter(adapter);
-        loadingBar(View.INVISIBLE);
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getParentFragmentManager(), tag);
-        popUp.setCancelable(false);
-
-        btn_selectSkills.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_selectSkills.setError(null);
-                ArrayList<Skill> tmpData = adapter.getData();
-                int quantity = 0;
-                for (Skill sk: tmpData) {
-                    if(sk.isSelected()){
-                        Log.d("Skill selected",sk.getName());
-                        quantity ++;
-                    }
-                }
-                if(quantity>Integer.parseInt(quantityLangToChoose)){
-                    btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
-                } else if (quantity==Integer.parseInt(quantityToChoose)) {
-
-                    createCharacter(tmpData);
-
-                }
+    private ArrayList<OptionsCharacter> checkCorrectData() {
+        ArrayList<OptionsCharacter> result = new ArrayList<>();
+        for (OptionsCharacter oc: dataSetSkills) {
+            if(!allSkillsPlayer.contains(oc)){
+                result.add(oc);
             }
-        });
+        }
+
+
+        return result;
     }
 
-    private void quantityChoose() {
-        Util.apiGETRequest("classes/"+rcaInfoSaved[1].getCodeApiSearch(), new ApiCallback() {
+    void showNextStat(int valueStat){
+        if(indexStats+1<stats.length) {
+            Stats.add(valueStat);
+            String stat = stats[indexStats+1];
+            callPopUpStats("CreateCharacter", stat);
+            indexStats++;
+        }else{
+            Stats.add(valueStat);
+            indexStats = 0;
+            loadingBar(View.VISIBLE);
+            getInfoFromRace();
+        }
+    }
+
+    private void getInfoFromRace(){
+        Util.apiGETRequest("races/" + rcaInfoSaved[0].getCodeApiSearch(), new ApiCallback() {
             @Override
-            public void onSuccess(JSONObject jsonObject) {
+            public void onSuccess(JSONObject chosenRace) {
+                try {
+                    speed = chosenRace.getInt("speed");
+                    JSONArray stats_bonuses = chosenRace.getJSONArray("ability_bonuses");
+                    JSONObject stat = null;
+                    String typeStat="";
+                    int statBonus = 0;
+                    for(int i=0;i<stats_bonuses.length();i++){
+                        stat = stats_bonuses.getJSONObject(i);
+                        typeStat = stat.getJSONObject("ability_score").getString("index");
+                        statBonus = stat.getInt("bonus");
+                        for(int j=0;j<Constants.TYPE_OF_STATS.length;j++){
+                            if(Constants.TYPE_OF_STATS[j].equals(typeStat)){
+                                int oldValue = Stats.get(j);
+                                statBonus += oldValue;
+                                Stats.set(j,statBonus);
+                                break;
+                            }
+                        }
+
+                    }
+                    if(chosenRace.has("ability_bonus_options")){
+                        JSONObject ability_Bonus = chosenRace.getJSONObject("ability_bonus_options");
+                        quantity_abilityBonusChoices = String.valueOf(ability_Bonus.getInt("choose"));
+                        JSONArray stats_bonuses_options = ability_Bonus.getJSONObject("from").getJSONArray("options");
+                        JSONObject tmpStatBonus;
+                        for(int i=0;i<stats_bonuses_options.length();i++){
+                            tmpStatBonus = stats_bonuses_options.getJSONObject(i).getJSONObject("ability_score");
+                            OptionsCharacter tmp = new OptionsCharacter(tmpStatBonus.getString("index"),tmpStatBonus.getString("name"));
+                            tmp.setBonus(stats_bonuses_options.getJSONObject(i).getInt("bonus"));
+                            dataSetAbilityBonus.add(tmp);
+                        }
+
+                    }
+
+                    JSONArray starting_proficiencies = chosenRace.getJSONArray("starting_proficiencies");
+                    if(starting_proficiencies.length() > 0){
+                        JSONObject choice = null;
+                        String nameResult = "";
+                        for (int i = 0; i< starting_proficiencies.length(); i++) {
+                            choice = starting_proficiencies.getJSONObject(i);
+                            if(choice.getString("index").contains("skill-")){
+                                nameResult = findCorrectName(choice.getString("name"),getResources().getStringArray(R.array.generalSkills),getResources().getStringArray(R.array.nameGeneralSkills),true);
+                                Skill skill = new Skill(choice.getString("index"),nameResult);
+                                allSkillsPlayer.add(skill);
+                            }else{
+                                ProfLang profLang = new ProfLang(choice.getString("index"),choice.getString("name"));
+                                proficienciesAndLanguages.add(profLang);
+                            }
+                        }
+                    }
+
+
+
+                    if(chosenRace.has("starting_proficiency_options")){
+                        JSONObject proficiency_options = chosenRace.getJSONObject("starting_proficiency_options");
+                        quantity_ProficiencyChoices_Race = String.valueOf(proficiency_options.getInt("choose"));
+                        JSONArray proficiencies_choices_options = proficiency_options.getJSONObject("from").getJSONArray("options");
+                        if(proficiencies_choices_options.length() > 0){
+                            JSONObject choice = null;
+                            String nameResult="";
+                            for (int i = 0; i< proficiencies_choices_options.length(); i++) {
+                                choice = proficiencies_choices_options.getJSONObject(i).getJSONObject("item");
+                                if(choice.getString("index").contains("skill-")) {
+                                    nameResult = findCorrectName(choice.getString("name"),getResources().getStringArray(R.array.generalSkills),getResources().getStringArray(R.array.nameGeneralSkills),true);
+                                }else{
+                                    nameResult = choice.getString("name");}
+                                OptionsCharacter tmpOp = new OptionsCharacter(choice.getString("index"),nameResult);
+                                dataSetProficiencyChoicesRace.add(tmpOp);
+                            }
+                        }
+                    }
+
+                    JSONArray starting_languages = chosenRace.getJSONArray("languages");
+                    if(starting_languages.length() > 0){
+                        JSONObject choice = null;
+                        for (int i = 0; i< starting_languages.length(); i++) {
+                            choice = starting_languages.getJSONObject(i);
+                            ProfLang profLang = new ProfLang(choice.getString("index"),getResources().getString(R.string.languageAdd).toString() + ": " + choice.getString("name"));
+                            proficienciesAndLanguages.add(profLang);
+                        }
+                    }
+
+
+                    if(chosenRace.has("language_options")){
+                        JSONObject lang_options = chosenRace.getJSONObject("language_options");
+                        quantity_languagesChoices = String.valueOf(lang_options.getInt("choose"));
+                        JSONArray starting_languages_options = lang_options.getJSONObject("from").getJSONArray("options");
+
+                        if(starting_languages_options.length() > 0){
+                            JSONObject choice = null;
+                            for (int i = 0; i< starting_languages_options.length(); i++) {
+                                choice = starting_languages_options.getJSONObject(i).getJSONObject("item");
+                                OptionsCharacter lang = new OptionsCharacter(choice.getString("index"),getResources().getString(R.string.languageAdd).toString() + ": " + choice.getString("name"));
+                                dataLanguagesChoices.add(lang);
+                            }
+                        }
+                    }
+
+                    JSONArray traitsRace = chosenRace.getJSONArray("traits");
+                    if(traitsRace.length() > 0){
+                        JSONObject choice = null;
+                        for (int i = 0; i< traitsRace.length(); i++) {
+                            choice = traitsRace.getJSONObject(i);
+                            ProfLang profLang = new ProfLang(choice.getString("index"),choice.getString("name"));
+                            dataTraitsChoices.add(profLang);
+                        }
+                    }
+
+                    getInfoFromClass();
+
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+    }
+
+    private void getInfoFromClass(){
+        Util.apiGETRequest("classes/" + rcaInfoSaved[1].getCodeApiSearch(), new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject chosenClass) {
                 try {
                     dataSetSkills = new ArrayList<>();
                     dataSavingThrows = new ArrayList<>();
-                    quantityToChoose = String.valueOf(jsonObject.getJSONArray("proficiency_choices").
+
+                    quantity_ProficiencyChoices_Class = String.valueOf(chosenClass.getJSONArray("proficiency_choices").
                             getJSONObject(0).getInt("choose"));
 
-
-                    JSONArray jsonArray = jsonObject.getJSONArray("proficiency_choices").
+                    JSONArray proficiency_choices = chosenClass.getJSONArray("proficiency_choices").
                             getJSONObject(0).getJSONObject("from").getJSONArray("options");
+                    getProficiencyChoices(proficiency_choices);
 
-                    for (int i = 0;i<jsonArray.length();i++){
-                        JSONObject jsonObject1 = jsonArray.getJSONObject(i).getJSONObject("item");
-                        String nameResult=getNameSkill(jsonObject1.getString("name"));
-                        Skill tmpResult = new Skill(jsonObject1.getString("index"),nameResult);
-                        dataSetSkills.add(tmpResult);
-                    }
+                    JSONArray proficienciesAdded = chosenClass.getJSONArray("proficiencies");
+                    saveProficienciesClass(proficienciesAdded);
 
-                    JSONArray arraySaving_Throws = jsonObject.getJSONArray("saving_throws");
-                    for (int i = 0;i<arraySaving_Throws.length();i++){
-                        dataSavingThrows.add(arraySaving_Throws.getJSONObject(i).getString("index"));
-                    }
+                    JSONArray saving_throws = chosenClass.getJSONArray("saving_throws");
+                    getSavingThrows(saving_throws);
 
-                    typeDice = jsonObject.getInt("hit_die");
+                    typeDice = chosenClass.getInt("hit_die");
 
-
-                    callPopUpSkills("skills");
+                    callPopUpStatsBonus("bonusStats");
 
                 }catch (Exception e){}
             }
-            @Override
-            public void onError(VolleyError error) {
 
-            }
-        },getActivity());
-    }
-
-    private String getNameSkill(String name) {
-        String[] nameSkills = getResources().getStringArray(R.array.generalSkills);
-        String[] namesGeneralSkills = getResources().getStringArray(R.array.nameGeneralSkills);
-        String skillToFind = name.substring(name.indexOf(": ")+2);
-
-        for(int i=0;i<nameSkills.length;i++){
-            if(nameSkills[i].contains(skillToFind)){
-                return namesGeneralSkills[i];
-            }
-        }
-        return "";
-    }
-
-    private String getNameLanguage(String name) {
-        String[] nameSkills = getResources().getStringArray(R.array.generalLanguages);
-        String[] namesGeneralSkills = getResources().getStringArray(R.array.nameGeneralLanguages);
-        //String skillToFind = name.substring(name.indexOf(": ")+2);
-
-        for(int i=0;i<nameSkills.length;i++){
-            if(nameSkills[i].contains(name)){
-                return namesGeneralSkills[i];
-            }
-        }
-        return "";
-    }
-
-    void getLanguages(){
-        Util.apiGETRequest("classes/"+rcaInfoSaved[0].getCodeApiSearch(), new ApiCallback() {
-            @Override
-            public void onSuccess(JSONObject jsonObject) {
-                try {
-                    JSONArray jsonArrayLang = jsonObject.getJSONArray("languages");
-                    for (int i = 0;i<jsonArrayLang.length();i++) {
-                        JSONObject jsonObject1 = jsonArrayLang.getJSONObject(i);
-                        String nameResult = getNameLanguage(jsonObject1.getString("name"));
-                        ProfLang tmpResult = new ProfLang(jsonObject1.getString("index"),nameResult);
-                        proficienciesAndLanguages.add(tmpResult);
-
-                    }
-                    if(jsonObject.has("language_options")){
-                        dataLanguages = new ArrayList<>();
-                        JSONObject jsonObjectLang= jsonObject.getJSONObject("language_options");
-                        JSONArray jsonArray = jsonObjectLang.getJSONObject("from").getJSONArray("options");
-                        for (int i = 0;i<jsonArray.length();i++){
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i).getJSONObject("item");
-                            String nameResult = getNameLanguage(jsonObject1.getString("name"));
-                            ProfLang tmpResult = new ProfLang(jsonObject1.getString("index"),nameResult);
-                            dataLanguages.add(tmpResult);
-                        }
-                        callPopUpLanguages("lang");
-                    }
-
-                }catch (Exception e){}
-            }
             @Override
             public void onError(VolleyError error) {
 
@@ -471,21 +670,93 @@ public class CharacterSheetFragment extends Fragment {
     }
 
 
+    private void getProficiencyChoices(JSONArray proficiency_choices) throws JSONException {
+        JSONObject choice = null;
+        String nameResult = "";
+        for (int i = 0; i< proficiency_choices.length(); i++) {
+            choice = proficiency_choices.getJSONObject(i).getJSONObject("item");
+            nameResult = findCorrectName(choice.getString("name"),getResources().getStringArray(R.array.generalSkills),getResources().getStringArray(R.array.nameGeneralSkills),true);
+            OptionsCharacter tmpResult = new OptionsCharacter(choice.getString("index"),nameResult);
+            dataSetSkills.add(tmpResult);
+        }
+    }
 
+    private void saveProficienciesClass(JSONArray proficienciesAdded) throws JSONException {
+        if(proficienciesAdded.length() > 0){
+            JSONObject choice = null;
+            for (int i = 0; i< proficienciesAdded.length(); i++) {
+                choice = proficienciesAdded.getJSONObject(i);
+                if(!choice.getString("index").contains("saving-throw")){
+                    ProfLang profLang = new ProfLang(choice.getString("index"),choice.getString("name"));
+                    proficienciesAndLanguages.add(profLang);
+                }
+            }
+        }
+
+    }
+
+    private void getSavingThrows(JSONArray saving_throws) throws JSONException {
+        for (int i = 0; i< saving_throws.length(); i++){
+            dataSavingThrows.add(saving_throws.getJSONObject(i).getString("index"));
+        }
+    }
+
+
+    private String findCorrectName(String name,String[] generalTypeToFind,String[] langNameToFind,boolean skill){
+        String [] nameOfType = generalTypeToFind;
+        String[] nameCorrectLangFind = langNameToFind;
+        String nameToFind = skill ? name.substring(name.indexOf(": ")+2) : name;
+
+        for(int i=0;i<nameOfType.length;i++){
+            if(nameOfType[i].contains(nameToFind)){
+                return nameCorrectLangFind[i];
+            }
+        }
+        return "";
+    }
+
+
+
+    private void addBonus(ArrayList<OptionsCharacter> tmpData) {
+        int bonus = 0;
+        for (OptionsCharacter op : tmpData) {
+            for(int j=0;j<Constants.TYPE_OF_STATS.length;j++){
+                if(Constants.TYPE_OF_STATS[j].equals(op.getCode())){
+                    int oldValue = Stats.get(j);
+                    bonus = oldValue + op.getBonus();
+                    Stats.set(j,bonus);
+                    break;
+                }
+            }
+        }
+    }
+
+
+    private void addProficiencies(ArrayList<OptionsCharacter> tmpData) {
+        for (OptionsCharacter op:tmpData) {
+            if(op.isSelected()){
+                if(op.getCode().contains("skill-")){
+                    allSkillsPlayer.add(new Skill(op.getCode(), op.getName()));
+                }else{
+                    proficienciesAndLanguages.add(new ProfLang(op.getCode(),op.getName()));
+                }
+            }
+        }
+    }
 
 
 
     void createCharacter(ArrayList<Skill> skillsResult) {
-        ArrayList<Skill> skills = skillsResult;
-        int speed = 0;
         int quantityHitDice = 1;
         int typeHitDice = typeDice;
+        for (Skill sk: skillsResult) {
+            allSkillsPlayer.add(sk);
+        }
 
-
-        Character character = new Character(User.getInstance(),txt_name.getText().toString(),profile_img.getDrawable(),
+        Character character = new Character(User.getInstance(),txt_name.getText().toString(),"",
                 rcaInfoSaved,Integer.parseInt(txt_level.getText().toString()),genderSelected,
-                pronounSelected,Stats,dataSavingThrows,skills,proficienciesAndLanguages,
-                speed,quantityHitDice,typeHitDice);
+                pronounSelected,Stats,dataSavingThrows,allSkillsPlayer,proficienciesAndLanguages,
+                speed,quantityHitDice,typeHitDice,dataTraitsChoices);
 
         saveCharacter(character);
     }
@@ -502,6 +773,12 @@ public class CharacterSheetFragment extends Fragment {
 
     void finishCreation(){
         //goBackTocharacterList
+        System.out.println("--------------------------------------------llegamos");
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    void loadingBar(int visibility){
+        ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
     }
 
 
@@ -518,5 +795,10 @@ public class CharacterSheetFragment extends Fragment {
         profile_img = fragmentV.findViewById(R.id.img_character);
         spn_gender = fragmentV.findViewById(R.id.txt_genderSelector);
         spn_pronoun = fragmentV.findViewById(R.id.txt_pronounSelector);
+
+        quantity_ProficiencyChoices_Class = "";
+        quantity_ProficiencyChoices_Race = "";
+        quantity_abilityBonusChoices = "";
+        quantity_languagesChoices= "";
     }
 }

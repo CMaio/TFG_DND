@@ -23,6 +23,7 @@ import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFra
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterStatsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,9 +121,21 @@ public class CharacterManagerActivity extends AppCompatActivity {
 
     private void backToMainActivity(int result){
         Intent intent = new Intent();
-        intent.putExtra("source","login");
+        intent.putExtra("source","characters");
         setResult(result,intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.Fr_characterManager);
+
+        if (currentFragment instanceof CharacterListFragment) {
+            backToMainActivity(RESULT_OK);
+        }else{
+            fragmentManager.popBackStack();
+        }
     }
 
 

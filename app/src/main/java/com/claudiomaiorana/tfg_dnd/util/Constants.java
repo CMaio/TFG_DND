@@ -36,4 +36,9 @@ public class Constants {
     public static final int STAT_WIS = 4;
     public static final int STAT_CHA = 5;
 
+    public static final int POPUP_STATS_BONUS = 0;
+    public static final int POPUP_STARTING_PROFICIENCIES_RACE = 1;
+    public static final int POPUP_STARTING_PROFICIENCIES_CLASS = 2;
+    public static final int POPUP_STARTING_LANGUAGES = 3;
+
 }

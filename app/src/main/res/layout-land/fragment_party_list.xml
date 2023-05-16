@@ -5,10 +5,35 @@
     android:layout_height="match_parent"
     tools:context=".usecases.party.fragment.PartyListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/txt_partytittle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/tittle_party_screen"
+            android:textSize="50sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            tools:ignore="TextSizeCheck">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_partyList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+    </LinearLayout>
 
 </FrameLayout>

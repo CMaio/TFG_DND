@@ -16,6 +16,7 @@
     <string name="select">Escoger</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tittle_characters_screen">Personajes</string>
+    <string name="tittle_party_screen">Parties</string>
     <string name="createnewcharacter">Crear un nuevo personaje</string>
     <string name="cancelButton">Cancelar</string>
     <string name="continueButton">Continuar</string>

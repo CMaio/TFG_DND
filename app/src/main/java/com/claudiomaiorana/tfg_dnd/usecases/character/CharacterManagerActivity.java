@@ -30,9 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CharacterManagerActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-    private User user;
     ActivityResultLauncher<Intent> myActivityResultLauncher;
 
     String state ="";
@@ -43,9 +40,6 @@ public class CharacterManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_character_manager);
         getSupportActionBar().hide();
-        user = User.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
         state = "listCharacters";
         ly = findViewById(R.id.ly_loading);
 

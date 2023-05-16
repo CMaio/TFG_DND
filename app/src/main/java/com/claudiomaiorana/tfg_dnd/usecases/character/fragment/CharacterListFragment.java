@@ -1,25 +1,22 @@
 package com.claudiomaiorana.tfg_dnd.usecases.character.fragment;
 
-import android.content.Intent;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
-import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -72,31 +69,6 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
 
         return fragmentV;
     }
-
-
-
-    /*private void generateCharacter() {
-        RCAInfo[] rca = new RCAInfo[3];
-        rca[0] = new RCAInfo("Human",null,"human");
-        rca[1] = new RCAInfo("Bard",null,"bard");
-        rca[2] = new RCAInfo("hi",null,"hi");
-        //Integer[] stats = {0,0,0,0,0,0};
-        List<Integer> stats = new ArrayList<>();
-        stats.add(0);
-        stats.add(0);
-        stats.add(0);
-        stats.add(0);
-        stats.add(0);
-        stats.add(0);
-        Character tmpCharacter = new Character(User.getInstance(),"Pablo",null,rca,1,"male","him",stats,null,null,null,0,1,8);
-        db.collection("characters").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).document(tmpCharacter.getID()).set(tmpCharacter).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                System.out.println("aqui llego*---------------------------");
-
-            }
-        });
-    }*/
 
 
     private void getData() {

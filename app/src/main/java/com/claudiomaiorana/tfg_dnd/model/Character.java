@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 
 public class Character {
 
@@ -61,7 +62,7 @@ public class Character {
                      ArrayList<String> savingThrows, ArrayList<Skill> skills,
                      ArrayList<ProfLang> proficienciesAndLanguages, int speed, int quantityHitDice,
                      int typeHitDice,ArrayList<ProfLang> traits) {
-        this.ID = user.getUserName() + "_" + characterName;
+        this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = "";
         this.name = characterName;

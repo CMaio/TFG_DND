@@ -6,9 +6,6 @@ public class User {
     String userName;
     String id;
     String mail;
-    String characters;
-    String parties;
-
 
     public User(){}
 
@@ -27,20 +24,12 @@ public class User {
         this.userName = userName;
         this.id = id;
         this.mail = mail;
-        this.characters = "";
-        this.parties = "";
     }
 
     public void fillUser(String id,String userName,String mail){
         this.userName = userName;
         this.id = id;
         this.mail = mail;
-        this.characters = "";
-        this.parties = "";
-    }
-
-    public String getCharacters() {
-        return characters;
     }
 
     public String getUserName() {
@@ -55,7 +44,4 @@ public class User {
         return mail;
     }
 
-    public String getParties() {
-        return parties;
-    }
 }

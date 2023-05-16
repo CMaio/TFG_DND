@@ -772,8 +772,6 @@ System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*--------
     }
 
     void finishCreation(){
-        //goBackTocharacterList
-        System.out.println("--------------------------------------------llegamos");
         getActivity().getSupportFragmentManager().popBackStack();
     }
 

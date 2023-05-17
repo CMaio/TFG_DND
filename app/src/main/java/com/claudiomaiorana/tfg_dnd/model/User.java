@@ -1,11 +1,15 @@
 package com.claudiomaiorana.tfg_dnd.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private static volatile User INSTANCE = null;
 
     String userName;
     String id;
     String mail;
+    ArrayList<String> parties;
 
     public User(){}
 
@@ -24,12 +28,22 @@ public class User {
         this.userName = userName;
         this.id = id;
         this.mail = mail;
+        this.parties = new ArrayList<>();
     }
 
     public void fillUser(String id,String userName,String mail){
         this.userName = userName;
         this.id = id;
         this.mail = mail;
+        this.parties = new ArrayList<>();
+    }
+
+
+    public void fillUser(String id,String userName,String mail,ArrayList<String> parties){
+        this.userName = userName;
+        this.id = id;
+        this.mail = mail;
+        this.parties = parties;
     }
 
     public String getUserName() {
@@ -44,4 +58,11 @@ public class User {
         return mail;
     }
 
+    public ArrayList<String> getParties() {
+        return parties;
+    }
+
+    public void setParties(ArrayList<String> parties) {
+        this.parties = parties;
+    }
 }

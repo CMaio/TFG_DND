@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -17,16 +18,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.party.PartyManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.user.LoginActivity;
 import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
 import com.claudiomaiorana.tfg_dnd.util.Util;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,12 +47,16 @@ public class MainActivity extends AppCompatActivity {
     Button b_logOut;
     TextView tx_nameUser;
     Button b_characters;
+    Button b_parties;
 
 
     //Firebase-------------------------
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private FirebaseFirestore db;
     ActivityResultLauncher<Intent> myActivityResultLauncher;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
         b_logIn = findViewById(R.id.btn_login);
         b_logOut = findViewById(R.id.btn_logout);
         b_characters = findViewById(R.id.btn_characters);
+        b_parties = findViewById(R.id.btn_parties);
         tx_nameUser = findViewById(R.id.tx_nameuser);
 
         mAuth = FirebaseAuth.getInstance();
-
+        db = FirebaseFirestore.getInstance();
         myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -104,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             createUserInstance(user);
@@ -133,14 +148,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        b_parties.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        goToParties();
+                    }
+                });
+
     }
+
 
     private void createUserInstance(FirebaseUser user) {
         User userD = User.getInstance();
+        Log.d("user",userD.getUserName() + " " + userD.getId());
         if(userD.getUserName() == null ||userD.getUserName() != user.getDisplayName()){
-            userD.fillUser(user.getUid(),user.getDisplayName(),user.getEmail());
+            db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    User tmp = task.getResult().toObject(User.class);
+                    Log.d("user",tmp.getUserName() + " " + tmp.getId());
+                    userD.fillUser(tmp.getId(),tmp.getUserName(),tmp.getMail(),tmp.getParties());
+                }
+            });
+
         }
     }
+
 
 
     private void logOut() {
@@ -162,5 +195,10 @@ public class MainActivity extends AppCompatActivity {
         myActivityResultLauncher.launch(intent);
     }
 
+
+    private void goToParties() {
+        Intent intent = new Intent(this, PartyManagerActivity.class);
+        myActivityResultLauncher.launch(intent);
+    }
 
 }

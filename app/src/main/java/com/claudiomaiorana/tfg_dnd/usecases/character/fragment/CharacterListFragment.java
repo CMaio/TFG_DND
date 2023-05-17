@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
@@ -24,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class CharacterListFragment extends Fragment implements AdapterCharacters.OnItemClickListener{
@@ -63,7 +66,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         System.out.println("hola--------------------"+dataSet);
         adapter = new AdapterCharacters(dataSet, this, getActivity());
         rv_list.setAdapter(adapter);
-
+        creatUs();
        /* Handler handler = new Handler();
         handler.postDelayed(new CharacterListFragment.MyRunneable(this),100);*/
 
@@ -98,6 +101,24 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
     void loadingBar(int visibility){
         ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
     }
+
+
+    private void creatUs(){
+        Party party = new Party("coolding","Maio");
+        db.collection("parties").document(party.getID()).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getActivity(),"dads",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+
+
+        ArrayList<String> partys = new ArrayList<>();
+        partys.add(party.getID());
+        User.getInstance().setParties(partys);
+    }
+
 
 }
 

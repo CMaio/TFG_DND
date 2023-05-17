@@ -19,7 +19,9 @@ import com.claudiomaiorana.tfg_dnd.usecases.party.PartyManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.party.adapters.AdapterParties;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -47,7 +49,6 @@ public class PartyListFragment extends Fragment implements AdapterParties.OnItem
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         rv_list.setLayoutManager(layoutManager);
         db = FirebaseFirestore.getInstance();
-        //generateCharacter();
         loadingBar(View.VISIBLE);
         getData();
 
@@ -59,26 +60,37 @@ public class PartyListFragment extends Fragment implements AdapterParties.OnItem
 
 
     private void getData() {
+        CollectionReference partiesRef = db.collection("parties");
         dataSet = new ArrayList<>();
         dataSet.add(new Party());
-        db.collection("parties").document(User.getInstance().getId()).collection(User.getInstance().getUserName())
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                dataSet.add(document.toObject(Party.class));
-                            }
-                            adapter.notifyDataSetChanged();
-                            loadingBar(View.INVISIBLE);
+        if(User.getInstance().getParties()!= null && !User.getInstance().getParties().isEmpty()){
+            Query query = partiesRef.whereIn("id", User.getInstance().getParties());
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            dataSet.add(document.toObject(Party.class));
                         }
+                        adapter.notifyDataSetChanged();
+                        loadingBar(View.INVISIBLE);
                     }
-                });
+                }
+            });
+        }else{
+            //adapter.notifyDataSetChanged();
+            loadingBar(View.INVISIBLE);
+        }
+
     }
 
     @Override
-    public void onItemClick(Character character) {
-        ((PartyManagerActivity)getActivity()).changeFragment("newParty");
+    public void onItemClick(Party party,boolean newParty) {
+        if(newParty){
+            ((PartyManagerActivity)getActivity()).changeFragment("newParty");
+        }else{
+            ((PartyManagerActivity)getActivity()).goToPlay(party);
+        }
     }
 
 

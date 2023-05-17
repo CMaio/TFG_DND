@@ -17,7 +17,7 @@ import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 import java.util.ArrayList;
 
-public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHolder> implements View.OnClickListener {
+public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHolder>{
 
     private ArrayList<Party> data;
     private Context context;
@@ -36,10 +36,10 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
         View view = null;
         switch (viewType){
             case Constants.TYPE_CREATE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_new_character,parent,false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_new_party,parent,false);
                 return new AdapterParties.ViewHolder(view);
             case Constants.TYPE_FILLED:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_new_character,parent,false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_party,parent,false);
                 return new AdapterParties.ViewHolder(view);
 
         }
@@ -48,7 +48,16 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull AdapterParties.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case Constants.TYPE_CREATE:
 
+                break;
+            case Constants.TYPE_FILLED:
+                Party party = data.get(position);
+                holder.rtv_name.setText(party.getNameParty());
+                /*Glide.with(context).load(current.getUrlImagePreview()).into(holder.iv_image);*/ //para cargar la imagen
+                break;
+        }
     }
 
     @Override
@@ -66,7 +75,7 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView rtv_name,rtv_pronoun,rtv_gender,rtv_level,rtv_race,rtv_class;
+        TextView rtv_name;
         ImageView iv_character;
 
         //TODO:Incluir todos los elementos de una fila
@@ -80,37 +89,27 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
 
 
         private void setComponents(View itemView){
-            rtv_name = itemView.findViewById(R.id.rtv_name);
-            rtv_pronoun = itemView.findViewById(R.id.rtv_ponoun);
-            rtv_gender = itemView.findViewById(R.id.rtv_gender);
-            rtv_level = itemView.findViewById(R.id.rtv_level);
-            rtv_race = itemView.findViewById(R.id.rtv_race);
-            rtv_class = itemView.findViewById(R.id.rtv_class);
-            iv_character = itemView.findViewById(R.id.IV_state_character);
+            rtv_name = itemView.findViewById(R.id.rtv_createPartyText);
+            iv_character = itemView.findViewById(R.id.IV_state_Party);
         }
 
         @Override
-        public void onClick(View v) {//iniciem el detall del cocktail seleccionat
+        public void onClick(View v) {
             int clickedPosition = getAbsoluteAdapterPosition();
             if(clickedPosition == 0){
-                //listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
+                listener.onItemClick(data.get(getAbsoluteAdapterPosition()),true);
             }else{
-                //listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
-                //System.out.println(data.get(getAbsoluteAdapterPosition()) + " dddd");
-
+                listener.onItemClick(data.get(getAbsoluteAdapterPosition()),false);
             }
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        System.out.println("hola");
-    }
+
 
 
 
     public interface OnItemClickListener {
 
-        void onItemClick(Character character);
+        void onItemClick(Party party,boolean newParty);
     }
 }

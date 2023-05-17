@@ -18,6 +18,7 @@
     <string name="tittle_characters_screen">Personajes</string>
     <string name="tittle_party_screen">Parties</string>
     <string name="createnewcharacter">Crear un nuevo personaje</string>
+    <string name="createNewParty">Acceder a una nueva party</string>
     <string name="cancelButton">Cancelar</string>
     <string name="continueButton">Continuar</string>
     <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
@@ -25,9 +26,14 @@
     <string name="quantitySkills">Puedes elegir <b>@numToCh@</b> habilidades entre estas.</string>
     <string name="quantityLanguage">Puedes elegir <b>@numToCh@</b> lenguajes mas entre estos.</string>
     <string name="quantityAbilityBonus">Puedes elegir <b>@numToCh@</b> bonus para subir entre estos.</string>
-
     <string name="createCharacter">Crear Personaje</string>
     <string name="languageAdd">Idioma</string>
+    <string name="partyNewJoin">Escribe el codigo proporcionado por el Master\n para poder unirte a la party.</string>
+    <string name="partyJoinButton">Unirse a la party</string>
+    <string name="partycodehint">Escribe aqui el codigo...</string>
+    <string name="waitingMaster">Espera hasta que el master empiece el juego</string>
+    <string name="waitingCharacter">Esperando jugador</string>
+
     <string-array name="racesName">
         <item>Dracónido</item>
         <item>Enano</item>

@@ -17,7 +17,7 @@ import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 import java.util.ArrayList;
 
-public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.ViewHolder> implements View.OnClickListener {
+public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.ViewHolder>{
 
     private ArrayList<Character> data;
     private Context context;
@@ -54,10 +54,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
 
                 break;
             case Constants.TYPE_FILLED:
-                System.out.println("------------------------------------------d");
                 Character current = data.get(position);
-                //TODO: Llenar con todo lo necesario de una linea
-
                 /*Glide.with(context).load(current.getUrlImagePreview()).into(holder.iv_image);*/ //para cargar la imagen
 
                 holder.rtv_name.setText(current.getName());
@@ -83,11 +80,6 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
         } else {
             return Constants.TYPE_FILLED;
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        System.out.println("hola");
     }
 
 

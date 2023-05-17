@@ -12,14 +12,18 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterStatsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyJoinFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyWaitingFragment;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 public class PartyManagerActivity extends AppCompatActivity {
@@ -48,11 +52,13 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     public void changeFragment(String state){
-        showFragment(state);
+        showFragment(state,"");
     }
 
+    public void changeFragment(String state,String code){        showFragment(state,code);}
 
-    private void showFragment(String state){
+
+    private void showFragment(String state,String code){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fr_party_manager);
         FragmentTransaction ft =  fm.beginTransaction();
@@ -61,6 +67,18 @@ public class PartyManagerActivity extends AppCompatActivity {
                 if(fragment == null || !(fragment instanceof PartyListFragment)){
                     PartyListFragment listFragment = PartyListFragment.newInstance();
                     ft.replace(R.id.fr_party_manager,listFragment,"fr_listFragment_party");
+                }
+                break;
+            case "newParty":
+                if(fragment == null || !(fragment instanceof PartyJoinFragment)){
+                    PartyJoinFragment listFragment = PartyJoinFragment.newInstance();
+                    ft.replace(R.id.fr_party_manager,listFragment,"fr_joinFragment_party");
+                }
+                break;
+            case "waitingParty":
+                if(fragment == null || !(fragment instanceof PartyWaitingFragment)){
+                    PartyWaitingFragment listFragment = PartyWaitingFragment.newInstance(code);
+                    ft.replace(R.id.fr_party_manager,listFragment,"fr_waiting_party");
                 }
                 break;
         }
@@ -89,5 +107,10 @@ public class PartyManagerActivity extends AppCompatActivity {
         }else{
             fragmentManager.popBackStack();
         }
+    }
+
+    public void goToPlay(Party party) {
+        Toast.makeText(this,"das",Toast.LENGTH_LONG).show();
+        //TODO:Aqui se va directamente a la pantalla de jugar
     }
 }

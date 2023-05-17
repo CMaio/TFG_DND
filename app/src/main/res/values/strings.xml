@@ -17,6 +17,7 @@
     <string name="tittle_characters_screen">Characters</string>
     <string name="tittle_party_screen">Parties</string>
     <string name="createnewcharacter">Create a new character</string>
+    <string name="createNewParty">Access to a new party</string>
     <string name="cancelButton">Cancel</string>
     <string name="continueButton">Continue</string>
     <string name="addStat">Throw a D20 \nand write the result for the <b>@sTat@</b> stat.</string>
@@ -26,6 +27,11 @@
     <string name="quantityAbilityBonus">You can choose <b>@numToCh@</b> stat bonus between this ones.</string>
     <string name="createCharacter">Create Character</string>
     <string name="languageAdd">Language</string>
+    <string name="partyNewJoin">Write the code provided by the Master\n and join the party.</string>
+    <string name="partyJoinButton">Join party</string>
+    <string name="partycodehint">Write here the code...</string>
+    <string name="waitingMaster">Wait until master starts the game</string>
+    <string name="waitingCharacter">Waiting character</string>
     <string-array name="racesName">
         <item>Dragonborn</item>
         <item>Dwarf</item>

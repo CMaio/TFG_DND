@@ -41,4 +41,8 @@ public class Constants {
     public static final int POPUP_STARTING_PROFICIENCIES_CLASS = 2;
     public static final int POPUP_STARTING_LANGUAGES = 3;
 
+
+    public static final String CARACTERES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final int LONGITUD_ID = 5;
+
 }

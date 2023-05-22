@@ -29,6 +29,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
+import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.Skill;
@@ -43,6 +44,7 @@ import com.claudiomaiorana.tfg_dnd.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -113,15 +115,27 @@ public class CharacterSheetFragment extends Fragment {
     String genderSelected = "";
     String pronounSelected = "";
 
+
+    private static  String PARTY_CODE ="";
+    String partyCode="";
+
     public CharacterSheetFragment() {}
 
-    public static CharacterSheetFragment newInstance() {
-        return new CharacterSheetFragment();
+    public static CharacterSheetFragment newInstance(String idParty) {
+        CharacterSheetFragment fragment = new CharacterSheetFragment();
+        Bundle args = new Bundle();
+        args.putString(PARTY_CODE, idParty);
+        fragment.setArguments(args);
+        PARTY_CODE = idParty;
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            partyCode = getArguments().getString(PARTY_CODE);
+        }
     }
 
     @Override
@@ -137,7 +151,7 @@ public class CharacterSheetFragment extends Fragment {
 
 
         Bundle bundle = getArguments();
-        if (bundle != null) {
+        if (bundle != null && bundle.getString("typaRCA") != null) {
             String type = bundle.getString("typaRCA");
             RCAInfo rcaInfo = (RCAInfo) bundle.getSerializable("rcainfo");
 
@@ -155,6 +169,9 @@ public class CharacterSheetFragment extends Fragment {
                 }
                 changeRCAText();
             }
+        }
+        if(!partyCode.equals("")){
+            System.out.println("-------------------------------------- " + partyCode);
         }
 
 
@@ -182,14 +199,53 @@ public class CharacterSheetFragment extends Fragment {
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                indexStats = 0;
-                String stat = stats[indexStats];
-System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*-------------------------------------");
-                callPopUpStats("CreateCharacter",stat);
+                if(checkAlldataCorrect()){
+                    indexStats = 0;
+                    String stat = stats[indexStats];
+
+                    callPopUpStats("CreateCharacter",stat);
+                }
             }
         });
 
         return fragmentV;
+    }
+
+    private boolean checkAlldataCorrect() {
+        if(txt_name.getText().toString().equals("")){
+            txt_name.setError(getResources().getString(R.string.errorNoNameCharacter));
+            return false;
+        }else if(txt_name.getText().toString().length()>10){
+            txt_name.setError(getResources().getString(R.string.errorNameToLongCharacter));
+            return false;
+        }
+
+        if(txt_race.getText().toString().equals("")){
+            txt_race.setError(getResources().getString(R.string.RCAnoChoosed));
+            return false;
+        }else if(txt_class.getText().toString().equals("")){
+            txt_class.setError(getResources().getString(R.string.RCAnoChoosed));
+            return false;
+        }else if(txt_alignment.getText().toString().equals("")){
+            txt_alignment.setError(getResources().getString(R.string.RCAnoChoosed));
+            return false;
+        }
+
+        if(txt_level.getText().toString().equals("")){
+            txt_level.setError(getResources().getString(R.string.errorNoLevelCharacter));
+        }
+
+        if(!(0< Integer.parseInt(txt_level.getText().toString()) && Integer.parseInt(txt_level.getText().toString())<21)){
+            txt_level.setError(getResources().getString(R.string.errorNoCorrectLevelCharacter));
+        }
+
+
+
+
+
+        genderSelected = "";
+        pronounSelected = "";
+        return true;
     }
 
     private void generateSpinners(){
@@ -203,7 +259,11 @@ System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*--------
         spn_gender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                genderSelected = parent.getItemAtPosition(position).toString();
+                if(parent.getItemAtPosition(position).toString().equals("Select gender...")){
+                    genderSelected="";
+                }else{
+                    genderSelected = parent.getItemAtPosition(position).toString();
+                }
 
             }
             @Override
@@ -220,7 +280,11 @@ System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*--------
         spn_pronoun.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                pronounSelected = parent.getItemAtPosition(position).toString();
+                if(parent.getItemAtPosition(position).toString().equals("Select pronoun...")){
+                    pronounSelected="";
+                }else{
+                    pronounSelected = parent.getItemAtPosition(position).toString();
+                }
 
             }
             @Override
@@ -758,17 +822,42 @@ System.out.println(Integer.parseInt(txt_level.getText().toString()) + "*--------
                 pronounSelected,Stats,dataSavingThrows,allSkillsPlayer,proficienciesAndLanguages,
                 speed,quantityHitDice,typeHitDice,dataTraitsChoices);
 
+
         saveCharacter(character);
     }
 
     private void saveCharacter(Character character) {
-        db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
-                .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finishCreation();
-                    }
-                });
+        if(!partyCode.equals("")){
+            character.setPartyID(partyCode);
+            db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
+                    .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            db.collection("parties").document(partyCode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+                                        Party party = task.getResult().toObject(Party.class);
+                                        ArrayList<Character> characters = party.getPlayers();
+                                        characters.add(character);
+                                        party.setPlayers(characters);
+                                        //volver a la waiting list
+                                        ((CharacterManagerActivity)getActivity()).goWaitingRoom(party.getID());
+                                    }
+                                }
+                            });
+                        }
+                    });
+        }else{
+            db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
+                    .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            finishCreation();
+                        }
+                    });
+        }
+
     }
 
     void finishCreation(){

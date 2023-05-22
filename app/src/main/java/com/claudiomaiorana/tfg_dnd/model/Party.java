@@ -2,6 +2,7 @@ package com.claudiomaiorana.tfg_dnd.model;
 
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -10,19 +11,49 @@ public class Party {
 
     String ID;
     String IDMaster;
-    List<String> IDCharacters;
+    String UsernameMaster;
+    ArrayList<String> playersConnected;
+    ArrayList<Character> players;
+
     String nameParty;
     Boolean open;
 
 
     public Party() {}
 
-    public Party(String party, String idMaster){
+    public Party(String party, String idMaster,String usernameMaster){
         this.ID = generateID();
         this.nameParty = party;
         this.IDMaster = idMaster;
+        this.players = new ArrayList<>();
+        this.playersConnected = new ArrayList<>();
+        this.open = false;
+        this.UsernameMaster = usernameMaster;
     }
 
+    public String getUsernameMaster() {
+        return UsernameMaster;
+    }
+
+    public void setUsernameMaster(String usernameMaster) {
+        UsernameMaster = usernameMaster;
+    }
+
+    public ArrayList<String> getPlayersConnected() {
+        return playersConnected;
+    }
+
+    public void setPlayersConnected(ArrayList<String> playersConnected) {
+        this.playersConnected = playersConnected;
+    }
+
+    public ArrayList<Character> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(ArrayList<Character> players) {
+        this.players = players;
+    }
 
     public String getID() {
         return ID;
@@ -38,14 +69,6 @@ public class Party {
 
     public void setIDMaster(String IDMaster) {
         this.IDMaster = IDMaster;
-    }
-
-    public List<String> getIDCharacters() {
-        return IDCharacters;
-    }
-
-    public void setIDCharacters(List<String> IDCharacters) {
-        this.IDCharacters = IDCharacters;
     }
 
     public String getNameParty() {

@@ -11,29 +11,22 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Character;
-import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterStatsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
-import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CharacterManagerActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> myActivityResultLauncher;
 
     String state ="";
     private LinearLayout ly;
+    String source = "";
+    String idParty = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +36,16 @@ public class CharacterManagerActivity extends AppCompatActivity {
         state = "listCharacters";
         ly = findViewById(R.id.ly_loading);
 
+        Intent intent = getIntent();
+        System.out.println("_________________________________ estamos por pillar party");
+        if(intent != null){
+            source = intent.getStringExtra("source");
+            idParty = intent.getStringExtra("idParty");
+            System.out.println("_________________________________ hemos pillado por pillar party " + idParty);
+        }
+
+
+
         myActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -51,11 +54,23 @@ public class CharacterManagerActivity extends AppCompatActivity {
                 }
             }
         });
-        changeFragment(state);
+        if(source.equals("party")){
+            selectCharacter();
+        }else{
+            changeFragment(state);
+        }
+    }
+
+    private void selectCharacter() {
+        showFragment("listCharacters",idParty);
+    }
+
+    public void selectNewCharacter(){
+        showFragment("sheet",idParty);
     }
 
     public void changeFragment(String state){
-        showFragment(state);
+        showFragment(state,"");
     }
 
     public void changeToRCA(String type){
@@ -66,42 +81,23 @@ public class CharacterManagerActivity extends AppCompatActivity {
         ft.addToBackStack(null);
         ft.commit();
     }
-    private void showFragment(String state){
+    private void showFragment(String state,String idParty){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.Fr_characterManager);
         FragmentTransaction ft =  fm.beginTransaction();
         switch (state){
             case "listCharacters":
                 if(fragment == null || !(fragment instanceof CharacterListFragment)){
-                    CharacterListFragment listFragment = CharacterListFragment.newInstance();
+                    CharacterListFragment listFragment = CharacterListFragment.newInstance(idParty);
                     ft.replace(R.id.Fr_characterManager,listFragment,"fr_listFragment");
                 }
                 break;
             case "sheet":
                 if(!(fragment instanceof CharacterSheetFragment)) {
-                    CharacterSheetFragment sheetFragment = CharacterSheetFragment.newInstance();
+                    CharacterSheetFragment sheetFragment = CharacterSheetFragment.newInstance(idParty);
                     ft.replace(R.id.Fr_characterManager, sheetFragment,"fr_sheetFragment");
                 }
                 break;
-            case "rca":
-                if(!(fragment instanceof SheetRCASelectorFragment)) {
-                    SheetRCASelectorFragment raceClassSelectorFragment = SheetRCASelectorFragment.newInstance(Constants.RACES_SELECTED);
-                    ft.replace(R.id.Fr_characterManager, raceClassSelectorFragment);
-                }
-                break;
-            case "stats":
-                if(!(fragment instanceof CharacterStatsFragment)) {
-                    CharacterStatsFragment characterStatsFragment = CharacterStatsFragment.newInstance();
-                    ft.replace(R.id.Fr_characterManager, characterStatsFragment);
-                }
-                break;
-            case "skills":
-                if(!(fragment instanceof CharacterSkillsFragment)) {
-                    CharacterSkillsFragment characterSkillsFragment = CharacterSkillsFragment.newInstance();
-                    ft.replace(R.id.Fr_characterManager, characterSkillsFragment);
-                }
-                break;
-
         }
         ft.addToBackStack(null);
         ft.commit();
@@ -133,4 +129,11 @@ public class CharacterManagerActivity extends AppCompatActivity {
     }
 
 
+    public void goWaitingRoom(String id) {
+        Intent intent = new Intent();
+        intent.putExtra("source","characterPartyCreated");
+        intent.putExtra("party",id);
+        setResult(RESULT_OK,intent);
+        finish();
+    }
 }

@@ -25,6 +25,7 @@ import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.party.PartyManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.user.LoginActivity;
 import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tx_nameUser;
     Button b_characters;
     Button b_parties;
+    Button b_master;
 
 
     //Firebase-------------------------
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         b_logOut = findViewById(R.id.btn_logout);
         b_characters = findViewById(R.id.btn_characters);
         b_parties = findViewById(R.id.btn_parties);
+        b_master = findViewById(R.id.btn_master);
         tx_nameUser = findViewById(R.id.tx_nameuser);
 
         mAuth = FirebaseAuth.getInstance();
@@ -149,11 +152,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         b_parties.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        goToParties();
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                goToParties();
+            }
+        });
+        b_master.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMaster();
+            }
+        });
 
     }
 
@@ -198,6 +207,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToParties() {
         Intent intent = new Intent(this, PartyManagerActivity.class);
+        myActivityResultLauncher.launch(intent);
+    }
+
+    private void goToMaster() {
+        Intent intent = new Intent(this, MasterManagerActivity.class);
         myActivityResultLauncher.launch(intent);
     }
 

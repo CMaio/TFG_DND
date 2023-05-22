@@ -28,7 +28,7 @@
 
 
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/img_character_game"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:src="@tools:sample/avatars"
@@ -45,22 +45,23 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:layout_margin="5dp">
+                        android:layout_margin="5dp"
+                        android:gravity="center|left">
 
                         <TextView
-                            android:id="@+id/rtv_name"
+                            android:id="@+id/rtv_name_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="INGREDEINTS" />
 
                         <TextView
-                            android:id="@+id/rtv_ponoun"
+                            android:id="@+id/rtv_pronoun_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:text="NAME" />
                         <TextView
-                            android:id="@+id/rtv_gender"
+                            android:id="@+id/rtv_gender_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -72,24 +73,25 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:layout_margin="5dp">
+                        android:layout_margin="5dp"
+                        android:gravity="center|left">
 
                         <TextView
-                            android:id="@+id/rtv_level"
+                            android:id="@+id/rtv_level_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="TextView" />
 
                         <TextView
-                            android:id="@+id/rtv_race"
+                            android:id="@+id/rtv_race_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="TextView" />
 
                         <TextView
-                            android:id="@+id/rtv_class"
+                            android:id="@+id/rtv_class_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -114,15 +116,16 @@
                     android:orientation="vertical"
                     android:layout_margin = "5dp">
 
-                    <Button
-                        android:id="@+id/button"
+                    <TextView
+                        android:id="@+id/txt_gold_game"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Button"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:gravity="center"/>
 
                     <Button
-                        android:id="@+id/button2"
+                        android:id="@+id/btn_sheathed_unsheathed"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Button"
@@ -131,19 +134,20 @@
 
 
                 <TextView
-                    android:id="@+id/textView11"
+                    android:id="@+id/txt_life_game"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="TextView"
                     android:gravity="center"/>
+
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btn_goHome"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Button"
+                    android:layout_margin="5dp"
                     android:layout_weight="2"
-                    android:layout_margin = "5dp"/>
+                    tools:ignore="SpeakableTextPresentCheck" />
 
                </LinearLayout>
         </LinearLayout>
@@ -161,12 +165,12 @@
                 android:background="#555555"
                 android:layout_weight="1">
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/txt_numSpells"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:text="TextView"
-                    android:layout_margin = "5dp"/>
+                    android:layout_margin ="5dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_spells"

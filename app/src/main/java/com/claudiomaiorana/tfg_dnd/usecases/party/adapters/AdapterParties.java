@@ -97,9 +97,9 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
         public void onClick(View v) {
             int clickedPosition = getAbsoluteAdapterPosition();
             if(clickedPosition == 0){
-                listener.onItemClick(data.get(getAbsoluteAdapterPosition()),true);
+                listener.newParty();
             }else{
-                listener.onItemClick(data.get(getAbsoluteAdapterPosition()),false);
+                listener.selectParty(data.get(getAbsoluteAdapterPosition()));
             }
         }
     }
@@ -110,6 +110,7 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
 
     public interface OnItemClickListener {
 
-        void onItemClick(Party party,boolean newParty);
+        void newParty();
+        void selectParty(Party party);
     }
 }

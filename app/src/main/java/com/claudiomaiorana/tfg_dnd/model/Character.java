@@ -102,7 +102,7 @@ public class Character {
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<String> weapons, ArrayList<String> spells, ArrayList<String> equipment,
                       ArrayList<ProfLang> featuresAndTraits, int money) {
-        this.ID = user.getUserName() + "_" + characterName;
+        this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = partyID;
         this.name = characterName;
@@ -168,8 +168,16 @@ public class Character {
         return ID;
     }
 
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
     public String getUserID() {
         return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getPartyID() {
@@ -184,32 +192,64 @@ public class Character {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getImgPlayerName() {
         return imgPlayerName;
+    }
+
+    public void setImgPlayerName(String imgPlayerName) {
+        this.imgPlayerName = imgPlayerName;
     }
 
     public String getClassPlayer() {
         return classPlayer;
     }
 
+    public void setClassPlayer(String classPlayer) {
+        this.classPlayer = classPlayer;
+    }
+
     public String getRace() {
         return race;
+    }
+
+    public void setRace(String race) {
+        this.race = race;
     }
 
     public String getAlignment() {
         return alignment;
     }
 
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
+    }
+
     public String getCodeClass() {
         return codeClass;
+    }
+
+    public void setCodeClass(String codeClass) {
+        this.codeClass = codeClass;
     }
 
     public String getCodeRace() {
         return codeRace;
     }
 
+    public void setCodeRace(String codeRace) {
+        this.codeRace = codeRace;
+    }
+
     public String getCodeAlignment() {
         return codeAlignment;
+    }
+
+    public void setCodeAlignment(String codeAlignment) {
+        this.codeAlignment = codeAlignment;
     }
 
     public int getLevel() {
@@ -224,8 +264,16 @@ public class Character {
         return gender;
     }
 
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public String getPronoun() {
         return pronoun;
+    }
+
+    public void setPronoun(String pronoun) {
+        this.pronoun = pronoun;
     }
 
     public List<Integer> getStats() {

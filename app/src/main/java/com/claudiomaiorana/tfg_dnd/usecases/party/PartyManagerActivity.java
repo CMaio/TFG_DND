@@ -12,19 +12,14 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterListFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterStatsFragment;
-import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyJoinFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyWaitingFragment;
-import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 public class PartyManagerActivity extends AppCompatActivity {
 
@@ -44,7 +39,10 @@ public class PartyManagerActivity extends AppCompatActivity {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if(result.getResultCode() ==  RESULT_OK){
-
+                    Intent intent = result.getData();
+                    if(intent.getStringExtra("source").equals("characterPartyCreated")){
+                        changeFragment("waitingParty",intent.getStringExtra("party"));
+                    }
                 }
             }
         });
@@ -55,7 +53,7 @@ public class PartyManagerActivity extends AppCompatActivity {
         showFragment(state,"");
     }
 
-    public void changeFragment(String state,String code){        showFragment(state,code);}
+    public void changeFragment(String state,String code){showFragment(state,code);}
 
 
     private void showFragment(String state,String code){
@@ -110,7 +108,20 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     public void goToPlay(Party party) {
-        Toast.makeText(this,"das",Toast.LENGTH_LONG).show();
+        //Toast.makeText(this,"das",Toast.LENGTH_LONG).show();
         //TODO:Aqui se va directamente a la pantalla de jugar
+        Intent intent = new Intent(this, GameplayActivity.class);
+        intent.putExtra("source","party");
+        intent.putExtra("idParty",party.getID());
+        myActivityResultLauncher.launch(intent);
+        finish();
+    }
+
+    public void selectCharacter(Party id) {
+        Intent intent = new Intent(this, CharacterManagerActivity.class);
+        intent.putExtra("source","party");
+        intent.putExtra("idParty",id.getID());
+        myActivityResultLauncher.launch(intent);
+        //finish();
     }
 }

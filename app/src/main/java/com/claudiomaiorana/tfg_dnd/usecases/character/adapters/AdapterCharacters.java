@@ -111,9 +111,9 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
         public void onClick(View v) {//iniciem el detall del cocktail seleccionat
             int clickedPosition = getAbsoluteAdapterPosition();
             if(clickedPosition == 0){
-                listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
+                listener.newCharacter();
             }else{
-                listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
+                listener.selectCharacter(data.get(getAbsoluteAdapterPosition()));
                 System.out.println(data.get(getAbsoluteAdapterPosition()) + " dddd");
 
             }
@@ -122,6 +122,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
 
     public interface OnItemClickListener {
 
-        void onItemClick(Character character);
+        void newCharacter();
+        void selectCharacter(Character character);
     }
 }

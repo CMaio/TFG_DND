@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".usecases.master.fragments.MasterListFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+
+        <TextView
+            android:id="@+id/txt_masterTittle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:text="@string/tittle_master_screen"
+            android:textSize="50sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            tools:ignore="TextSizeCheck">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_masterList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+    </LinearLayout>
+</FrameLayout>

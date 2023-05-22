@@ -6,6 +6,7 @@
     <string name="btn_goCharacters">Characters</string>
     <string name="btn_logGoogle">LogIn</string>
     <string name="btn_goback">Go Back</string>
+    <string name="btn_return">Return</string>
     <string name="titleSignIn">Sign In</string>
     <string name="titleSignUp">Sign Up</string>
     <string name="hintmail">mail...</string>
@@ -32,6 +33,44 @@
     <string name="partycodehint">Write here the code...</string>
     <string name="waitingMaster">Wait until master starts the game</string>
     <string name="waitingCharacter">Waiting character</string>
+    <string name="gameplayMovementButton">Movement action</string>
+    <string name="gameplayAttackButton">Attack action</string>
+    <string name="gameplayBonusButton">Bonus action</string>
+    <string name="gameplayFinishButton">Finish turn</string>
+    <string name="gameplayTittleFight">It is your turn! This are the actions you can do!</string>
+    <string name="waitForYourTurn">Wait until it is your turn!</string>
+    <string name="popUpTittleType">Type</string>
+    <string name="popUpLvl">Level: @l3v3l@</string>
+    <string name="popUpScope">Scope: @scOp3@</string>
+    <string name="popUpDuration">Duration: @Durat1oN@</string>
+    <string name="popUpDesc">Description: @d3sc@</string>
+    <string name="popUpMovementTittle">Choose how many squares you want to move (1 square = 3.5m)</string>
+    <string name="popUpMovementInfo">I am moving @mov3@ squares(@mov3meters@m)</string>
+    <string name="popUpMovementSelect">I am moving</string>
+
+    <string name="gameplayAttackSelect">Select Attack</string>
+    <string name="gameplayAttackSelectTittle">Select the enemy and the way of attacking</string>
+
+    <string name="tittle_master_screen">Master</string>
+    <string name="code_waiting_screen">The code of the party is: @coD3@</string>
+    <string name="partyNewCreateTittle">Write the name of the party.</string>
+    <string name="partyNamehint">Write here the name...</string>
+    <string name="partyCreateButton">Create party</string>
+    <string name="MasterStartButton">Start</string>
+
+    <string name="errorNoNameCharacter">Add a name</string>
+    <string name="errorNameToLongCharacter">Name to long (10 max)</string>
+    <string name="RCAnoChoosed">You have to choose one</string>
+    <string name="errorNoLevelCharacter">You have to add a level</string>
+    <string name="errorNoCorrectLevelCharacter">Level has to be between 1 and 20</string>
+    <string name="errorNoGenderCharacter">Select a gender</string>
+    <string name="errorNoPronounCharacter">Select a pronoun</string>
+
+    <string name="addName">Add here a name...</string>
+
+
+
+
     <string-array name="racesName">
         <item>Dragonborn</item>
         <item>Dwarf</item>

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.party.PartyManagerActivity;
@@ -54,16 +55,13 @@ public class PartyJoinFragment extends Fragment {
                         getParty(txt_code.getText().toString(), new PartyCallback() {
                             @Override
                             public void onPartyLoaded(Party party) {
-                                List<String> characters = party.getIDCharacters();
-                                characters.add(User.getInstance().getUserName());
-                                party.setIDCharacters(characters);
-                                db.collection("parties").document(party.getID()).set(party);
-                                ((PartyManagerActivity)getActivity()).changeFragment("waitingParty",party.getID());
+                                //TODO:Hacer que se una el player seleccionado y de ahi que se añada a la party
+                                ((PartyManagerActivity)getActivity()).selectCharacter(party);
                             }
 
                             @Override
                             public void onPartyNotFound() {
-                                btn_joinParty.setError("Party doesn't exist");
+                                btn_joinParty.setError("Error with that party");
                             }
                         });
 
@@ -98,7 +96,11 @@ public class PartyJoinFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Party party = document.toObject(Party.class);
-                        callback.onPartyLoaded(party);
+                        if(party.getPlayers().size()<4){
+                            callback.onPartyLoaded(party);
+                        }else{
+                            callback.onPartyNotFound();
+                        }
                     } else {
                         callback.onPartyNotFound();
                     }

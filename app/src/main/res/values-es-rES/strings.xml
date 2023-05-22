@@ -7,6 +7,7 @@
     <string name="btn_goCharacters">Personajes</string>
     <string name="btn_logGoogle">LogIn</string>
     <string name="btn_goback">Atras</string>
+    <string name="btn_return">Volver</string>
     <string name="titleSignIn">Acceder</string>
     <string name="titleSignUp">Registro</string>
     <string name="hintmail">correo...</string>
@@ -33,6 +34,41 @@
     <string name="partycodehint">Escribe aqui el codigo...</string>
     <string name="waitingMaster">Espera hasta que el master empiece el juego</string>
     <string name="waitingCharacter">Esperando jugador</string>
+    <string name="gameplayMovementButton">Acción de movimiento</string>
+    <string name="gameplayAttackButton">Acción de ataque</string>
+    <string name="gameplayBonusButton">Acción bonus</string>
+    <string name="gameplayFinishButton">Finalizar turno</string>
+    <string name="gameplayTittleFight">Es tu turno! Estas son las acciones que puedes hacer!</string>
+    <string name="waitForYourTurn">Espera hasta que sea tu turno!</string>
+    <string name="popUpTittleType">Type</string>
+    <string name="popUpLvl">Nivel: @l3v3l@</string>
+    <string name="popUpScope">Alcance: @scOp3@</string>
+    <string name="popUpDuration">Duración: @Durat1oN@</string>
+    <string name="popUpDesc">Descripcion: @d3sc@</string>
+    <string name="popUpMovementTittle">Elije cuantas casillas quieres moverte (1 square = 3.5m)</string>
+    <string name="popUpMovementInfo">Me estoy moviendo @mov3@ casillas(@mov3meters@m)</string>
+    <string name="popUpMovementSelect">Me muevo</string>
+
+    <string name="gameplayAttackSelect">Seleccionar ataque</string>
+    <string name="gameplayAttackSelectTittle">Selecciona al enemigo y la manera de atacar</string>
+
+    <string name="tittle_master_screen">Master</string>
+    <string name="code_waiting_screen">El codigo de la party es: @coD3@</string>
+    <string name="partyNewCreateTittle">Escribe el nombre de la party.</string>
+    <string name="partyNamehint">Escribe aqui el nombre...</string>
+    <string name="partyCreateButton">Crear party</string>
+    <string name="MasterStartButton">Empezar</string>
+
+    <string name="errorNoNameCharacter">Añade un nombre</string>
+    <string name="errorNameToLongCharacter">Nombre muy largo (10 max)</string>
+    <string name="RCAnoChoosed">Tienes que elegir uno</string>
+    <string name="errorNoLevelCharacter">Tienes que añadir un nivel</string>
+    <string name="errorNoCorrectLevelCharacter">Nivel tiene que ser entre 1 y 20</string>
+    <string name="errorNoGenderCharacter">Selecciona un genero</string>
+    <string name="errorNoPronounCharacter">Selecciona un pronombre</string>
+
+    <string name="addName">Añade aqui un nombre...</string>
+
 
     <string-array name="racesName">
         <item>Dracónido</item>

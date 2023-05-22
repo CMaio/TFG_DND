@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,7 +35,6 @@ public class PartyWaitingFragment extends Fragment {
     private Party party;
 
     TextView txt_slot1,txt_slot2,txt_slot3,txt_slot4,txt_masterSlot;
-    Button startGame;
 
     private static final String PARTY_CODE ="";
 
@@ -70,18 +70,8 @@ public class PartyWaitingFragment extends Fragment {
         txt_slot1.setText(User.getInstance().getUserName());
         getParty();
 
-        startGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(party.getIDMaster().equals(User.getInstance().getUserName())){
-                    updateParty();
-                }
-            }
-        });
-        return v;
-    }
 
-    private void updateParty() {
+        return v;
     }
 
     @Override
@@ -107,6 +97,25 @@ public class PartyWaitingFragment extends Fragment {
         if (listenerRegistration != null) {
             listenerRegistration.remove();
         }
+        ArrayList<String> charConnected = party.getPlayersConnected();
+        String nameCharacter = deleteCharacter(party.getPlayers());
+        if(charConnected.contains(nameCharacter)){
+            charConnected.remove(nameCharacter);
+            db.collection("parties").document(partyCodeParam).set(party);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        ArrayList<String> charConnected = party.getPlayersConnected();
+        String nameCharacter = deleteCharacter(party.getPlayers());
+        if(charConnected.contains(nameCharacter)){
+            charConnected.remove(nameCharacter);
+            db.collection("parties").document(partyCodeParam).set(party);
+        }
+
     }
 
     private void getParty(){
@@ -114,20 +123,59 @@ public class PartyWaitingFragment extends Fragment {
         db.collection("parties").document(partyCodeParam).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                updateScreen(task.getResult().toObject(Party.class));
-                party=task.getResult().toObject(Party.class);
-
+                party = task.getResult().toObject(Party.class);
+                updateParty();
             };
         });
     }
 
+    private void updateParty() {
+        ArrayList<String> charConnected = party.getPlayersConnected();
+        String nameCharacter = characterName(party.getPlayers());
+        if(!nameCharacter.equals("")){
+            charConnected.add(nameCharacter);
+            db.collection("parties").document(partyCodeParam).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    updateScreen(party);
+                }
+            });
+        }
+
+    }
+    private String deleteCharacter(ArrayList<Character> players) {
+
+        for (Character character : players) {
+            if(character.getUserID().equals(User.getInstance().getId())){
+                if(party.getPlayersConnected().contains(character.getName())){
+                    return character.getName();
+                }
+            }
+        }
+        return "";
+    }
+
+    private String characterName(ArrayList<Character> players) {
+
+        for (Character character : players) {
+            if(character.getUserID().equals(User.getInstance().getId())){
+                if(party.getPlayersConnected().contains(character.getName())){
+                    return "";
+                }else{
+                    return character.getName();
+                }
+            }
+        }
+        return "";
+    }
+
     private void updateScreen(Party party) {
-        List<String> characters = party.getIDCharacters();
+        List<String> characters = party.getPlayersConnected();
+        txt_masterSlot.setText(party.getUsernameMaster());
+        setElementsEmpty();
         for (String character:characters){
             Log.d("newChar",character);
             if(!(txt_slot1.getText().toString().equals(character) || txt_slot2.getText().toString().equals(character) ||txt_slot3.getText().toString().equals(character) ||txt_slot4.getText().toString().equals(character))) {
-
                 if (txt_slot1.getText().toString().equals("") || txt_slot1.getText().toString() == null) {
                     txt_slot1.setText(character);
                 } else if (txt_slot2.getText().toString().equals("") || txt_slot2.getText().toString() == null) {
@@ -142,6 +190,13 @@ public class PartyWaitingFragment extends Fragment {
         if(party.getOpen()){
             startPlaying();
         }
+    }
+
+    private void setElementsEmpty() {
+        txt_slot1.setText("");
+        txt_slot2.setText("");
+        txt_slot3.setText("");
+        txt_slot4.setText("");
     }
 
     void startPlaying(){
@@ -179,6 +234,5 @@ public class PartyWaitingFragment extends Fragment {
         txt_slot3 = v.findViewById(R.id.txt_slot3);
         txt_slot4 = v.findViewById(R.id.txt_slot4);
         txt_masterSlot = v.findViewById(R.id.txt_masterSlot);
-        startGame = v.findViewById(R.id.btn_startGame);
     }
 }

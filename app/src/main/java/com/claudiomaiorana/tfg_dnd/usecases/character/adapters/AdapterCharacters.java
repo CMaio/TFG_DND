@@ -2,6 +2,7 @@ package com.claudiomaiorana.tfg_dnd.usecases.character.adapters;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -22,6 +27,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
     private ArrayList<Character> data;
     private Context context;
     private OnItemClickListener listener;
+    FirebaseStorage dbStorage = FirebaseStorage.getInstance();
 
 
     public AdapterCharacters(ArrayList<Character> data, OnItemClickListener listener, Context context) {
@@ -56,6 +62,21 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
             case Constants.TYPE_FILLED:
                 Character current = data.get(position);
                 /*Glide.with(context).load(current.getUrlImagePreview()).into(holder.iv_image);*/ //para cargar la imagen
+                if(!current.getImgPlayerName().equals("")){
+                    StorageReference storageRef = dbStorage.getReference();
+                    String imageName = current.getImgPlayerName();
+                    StorageReference imageRef = storageRef.child(imageName);
+
+                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide.with(context)
+                                    .load(uri)
+                                    .into(holder.iv_character);
+                        }
+                    });
+                }
+
 
                 holder.rtv_name.setText(current.getName());
                 holder.rtv_gender.setText(current.getGender());

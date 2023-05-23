@@ -10,6 +10,7 @@
         android:id="@+id/Fr_gameplayManager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:layout="@layout/fragment_gameplay_safe"
         tools:layout_editor_absoluteX="-2dp"
         tools:layout_editor_absoluteY="0dp" />

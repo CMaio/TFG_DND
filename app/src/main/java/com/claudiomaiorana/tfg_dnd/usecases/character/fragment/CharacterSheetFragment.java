@@ -1,14 +1,26 @@
 package com.claudiomaiorana.tfg_dnd.usecases.character.fragment;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +38,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
@@ -42,17 +57,23 @@ import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.claudiomaiorana.tfg_dnd.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +93,9 @@ public class CharacterSheetFragment extends Fragment {
 
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage dbStorage = FirebaseStorage.getInstance();
+
+
 
     //Info needed from Race of Player
     String quantity_ProficiencyChoices_Race;
@@ -118,6 +142,8 @@ public class CharacterSheetFragment extends Fragment {
 
     private static  String PARTY_CODE ="";
     String partyCode="";
+    Uri urlImg = Uri.parse("");;
+    ActivityResultLauncher<Intent> activityResultLauncher;
 
     public CharacterSheetFragment() {}
 
@@ -135,6 +161,7 @@ public class CharacterSheetFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             partyCode = getArguments().getString(PARTY_CODE);
+            if(partyCode == null){partyCode = "";}
         }
     }
 
@@ -173,6 +200,34 @@ public class CharacterSheetFragment extends Fragment {
         if(!partyCode.equals("")){
             System.out.println("-------------------------------------- " + partyCode);
         }
+
+
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Bundle extras = result.getData().getExtras();
+                            System.out.println(result.getData().getData() + "-----------------URI");
+                            //Drawable imageBitmap = (Drawable) extras.get("data");
+                            //TODO:Regoger imagen y guardarla y ponerla
+                            urlImg = result.getData().getData();
+                            System.out.println(urlImg + "-----------------URI");
+                            Glide.with(getContext())
+                                    .load(urlImg)
+                                    .into(profile_img);
+                            //profile_img.setImageBitmap(imageBitmap);
+                        }
+                    }
+        });
+
+
+        profile_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent takeFotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                activityResultLauncher.launch(takeFotoIntent);
+            }
+        });
 
 
         btn_race.setOnClickListener(new View.OnClickListener() {
@@ -304,6 +359,20 @@ public class CharacterSheetFragment extends Fragment {
                     txt_alignment.setText((!rcaInfoSaved[i].getTittleText().equals("")) ? rcaInfoSaved[i].getTittleText() : "Select Alignment");
                 }
             }
+        }
+        if(!urlImg.equals(" ")){
+            try{
+                Glide.with(getContext())
+                        .load(urlImg)
+                        .into(profile_img);
+            }catch (Exception e){
+                Glide.with(getContext())
+                        .load(R.drawable.avatar_background)
+                        .into(profile_img);
+            }
+
+
+            System.out.println(urlImg + "-----------------URICharge");
 
         }
     }
@@ -822,8 +891,33 @@ public class CharacterSheetFragment extends Fragment {
                 pronounSelected,Stats,dataSavingThrows,allSkillsPlayer,proficienciesAndLanguages,
                 speed,quantityHitDice,typeHitDice,dataTraitsChoices);
 
+        StorageReference storageRef = dbStorage.getReference();
+        String nameImage = "profileCharacter_" + character.getID() + ".jpg";
+        StorageReference imageRef = storageRef.child("profileImages/" + nameImage);
 
-        saveCharacter(character);
+        character.setImgPlayerName("profileImages/" + nameImage);
+        Drawable drawable = profile_img.getDrawable();
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        imageRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                saveCharacter(character);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                character.setImgPlayerName("");
+                saveCharacter(character);
+            }
+        });
+
+
     }
 
     private void saveCharacter(Character character) {

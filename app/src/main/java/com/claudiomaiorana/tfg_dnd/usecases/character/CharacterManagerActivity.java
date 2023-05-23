@@ -40,6 +40,7 @@ public class CharacterManagerActivity extends AppCompatActivity {
         System.out.println("_________________________________ estamos por pillar party");
         if(intent != null){
             source = intent.getStringExtra("source");
+            if(source == null){source ="";}
             idParty = intent.getStringExtra("idParty");
             System.out.println("_________________________________ hemos pillado por pillar party " + idParty);
         }
@@ -136,4 +137,7 @@ public class CharacterManagerActivity extends AppCompatActivity {
         setResult(RESULT_OK,intent);
         finish();
     }
+
+
+
 }

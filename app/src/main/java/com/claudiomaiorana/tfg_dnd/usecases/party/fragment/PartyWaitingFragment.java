@@ -141,7 +141,6 @@ public class PartyWaitingFragment extends Fragment {
                 }
             });
         }
-
     }
     private String deleteCharacter(ArrayList<Character> players) {
 

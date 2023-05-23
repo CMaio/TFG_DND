@@ -74,7 +74,7 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_launcher_background"
+            app:srcCompat="@drawable/avatar_background"
             tools:ignore="ImageContrastCheck"
             tools:srcCompat="@tools:sample/avatars" />
 
@@ -122,10 +122,10 @@
 
         <Spinner
             android:id="@+id/txt_genderSelector"
-            android:layout_width="194dp"
+            android:layout_width="207dp"
             android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="88dp"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="92dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
@@ -137,7 +137,7 @@
             android:layout_width="207dp"
             android:layout_height="50dp"
             android:layout_marginStart="36dp"
-            android:layout_marginTop="84dp"
+            android:layout_marginTop="88dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"

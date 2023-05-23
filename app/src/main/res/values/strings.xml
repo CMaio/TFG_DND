@@ -69,8 +69,6 @@
     <string name="addName">Add here a name...</string>
 
 
-
-
     <string-array name="racesName">
         <item>Dragonborn</item>
         <item>Dwarf</item>

@@ -2,6 +2,9 @@ package com.claudiomaiorana.tfg_dnd.usecases.character.adapters;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +78,10 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
                                     .into(holder.iv_character);
                         }
                     });
+                }else{
+                    Glide.with(context)
+                            .load(R.drawable.avatar_1)
+                            .into(holder.iv_character);
                 }
 
 
@@ -134,8 +141,13 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
             if(clickedPosition == 0){
                 listener.newCharacter();
             }else{
-                listener.selectCharacter(data.get(getAbsoluteAdapterPosition()));
-                System.out.println(data.get(getAbsoluteAdapterPosition()) + " dddd");
+                Drawable drawable = iv_character.getDrawable();
+                Bitmap bitmap = null;
+                if (drawable instanceof BitmapDrawable) {
+                    bitmap = ((BitmapDrawable) drawable).getBitmap();
+                }
+                listener.selectCharacter(data.get(getAbsoluteAdapterPosition()),bitmap);
+                //System.out.println(data.get(getAbsoluteAdapterPosition()) + " dddd");
 
             }
         }
@@ -144,6 +156,6 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
     public interface OnItemClickListener {
 
         void newCharacter();
-        void selectCharacter(Character character);
+        void selectCharacter(Character character, Bitmap bitmap);
     }
 }

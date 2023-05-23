@@ -10,12 +10,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetVisualizerFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
@@ -104,10 +108,20 @@ public class CharacterManagerActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    public void seeCharacter(Character character, Bitmap bitmap){
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.Fr_characterManager);
+        FragmentTransaction ft =  fm.beginTransaction();
+        if(!(fragment instanceof CharacterSheetVisualizerFragment)) {
+            CharacterSheetVisualizerFragment sheetFragment = CharacterSheetVisualizerFragment.newInstance(character,bitmap);
+            ft.replace(R.id.Fr_characterManager, sheetFragment,"fr_sheetFragment");
+        }
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
     public void changeLoadingVisibility(int visible){
-
         ly.setVisibility(visible);
-
     }
 
     private void backToMainActivity(int result){

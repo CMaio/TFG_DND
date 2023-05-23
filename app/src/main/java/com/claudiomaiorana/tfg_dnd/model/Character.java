@@ -2,6 +2,7 @@ package com.claudiomaiorana.tfg_dnd.model;
 
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
-public class Character {
+public class Character implements Parcelable{
 
     private String ID, userID, partyID;
 
@@ -130,6 +131,53 @@ public class Character {
         this.equipment = equipment;
         this.featuresAndTraits = featuresAndTraits;
         this.money = money;
+    }
+
+    private Character(Parcel in) {
+        ID = in.readString();
+        userID = in.readString();
+        partyID = in.readString();
+        name = in.readString();
+        imgPlayerName = in.readString();
+        race = in.readString();
+        codeRace = in.readString();
+        classPlayer =in.readString();
+        codeClass = in.readString();
+        alignment = in.readString();
+        codeAlignment = in.readString();
+        level = in.readInt();
+        gender = in.readString();
+        pronoun = in.readString();
+        stats = new ArrayList<>();
+        in.readList(stats, Integer.class.getClassLoader());
+        this.stats_mod = new ArrayList<>();
+        createMod(stats);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            inspiration = in.readBoolean();
+        }
+        profBonus = getProfBonus();
+        savingThrows = new ArrayList<>();
+        in.readList(savingThrows, String.class.getClassLoader());
+        skills = new ArrayList<>();
+        in.readList(skills, Skill.class.getClassLoader());
+        proficienciesAndLanguages = new ArrayList<>();
+        in.readList(proficienciesAndLanguages, ProfLang.class.getClassLoader());
+        armorClass = 10 + stats_mod.get(Constants.STAT_CON);
+        initiative = stats_mod.get(Constants.STAT_DEX);
+        speed = in.readInt();
+        quantityHitDice = in.readInt();
+        typeHitDice = in.readInt();
+        maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
+        currentHitPoints = in.readInt();
+        weapons = new ArrayList<>();
+        in.readList(weapons, String.class.getClassLoader());
+        spells = new ArrayList<>();
+        in.readList(spells, String.class.getClassLoader());
+        equipment = new ArrayList<>();
+        in.readList(equipment, String.class.getClassLoader());
+        featuresAndTraits = new ArrayList<>();
+        in.readList(featuresAndTraits, ProfLang.class.getClassLoader());
+        money = in.readInt();
     }
 
     private void saveRCAInfo(RCAInfo[] rcaInfo) {
@@ -416,6 +464,8 @@ public class Character {
         this.featuresAndTraits = featuresAndTraits;
     }
 
+
+
     public int getMoney() {
         return money;
     }
@@ -423,4 +473,53 @@ public class Character {
     public void setMoney(int money) {
         this.money = money;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(ID);
+        dest.writeString(userID);
+        dest.writeString(partyID);
+        dest.writeString(name);
+        dest.writeString(race);
+        dest.writeString(codeRace);
+        dest.writeString(classPlayer);
+        dest.writeString(codeClass);
+        dest.writeString(alignment);
+        dest.writeInt(level);
+        dest.writeString(gender);
+        dest.writeString(pronoun);
+        dest.writeList(stats);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(inspiration);
+        }
+        dest.writeList(savingThrows);
+        dest.writeList(skills);
+        dest.writeList(proficienciesAndLanguages);
+        dest.writeInt(speed);
+        dest.writeInt(quantityHitDice);
+        dest.writeInt(typeHitDice);
+        dest.writeInt(currentHitPoints);
+        dest.writeList(weapons);
+        dest.writeList(spells);
+        dest.writeList(equipment);
+        dest.writeList(featuresAndTraits);
+        dest.writeInt(money);
+    }
+
+
+
+    public static final Parcelable.Creator<Character> CREATOR = new Parcelable.Creator<Character>() {
+        public Character createFromParcel(Parcel in) {
+            return new Character(in);
+        }
+
+        public Character[] newArray(int size) {
+            return new Character[size];
+        }
+    };
 }

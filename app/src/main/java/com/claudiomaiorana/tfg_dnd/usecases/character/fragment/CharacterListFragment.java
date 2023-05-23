@@ -1,6 +1,8 @@
 package com.claudiomaiorana.tfg_dnd.usecases.character.fragment;
 
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -136,7 +138,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
     }
 
     @Override
-    public void selectCharacter(Character character) {
+    public void selectCharacter(Character character, Bitmap bitmap) {
         if(!partyCode.equals("")){
             System.out.println(character.getID() + "--------ID");
             System.out.println(character.getUserID() + "--------UserID");
@@ -167,6 +169,9 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
                         }
                     });
         }else{
+
+            ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(View.VISIBLE);
+            ((CharacterManagerActivity)getActivity()).seeCharacter(character,bitmap);
             Toast.makeText(getActivity(), "The character is: " + character.getName(), Toast.LENGTH_SHORT).show();
         }
 

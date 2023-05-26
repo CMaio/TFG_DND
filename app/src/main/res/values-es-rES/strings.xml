@@ -69,6 +69,15 @@
 
     <string name="addName">Añade aqui un nombre...</string>
 
+    <string name="selectRace">Selecciona raza</string>
+    <string name="selectClass">Selecciona clase</string>
+    <string name="selectAlign">Selecciona alineamiento</string>
+    <string name="hintRace">Raza no seleccionada</string>
+    <string name="hintClass">Clase no seleccionada</string>
+    <string name="hintAlign">Alineamiento no seleccionado</string>
+
+    <string name="cantrips">Trucos</string>
+
 
     <string-array name="racesName">
         <item>Dracónido</item>

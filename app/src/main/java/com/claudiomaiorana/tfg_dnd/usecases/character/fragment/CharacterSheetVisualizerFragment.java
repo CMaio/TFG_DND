@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -14,14 +15,34 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.ProfLang;
+import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterAbilities;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterObjects;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpells;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpellsQuantity;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
+import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
+import com.claudiomaiorana.tfg_dnd.util.Util;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
-public class CharacterSheetVisualizerFragment extends Fragment {
+public class CharacterSheetVisualizerFragment extends Fragment implements AdapterSpells.OnItemClickListener, AdapterAbilities.OnItemClickListener, AdapterObjects.OnItemClickListener {
 
     private static final String ARG_PARAM1 = "character";
     private static final String ARG_PARAM2 = "imgCharacter";
@@ -30,10 +51,17 @@ public class CharacterSheetVisualizerFragment extends Fragment {
     private Character mParam1;
     private Bitmap mParam2;
 
-    private RecyclerView rv_spells,rv_abilities,rv_objects;
-    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_gold_game,txt_life_game,txt_numSpells,txt_sheathed_unsheathed;
+    private RecyclerView rv_spells,rv_abilities,rv_objects,rv_spQuantity;
+    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_gold_game,txt_life_game,txt_sheathed_unsheathed;
     private ImageView img_character_game;
     private Button btn_goHome;
+
+
+    private AdapterSpellsQuantity adapterSpellsQ;
+    private AdapterSpells adapterSpells;
+    private AdapterAbilities adapterAbilities;
+    private AdapterObjects adapterObjects;
+
 
     public CharacterSheetVisualizerFragment() {}
 
@@ -60,10 +88,22 @@ public class CharacterSheetVisualizerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_character_sheet_visualizer, container, false);
         setElements(v);
         setCharacterScreen();
+        RecyclerView.LayoutManager layoutManagerQS = new GridLayoutManager(getContext(),4);
+        rv_spQuantity.setLayoutManager(layoutManagerQS);
+
+        RecyclerView.LayoutManager layoutManagerS = new GridLayoutManager(getContext(),2);
+        rv_spells.setLayoutManager(layoutManagerS);
+
+        RecyclerView.LayoutManager layoutManagerAb = new GridLayoutManager(getContext(),2);
+        rv_abilities.setLayoutManager(layoutManagerAb);
+
+        RecyclerView.LayoutManager layoutManagerO = new GridLayoutManager(getContext(),2);
+        rv_objects.setLayoutManager(layoutManagerO);
+        AdapterSpells();
+
 
         ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(View.INVISIBLE);
         btn_goHome.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +113,31 @@ public class CharacterSheetVisualizerFragment extends Fragment {
             }
         });
         return v;
+    }
+
+    private void AdapterSpells() {
+        Map<String,Integer> spellsToAdd = new HashMap<>(mParam1.getSpells().getSpells());
+        spellsToAdd.put("0Cantrips",mParam1.getSpells().getCantrips());
+        adapterSpellsQ = new AdapterSpellsQuantity(spellsToAdd, getActivity());
+        rv_spQuantity.setAdapter(adapterSpellsQ);
+
+        Map<String,List<Spells.Spell>> tmpSpell = mParam1.getSpells().getSpellsName();
+        List<Spells.Spell> spells = new ArrayList<>();
+        for(int i=0;i<tmpSpell.size();i++){
+            List<Spells.Spell> spellsTMP = tmpSpell.get(Integer.toString(i));
+            System.out.println("--------- s"+spellsTMP);
+            for(int j = 0;j<spellsTMP.size();j++){
+                spells.add(tmpSpell.get(Integer.toString(i)).get(j));
+            }
+        }
+        adapterSpells = new AdapterSpells(spells, getActivity(),this);
+        rv_spells.setAdapter(adapterSpells);
+
+        adapterAbilities = new AdapterAbilities(mParam1.getFeaturesAndTraits(), getActivity(),this);
+        rv_abilities.setAdapter(adapterAbilities);
+
+        adapterObjects = new AdapterObjects(mParam1.getEquipment(), getActivity(),this);
+        rv_objects.setAdapter(adapterObjects);
     }
 
     private void setCharacterScreen() {
@@ -96,6 +161,9 @@ public class CharacterSheetVisualizerFragment extends Fragment {
                     .into(img_character_game);
         }
 
+
+
+
     }
 
 
@@ -106,6 +174,7 @@ public class CharacterSheetVisualizerFragment extends Fragment {
         rv_spells = v.findViewById(R.id.rv_spells_character);
         rv_abilities = v.findViewById(R.id.rv_abilities_character);
         rv_objects = v.findViewById(R.id.rv_objects_character);
+        rv_spQuantity = v.findViewById(R.id.rv_spells_quantity_character);
 
         rtv_name_game = v.findViewById(R.id.rtv_name_game_character);
         rtv_pronoun_game = v.findViewById(R.id.rtv_pronoun_character);
@@ -115,11 +184,46 @@ public class CharacterSheetVisualizerFragment extends Fragment {
         rtv_class_game = v.findViewById(R.id.rtv_class_character);
         txt_gold_game = v.findViewById(R.id.txt_gold_character);
         txt_life_game = v.findViewById(R.id.txt_life_character);
-        txt_numSpells = v.findViewById(R.id.txt_numSpells_character);
         txt_sheathed_unsheathed = v.findViewById(R.id.txt_sheathed_unsheathed_character);
 
         img_character_game = v.findViewById(R.id.img_character_character);
 
         btn_goHome = v.findViewById(R.id.btn_goHome_character);
+    }
+
+    @Override
+    public void onItemClick(Spells.Spell spell) {
+        Toast.makeText(getContext(), spell.getName(), Toast.LENGTH_LONG).show();
+        //View view = getLayoutInflater().inflate(R.layout.fragment_character_stats, null);
+
+//        Util.apiGETRequest("spells/" + spell.getCode(), new ApiCallback() {
+//            @Override
+//            public void onSuccess(JSONObject jsonObject) {
+//                if(jsonObject.has("desc")){
+//
+//                }
+//                PopUpCustom popUp = new PopUpCustom(view,this,spell.getName(),);
+//                popUp.show(getParentFragmentManager(), tag);
+//            }
+//
+//            @Override
+//            public void onError(VolleyError error) {
+//
+//            }
+//        },getActivity());
+
+        //popUp.setCancelable(false);
+
+
+    }
+
+    @Override
+    public void onItemClick(ProfLang nameTrait) {
+        Toast.makeText(getContext(), nameTrait.getName(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onItemClick(String nameObject) {
+        Toast.makeText(getContext(), nameObject, Toast.LENGTH_LONG).show();
     }
 }

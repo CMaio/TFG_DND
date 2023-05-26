@@ -165,13 +165,12 @@
                 android:orientation="vertical"
                 android:background="#555555"
                 android:layout_weight="1">
-                <TextView
-                    android:id="@+id/txt_numSpells_character"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_spells_quantity_character"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:text="TextView"
-                    android:layout_margin ="5dp"/>
+                    android:layout_weight = "2"
+                    android:layout_margin = "5dp"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_spells_character"

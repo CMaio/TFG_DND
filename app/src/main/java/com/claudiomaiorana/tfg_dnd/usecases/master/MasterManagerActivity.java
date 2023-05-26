@@ -18,6 +18,7 @@ import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterCreatePartyFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterWaitingFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
 
 public class MasterManagerActivity extends AppCompatActivity {
 
@@ -87,4 +88,23 @@ public class MasterManagerActivity extends AppCompatActivity {
 
         //TODO:party codee starts!
     }
+    private void backToMainActivity(int result){
+        Intent intent = new Intent();
+        intent.putExtra("source","master");
+        setResult(result,intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fr_master_manager);
+
+        if (currentFragment instanceof MasterListFragment) {
+            backToMainActivity(RESULT_OK);
+        }else{
+            fragmentManager.popBackStack();
+        }
+    }
+
 }

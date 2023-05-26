@@ -98,7 +98,7 @@ public class PartyManagerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment currentFragment = fragmentManager.findFragmentById(R.id.Fr_characterManager);
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.fr_party_manager);
 
         if (currentFragment instanceof PartyListFragment) {
             backToMainActivity(RESULT_OK);

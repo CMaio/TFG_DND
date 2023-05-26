@@ -46,8 +46,8 @@ public class Character implements Parcelable{
     private int maxHitPoints;
     private int currentHitPoints;
 
-    private ArrayList<String> weapons;
-    private ArrayList<String> spells;
+    private ArrayList<Weapons> weaponEquipped;
+    private Spells spells;
     private ArrayList<String> equipment;
     private ArrayList<ProfLang> featuresAndTraits;
 
@@ -62,7 +62,7 @@ public class Character implements Parcelable{
                      int level, String gender, String pronoun, List<Integer> stats,
                      ArrayList<String> savingThrows, ArrayList<Skill> skills,
                      ArrayList<ProfLang> proficienciesAndLanguages, int speed, int quantityHitDice,
-                     int typeHitDice,ArrayList<ProfLang> traits) {
+                     int typeHitDice,ArrayList<ProfLang> traits,Spells spells) {
         this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = "";
@@ -87,8 +87,8 @@ public class Character implements Parcelable{
         this.typeHitDice = typeHitDice;
         this.maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
         this.currentHitPoints = this.maxHitPoints;
-        this.weapons = new ArrayList<String>();
-        this.spells = new ArrayList<String>();
+        this.weaponEquipped = new ArrayList<Weapons>();
+        this.spells = spells;
         this.equipment = new ArrayList<String>();
         this.featuresAndTraits = traits;
         this.money = 0;
@@ -101,7 +101,7 @@ public class Character implements Parcelable{
                       int profBonus,ArrayList<String> savingThrows, ArrayList<Skill> skills,
                       ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
-                      ArrayList<String> weapons, ArrayList<String> spells, ArrayList<String> equipment,
+                      ArrayList<Weapons> weapons, Spells spells, ArrayList<String> equipment,
                       ArrayList<ProfLang> featuresAndTraits, int money) {
         this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
@@ -126,7 +126,7 @@ public class Character implements Parcelable{
         this.typeHitDice = typeHitDice;
         this.maxHitPoints = maxHitPoints;
         this.currentHitPoints = currentHitPoints;
-        this.weapons = weapons;
+        this.weaponEquipped = weapons;
         this.spells = spells;
         this.equipment = equipment;
         this.featuresAndTraits = featuresAndTraits;
@@ -169,10 +169,9 @@ public class Character implements Parcelable{
         typeHitDice = in.readInt();
         maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
         currentHitPoints = in.readInt();
-        weapons = new ArrayList<>();
-        in.readList(weapons, String.class.getClassLoader());
-        spells = new ArrayList<>();
-        in.readList(spells, String.class.getClassLoader());
+        weaponEquipped = new ArrayList<>();
+        in.readList(weaponEquipped, Weapons.class.getClassLoader());
+        spells = in.readParcelable(Spells.class.getClassLoader());
         equipment = new ArrayList<>();
         in.readList(equipment, String.class.getClassLoader());
         featuresAndTraits = new ArrayList<>();
@@ -432,19 +431,19 @@ public class Character implements Parcelable{
         this.currentHitPoints = currentHitPoints;
     }
 
-    public ArrayList<String> getWeapons() {
-        return weapons;
+    public ArrayList<Weapons> getWeapons() {
+        return weaponEquipped;
     }
 
-    public void setWeapons(ArrayList<String> weapons) {
-        this.weapons = weapons;
+    public void setWeapons(ArrayList<Weapons> weapons) {
+        this.weaponEquipped = weapons;
     }
 
-    public ArrayList<String> getSpells() {
+    public Spells getSpells() {
         return spells;
     }
 
-    public void setSpells(ArrayList<String> spells) {
+    public void setSpells(Spells spells) {
         this.spells = spells;
     }
 
@@ -504,8 +503,8 @@ public class Character implements Parcelable{
         dest.writeInt(quantityHitDice);
         dest.writeInt(typeHitDice);
         dest.writeInt(currentHitPoints);
-        dest.writeList(weapons);
-        dest.writeList(spells);
+        dest.writeList(weaponEquipped);
+        dest.writeParcelable(spells,0);
         dest.writeList(equipment);
         dest.writeList(featuresAndTraits);
         dest.writeInt(money);

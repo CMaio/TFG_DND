@@ -48,6 +48,7 @@ import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.RCAInfo;
 import com.claudiomaiorana.tfg_dnd.model.Skill;
+import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterCharacters;
@@ -118,6 +119,13 @@ public class CharacterSheetFragment extends Fragment {
     ArrayList<ProfLang> proficienciesAndLanguages = new ArrayList<>();
     ArrayList<Skill> allSkillsPlayer = new ArrayList<>();
 
+
+    //Info needed for spells
+    JSONArray allSpellsClass = null;
+    ArrayList<JSONArray> allSpellsByLevel = new ArrayList<>();
+    ArrayList<Integer> spellsLevelQuantity = new ArrayList<>();
+    Spells spells;
+    int spellsKnownQuantity;
 
 
 
@@ -255,6 +263,7 @@ public class CharacterSheetFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(checkAlldataCorrect()){
+
                     indexStats = 0;
                     String stat = stats[indexStats];
 
@@ -288,18 +297,25 @@ public class CharacterSheetFragment extends Fragment {
 
         if(txt_level.getText().toString().equals("")){
             txt_level.setError(getResources().getString(R.string.errorNoLevelCharacter));
+            return false;
         }
 
         if(!(0< Integer.parseInt(txt_level.getText().toString()) && Integer.parseInt(txt_level.getText().toString())<21)){
             txt_level.setError(getResources().getString(R.string.errorNoCorrectLevelCharacter));
+            return false;
         }
 
 
 
+        if(genderSelected.equals("")){
+            btn_create.setError(getResources().getString(R.string.errorNoGenderCharacter));
+            return false;
+        }
+        if(pronounSelected.equals("")){
+            btn_create.setError(getResources().getString(R.string.errorNoPronounCharacter));
+            return false;
+        }
 
-
-        genderSelected = "";
-        pronounSelected = "";
         return true;
     }
 
@@ -316,8 +332,10 @@ public class CharacterSheetFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(parent.getItemAtPosition(position).toString().equals("Select gender...")){
                     genderSelected="";
+                    System.out.println("---------------------SelectGender");
                 }else{
                     genderSelected = parent.getItemAtPosition(position).toString();
+                    System.out.println("---------------------SelectGender + " +genderSelected );
                 }
 
             }
@@ -367,7 +385,7 @@ public class CharacterSheetFragment extends Fragment {
                         .into(profile_img);
             }catch (Exception e){
                 Glide.with(getContext())
-                        .load(R.drawable.avatar_background)
+                        .load(R.drawable.avatar_1)
                         .into(profile_img);
             }
 
@@ -606,6 +624,8 @@ public class CharacterSheetFragment extends Fragment {
                     popUp.dismiss();
                     createCharacter(finalSkills);
 
+
+
                 } else if (quantity>Integer.parseInt(quantityToChoose)) {
                     btn_selectSkills.setError("Solo puedes elegir "+quantityToChoose);
                     finalSkills.removeAll(finalSkills);
@@ -790,8 +810,11 @@ public class CharacterSheetFragment extends Fragment {
 
                     typeDice = chosenClass.getInt("hit_die");
 
-                    callPopUpStatsBonus("bonusStats");
-
+                    if(chosenClass.has("spells")){
+                        getSpells();
+                    }else{
+                        callPopUpStatsBonus("bonusStats");
+                    }
                 }catch (Exception e){}
             }
 
@@ -800,6 +823,66 @@ public class CharacterSheetFragment extends Fragment {
 
             }
         },getActivity());
+    }
+
+
+    private void getSpells(){
+        Util.apiGETRequest("classes/" + rcaInfoSaved[1].getCodeApiSearch() + "/spells", new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject){
+                try {
+                    allSpellsClass = jsonObject.getJSONArray("results");
+                    Util.apiGETRequest("classes/" + rcaInfoSaved[1].getCodeApiSearch() + "/levels/" + txt_level.getText().toString(), new ApiCallback() {
+                        @Override
+                        public void onSuccess(JSONObject jsonObject){
+                            try{
+                                //TODO: llenar list de integer para la cantidad que puede usar
+                                JSONObject spellCasting = jsonObject.getJSONObject("spellcasting");
+                                spellsLevelQuantity = new ArrayList<>();
+                                for (int i = 0; i < 10; i++) {
+                                    if (i == 0) {
+                                        if (spellCasting.has("cantrips_known")) {
+                                            spellsLevelQuantity.add(spellCasting.getInt("cantrips_known"));
+                                            if(spellCasting.has("spells_known")){
+                                                spellsKnownQuantity = spellCasting.getInt("spells_known");
+                                            }else{
+                                                spellsKnownQuantity = -1;
+                                            }
+                                        } else {
+                                            spellsLevelQuantity.add(-1);
+                                            spellsKnownQuantity = -1;
+                                        }
+                                    }else{
+                                        if(spellCasting.has("spell_slots_level_" + i)){
+                                            spellsLevelQuantity.add(spellCasting.getInt("spell_slots_level_" + i));
+                                        }else{
+                                            spellsLevelQuantity.add(-1);
+                                        }
+                                    }
+                                }
+
+                                addAllSpells(1, Integer.parseInt(txt_level.getText().toString()));
+                            }catch (Exception e){
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                        @Override
+                        public void onError(VolleyError error) {
+
+                        }
+                    },getActivity());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                callPopUpStatsBonus("bonusStats");
+            }
+        },getActivity());
+
     }
 
 
@@ -879,6 +962,36 @@ public class CharacterSheetFragment extends Fragment {
 
 
 
+    private void addAllSpells(int level,int finalLevel){
+        Util.apiGETRequest("spells?level=" + level, new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try{
+                    allSpellsByLevel.add(jsonObject.getJSONArray("results"));
+
+                    if(level == finalLevel){
+                        spells = new Spells(spellsLevelQuantity,allSpellsByLevel,allSpellsClass,spellsKnownQuantity);
+                        callPopUpStatsBonus("bonusStats");
+                    }else{
+                        int tmpLevel = level + 1;
+                        addAllSpells(tmpLevel,finalLevel);
+                    }
+                }catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+
+
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+    }
+
+
+
     void createCharacter(ArrayList<Skill> skillsResult) {
         int quantityHitDice = 1;
         int typeHitDice = typeDice;
@@ -889,33 +1002,40 @@ public class CharacterSheetFragment extends Fragment {
         Character character = new Character(User.getInstance(),txt_name.getText().toString(),"",
                 rcaInfoSaved,Integer.parseInt(txt_level.getText().toString()),genderSelected,
                 pronounSelected,Stats,dataSavingThrows,allSkillsPlayer,proficienciesAndLanguages,
-                speed,quantityHitDice,typeHitDice,dataTraitsChoices);
+                speed,quantityHitDice,typeHitDice,dataTraitsChoices,spells);
 
         StorageReference storageRef = dbStorage.getReference();
         String nameImage = "profileCharacter_" + character.getID() + ".jpg";
         StorageReference imageRef = storageRef.child("profileImages/" + nameImage);
 
-        character.setImgPlayerName("profileImages/" + nameImage);
-        Drawable drawable = profile_img.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        if(profile_img.getDrawable() != null){
+            character.setImgPlayerName("profileImages/" + nameImage);
+            Drawable drawable = profile_img.getDrawable();
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
 
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
 
-        imageRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                saveCharacter(character);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                character.setImgPlayerName("");
-                saveCharacter(character);
-            }
-        });
+            imageRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    saveCharacter(character);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    character.setImgPlayerName("");
+                    saveCharacter(character);
+                }
+            });
+        }else{
+            character.setImgPlayerName("");
+            saveCharacter(character);
+        }
+
+
 
 
     }

@@ -17,29 +17,30 @@
             android:layout_height="42dp"
             android:layout_marginStart="124dp"
             android:layout_marginTop="28dp"
-            android:text="TextView"
+            android:text="@string/hintClass"
+            android:gravity="center"
             app:layout_constraintStart_toEndOf="@+id/txv_raceSelected"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_classSelector"
-            android:layout_width="106dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="184dp"
+            android:layout_width="155dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="128dp"
             android:layout_marginTop="4dp"
-            android:text="Button"
+            android:text="@string/selectClass"
             app:layout_constraintStart_toEndOf="@+id/btn_raceSelector"
             app:layout_constraintTop_toBottomOf="@+id/txv_classSelected"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <Button
             android:id="@+id/btn_alignmentSelector"
-            android:layout_width="106dp"
-            android:layout_height="40dp"
+            android:layout_width="178dp"
+            android:layout_height="56dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="4dp"
-            android:text="Button"
-            app:layout_constraintStart_toEndOf="@+id/txt_nameSelector"
+            android:text="@string/selectAlign"
+            app:layout_constraintStart_toEndOf="@+id/img_character"
             app:layout_constraintTop_toBottomOf="@+id/txv_alignmentSelected"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
@@ -49,7 +50,8 @@
             android:layout_height="42dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="132dp"
-            android:text="TextView"
+            android:text="@string/hintAlign"
+            android:gravity="center"
             app:layout_constraintStart_toEndOf="@+id/img_character"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -92,11 +94,11 @@
 
         <Button
             android:id="@+id/btn_raceSelector"
-            android:layout_width="106dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="52dp"
+            android:layout_width="154dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="28dp"
             android:layout_marginTop="4dp"
-            android:text="Button"
+            android:text="@string/selectRace"
             app:layout_constraintStart_toEndOf="@+id/img_character"
             app:layout_constraintTop_toBottomOf="@+id/txv_raceSelected"
             tools:ignore="DuplicateSpeakableTextCheck" />
@@ -107,7 +109,8 @@
             android:layout_height="42dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="28dp"
-            android:text="TextView"
+            android:text="@string/hintRace"
+            android:gravity="center"
             app:layout_constraintStart_toEndOf="@+id/img_character"
             app:layout_constraintTop_toTopOf="parent" />
 

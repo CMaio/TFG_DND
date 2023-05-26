@@ -78,9 +78,6 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
         System.out.println("hola--------------------"+dataSet);
         adapter = new AdapterCharacters(dataSet, this, getActivity());
         rv_list.setAdapter(adapter);
-        //createUs();
-       /* Handler handler = new Handler();
-        handler.postDelayed(new CharacterListFragment.MyRunneable(this),100);*/
 
         return fragmentV;
     }
@@ -108,6 +105,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
                         }
                     });
         }else{
+
             db.collection("characters").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).
                     whereEqualTo("partyID","").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

@@ -14,5 +14,13 @@
         <!-- Customize your theme here. -->
         <item name="android:windowFullscreen">true</item>
 
+
+    </style>
+
+    <style name="ButtonCustom" parent="Widget.AppCompat.Button">
+        <!-- Propiedades adicionales personalizadas -->
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:src">@drawable/boton_personalizado</item>
+
     </style>
 </resources>

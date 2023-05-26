@@ -64,7 +64,6 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
                 break;
             case Constants.TYPE_FILLED:
                 Character current = data.get(position);
-                /*Glide.with(context).load(current.getUrlImagePreview()).into(holder.iv_image);*/ //para cargar la imagen
                 if(!current.getImgPlayerName().equals("")){
                     StorageReference storageRef = dbStorage.getReference();
                     String imageName = current.getImgPlayerName();

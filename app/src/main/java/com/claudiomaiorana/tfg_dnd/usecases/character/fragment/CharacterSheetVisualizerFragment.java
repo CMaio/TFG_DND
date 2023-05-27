@@ -118,6 +118,9 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
     private void AdapterSpells() {
         Map<String,Integer> spellsToAdd = new HashMap<>(mParam1.getSpells().getSpells());
         spellsToAdd.put("0Cantrips",mParam1.getSpells().getCantrips());
+        if(mParam1.getSpells().getSpells_known() > 0){
+            spellsToAdd.put("0Spells Known",mParam1.getSpells().getSpells_known());
+        }
         adapterSpellsQ = new AdapterSpellsQuantity(spellsToAdd, getActivity());
         rv_spQuantity.setAdapter(adapterSpellsQ);
 
@@ -125,7 +128,6 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         List<Spells.Spell> spells = new ArrayList<>();
         for(int i=0;i<tmpSpell.size();i++){
             List<Spells.Spell> spellsTMP = tmpSpell.get(Integer.toString(i));
-            System.out.println("--------- s"+spellsTMP);
             for(int j = 0;j<spellsTMP.size();j++){
                 spells.add(tmpSpell.get(Integer.toString(i)).get(j));
             }

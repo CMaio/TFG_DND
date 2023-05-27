@@ -41,16 +41,14 @@ public class AdapterSpellsQuantity extends RecyclerView.Adapter<AdapterSpellsQua
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(position == 0 ){
-            String key = keys.get(position);
-            int value = data.get(key);
+        String key = keys.get(position);
+        int value = data.get(key);
+        if(position == 0 || (position == 1 && key.equals("0Spells Known"))){
             key = key.substring(1);
             String text = key + ": "+value;
             holder.txt_LevelQuantity.setText(text);
         }else{
-            String key = keys.get(position);
-            int value = data.get(key);
-            String text = "Lvl " +key + ": "+value;
+            String text = "Lvl " + key + ": "+value;
             holder.txt_LevelQuantity.setText(text);
         }
 

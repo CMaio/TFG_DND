@@ -5,41 +5,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-public class Weapons implements Parcelable{
-    private String type;
-
-    private String name;
-    private String code;
+public class Weapons extends Item {
 
     private String damageDice;
 
-    private int armorBase;
 
-
-
-    public Weapons(String type, String name, String code, String damageDice) {
-        this.name = name;
-        this.type = type;
-        this.code = code;
+    public Weapons(String name, String code, String damageDice) {
+        super("weapons",name,code);
         this.damageDice = damageDice;
-        this.armorBase = -1;
 
     }
 
-    public Weapons(String type, String name, String code, int armorBase) {
-        this.name = name;
-        this.type = type;
-        this.code = code;
-        this.armorBase = armorBase;
-        this.damageDice = "";
-    }
-
-    protected Weapons(Parcel in) {
-        type = in.readString();
-        name = in.readString();
-        code = in.readString();
+    protected Weapons(Parcel in){
+        super(in);
         damageDice = in.readString();
-        armorBase = in.readInt();
     }
 
     public static final Creator<Weapons> CREATOR = new Creator<Weapons>() {
@@ -54,28 +33,10 @@ public class Weapons implements Parcelable{
         }
     };
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        super.writeToParcel(parcel, i);
+        parcel.writeString(damageDice);
     }
 
     public String getDamageDice() {
@@ -86,27 +47,6 @@ public class Weapons implements Parcelable{
         this.damageDice = damageDice;
     }
 
-    public int getArmorBase() {
-        return armorBase;
-    }
-
-    public void setArmorBase(int armorBase) {
-        this.armorBase = armorBase;
-    }
 
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(type);
-        parcel.writeString(name);
-        parcel.writeString(code);
-        parcel.writeString(damageDice);
-        parcel.writeInt(armorBase);
-    }
 }

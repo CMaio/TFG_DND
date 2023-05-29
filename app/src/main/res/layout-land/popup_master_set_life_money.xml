@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".usecases.character.fragment.CharacterSkillsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical|center"
+        android:gravity="center|top">
+
+        <TextView
+            android:id="@+id/txt_actualStat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addStat"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|center"
+            android:gravity="center|top">
+
+
+            <EditText
+                android:id="@+id/txt_numberToAdd"
+                android:layout_width="184dp"
+                android:layout_height="90dp"
+                android:layout_marginBottom="20dp"
+                android:ems="10"
+                android:gravity="center_horizontal"
+                android:inputType="number"
+                android:textSize="60sp" />
+
+            <Space
+                android:layout_width="23dp"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:id="@+id/sp_typeMoney"
+                android:layout_width="184dp"
+                android:layout_height="66dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|center"
+            android:gravity="center|top">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancelButton"
+                android:layout_marginBottom="5dp"/>
+
+            <Space
+                android:layout_width="23dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btn_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/acceptButton"
+                android:layout_marginBottom="5dp"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

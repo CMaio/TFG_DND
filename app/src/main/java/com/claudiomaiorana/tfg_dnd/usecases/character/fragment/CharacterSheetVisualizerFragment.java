@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
@@ -52,9 +53,9 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
     private Bitmap mParam2;
 
     private RecyclerView rv_spells,rv_abilities,rv_objects,rv_spQuantity;
-    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_gold_game,txt_life_game,txt_sheathed_unsheathed;
+    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_life_game;
     private ImageView img_character_game;
-    private Button btn_goHome;
+    private Button btn_goHome,btn_gold_game;
 
 
     private AdapterSpellsQuantity adapterSpellsQ;
@@ -106,6 +107,14 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
 
 
         ((CharacterManagerActivity)getActivity()).changeLoadingVisibility(View.INVISIBLE);
+
+        btn_gold_game.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPopUpGold();
+            }
+        });
+
         btn_goHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,6 +123,32 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         });
         return v;
     }
+
+    private void openPopUpGold() {
+        Button btn_okay;
+        TextView showGold;
+        View v = getLayoutInflater().inflate(R.layout.popup_game_player_show_gold, null);
+
+        btn_okay = v.findViewById(R.id.txt_showMoney);
+        showGold = v.findViewById(R.id.btn_okayMoney);
+        String actualMoney = "pp:" + mParam1.getMoneyPlatinum() + ", gp:"+ mParam1.getMoneyGold() + ", sp:"+ mParam1.getMoneySilver() + ", cp:"+mParam1.getMoneyCopper();
+        showGold.setText(actualMoney);
+
+        PopUpCustom popUp = new PopUpCustom(v);
+        popUp.show(getParentFragmentManager(), "showMoney");
+        popUp.setCancelable(false);
+
+
+        btn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUp.dismiss();
+            }
+        });
+
+
+    }
+
 
     private void AdapterSpells() {
         Map<String,Integer> spellsToAdd = new HashMap<>(mParam1.getSpells().getSpells());
@@ -138,7 +173,7 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         adapterAbilities = new AdapterAbilities(mParam1.getFeaturesAndTraits(), getActivity(),this);
         rv_abilities.setAdapter(adapterAbilities);
 
-        adapterObjects = new AdapterObjects(mParam1.getEquipment(), getActivity(),this);
+        adapterObjects = new AdapterObjects(mParam1.getItems(), getActivity(),this);
         rv_objects.setAdapter(adapterObjects);
     }
 
@@ -149,7 +184,8 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         rtv_level_game.setText(Integer.toString(mParam1.getLevel()));
         rtv_race_game.setText(mParam1.getRace());
         rtv_class_game.setText(mParam1.getClassPlayer());
-        txt_gold_game.setText(Integer.toString(mParam1.getMoney()));
+        //TODO: popup con mondeas
+        //txt_gold_game.setText(Integer.toString(mParam1.getMoney()));
         txt_life_game.setText(Integer.toString(mParam1.getCurrentHitPoints()));
         if(mParam2 != null){
             Drawable drawable = new BitmapDrawable(getResources(), mParam2);
@@ -184,9 +220,8 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         rtv_level_game = v.findViewById(R.id.rtv_level_character);
         rtv_race_game = v.findViewById(R.id.rtv_race_character);
         rtv_class_game = v.findViewById(R.id.rtv_class_character);
-        txt_gold_game = v.findViewById(R.id.txt_gold_character);
+        btn_gold_game = v.findViewById(R.id.btn_gold_character);
         txt_life_game = v.findViewById(R.id.txt_life_character);
-        txt_sheathed_unsheathed = v.findViewById(R.id.txt_sheathed_unsheathed_character);
 
         img_character_game = v.findViewById(R.id.img_character_character);
 
@@ -225,7 +260,7 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
     }
 
     @Override
-    public void onItemClick(String nameObject) {
-        Toast.makeText(getContext(), nameObject, Toast.LENGTH_LONG).show();
+    public void onItemClick(Item nameObject) {
+        Toast.makeText(getContext(), nameObject.getName(), Toast.LENGTH_LONG).show();
     }
 }

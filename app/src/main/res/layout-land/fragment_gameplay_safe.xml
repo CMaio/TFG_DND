@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0000"
     tools:context=".usecases.game.fragments.GameplaySafeFragment">
 
     <LinearLayout
@@ -52,6 +51,7 @@
                             android:id="@+id/rtv_name_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
                             android:text="INGREDEINTS" />
 
                         <TextView
@@ -59,12 +59,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+
                             android:text="NAME" />
                         <TextView
                             android:id="@+id/rtv_gender_game"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
+                            android:layout_marginRight="5dp"
+
                             android:text="NAME" />
                     </LinearLayout>
 
@@ -81,6 +85,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginRight="5dp"
                             android:text="TextView" />
 
                         <TextView
@@ -88,6 +93,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:layout_marginRight="5dp"
                             android:text="TextView" />
 
                         <TextView
@@ -116,19 +122,19 @@
                     android:orientation="vertical"
                     android:layout_margin = "5dp">
 
-                    <TextView
+                    <Button
                         android:id="@+id/txt_gold_game"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="TextView"
+                        android:foreground="@drawable/btn_money_foreground"
                         android:gravity="center"/>
 
                     <Button
                         android:id="@+id/btn_sheathed_unsheathed"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Button"
+                        android:foreground="@drawable/sword_off"
                         android:layout_weight="1"/>
                 </LinearLayout>
 
@@ -147,6 +153,9 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="2"
+                    android:foreground="@drawable/btn_home_foreground"
+                    android:foregroundGravity="center"
+                    android:scaleType="center"
                     tools:ignore="SpeakableTextPresentCheck" />
 
                </LinearLayout>

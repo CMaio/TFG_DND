@@ -22,6 +22,8 @@
     <string name="createNewParty">Acceder a una nueva party</string>
     <string name="cancelButton">Cancelar</string>
     <string name="continueButton">Continuar</string>
+    <string name="acceptButton">Acceptar</string>
+
     <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
     <string name="errorStat">Tienes que escribir un numero entre 1 y 20</string>
     <string name="quantitySkills">Puedes elegir <b>@numToCh@</b> habilidades entre estas.</string>
@@ -77,6 +79,58 @@
     <string name="hintAlign">Alineamiento no seleccionado</string>
 
     <string name="cantrips">Trucos</string>
+
+    <string name="switchBattleButton">Cambiar a pelea</string>
+
+    <string name="giveMoneyToPlayer">Dinero actual: <b>@mon3y@</b>\n, cuanto dinero quieres dar</string>
+    <string name="takeMoneyFromPlayer">Dinero actual: <b>@mon3y@</b>\n, cuanto dinero quieres quitar</string>
+    <string name="giveHealthToPlayer">Vida actual: <b>@mon3y@</b>\n, cuanta vida quieres dar</string>
+    <string name="takeHealthToPlayer">Vida actual: <b>@mon3y@</b>\n, cuanta vida quieres quitar</string>
+    <string name="ErrorValueToPlayer">El valor tiene que ser por encima de 0</string>
+    <string name="errorNotypeCoin">Select tipo de moneda</string>
+
+    <string name="itemToPlayer">Selecciona los items que quieres darle al personaje</string>
+    <string name="itemFromPlayer">Selecciona los items que quieres eliminar del personaje</string>
+
+    <string name="typeNewItem">Selecciona el nuevo tipo de item</string>
+    <string name="errorNotypeItem">Selecciona el tipo de item</string>
+
+    <string name="errorNoItemFill">Rellena todos los espacios</string>
+
+    <string name="hintForWeapon">Añade dados de daño</string>
+    <string name="hintForUsable">Añade pequeña descripción</string>
+    <string name="hintForShieldArmor">Añade armadura base</string>
+
+    <string name="nameItem">Nombre: </string>
+    <string name="elementWeaponItem">Dados de daño: </string>
+    <string name="elementUsableItem">Descripción: </string>
+    <string name="elementShieldArmorItem">Armadura base: </string>
+
+    <string name="typeElementTittle">Item de tipo: @it3m@</string>
+    <string name="addHitDice">Añade dado de daño aqui...</string>
+    <string name="newEnemy">Creando enemigo</string>
+
+    <string name="addNewAttack">Añade nuevo ataque</string>
+    <string name="addNewfeature">Añade nuevo rasgo</string>
+    <string name="addSpeed">Añade la velocidad aqui...</string>
+    <string name="addmaxHitPoints">Añade puntos de golpe aqui...</string>
+    <string name="addarmorClassEnemy">Añade armadura aqui...</string>
+
+    <string name="btnCreateEnemy">Crear enemigo</string>
+
+    <string name="createAttack">Creando un ataque</string>
+    <string name="nameAttack">Añade un nombre para el ataque...</string>
+    <string name="hitAttack">Añade un dado de golpe...</string>
+    <string name="createFeature">Creando un rasgo</string>
+    <string name="nameFeature">Añade un nombre para el rasgo...</string>
+
+    <string name="actualMoney">Dinero actual</string>
+    <string name="money">Dinero</string>
+
+
+
+
+
 
 
     <string-array name="racesName">
@@ -210,5 +264,29 @@
         <item>Primordial</item>
         <item>Silvano</item>
         <item>Subcomún</item>
+    </string-array>
+
+    <string-array name="moneyType">
+        <item>Selecciona moneda...</item>
+        <item>pp</item>
+        <item>gp</item>
+        <item>sp</item>
+        <item>cp</item>
+    </string-array>
+
+    <string-array name="itemType">
+        <item>Select type...</item>
+        <item>Weapon</item>
+        <item>Usable</item>
+        <item>Shield</item>
+        <item>Armor</item>
+    </string-array>
+
+    <string-array name="itemTypeName">
+        <item>Select type...</item>
+        <item>Arma</item>
+        <item>Usable</item>
+        <item>Escudo</item>
+        <item>Armadura</item>
     </string-array>
 </resources>

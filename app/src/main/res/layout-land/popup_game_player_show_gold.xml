@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+
+    <TextView
+        android:id="@+id/tittleCreateAttack"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center"
+        android:text="@string/actualMoney"
+        android:textSize="24sp"/>
+
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="18dp"
+        android:layout_weight="1" />
+    <TextView
+        android:id="@+id/txt_showMoney"
+        android:layout_width="264dp"
+        android:layout_height="60dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/nameFeature"
+        android:gravity="center"/>
+
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="25dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <Button
+            android:id="@+id/btn_okayMoney"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/acceptButton" />
+
+    </LinearLayout>
+</LinearLayout>

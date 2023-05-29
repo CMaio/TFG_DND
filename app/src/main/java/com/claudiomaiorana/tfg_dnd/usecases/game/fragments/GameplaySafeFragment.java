@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
+import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.Spells;
@@ -30,11 +32,13 @@ import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpellsQuan
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterItemsGame;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterSpellsGame;
+import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -50,20 +54,23 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     private String partyCode;
 
     private RecyclerView rv_spells,rv_abilities,rv_objects,rv_spQuantity;
-    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_gold_game,txt_life_game;
+    private TextView rtv_name_game,rtv_pronoun_game,rtv_gender_game,rtv_level_game,rtv_race_game,rtv_class_game,txt_life_game;
     private ImageView img_character_game;
-    private Button btn_sheathed_unsheathed,btn_goHome;
+    private Button btn_sheathed_unsheathed,btn_goHome,btn_gold_game;
 
     Party party;
     Character character;
 
     private FirebaseFirestore db;
     FirebaseStorage dbStorage = FirebaseStorage.getInstance();
+    private ListenerRegistration listenerRegistration;
+
 
     private AdapterSpellsQuantity adapterSpellsQ;
     private AdapterSpellsGame adapterSpells;
     private AdapterAbilities adapterAbilities;
     private AdapterItemsGame adapterItems;
+
     public GameplaySafeFragment() {}
 
     public static GameplaySafeFragment newInstance(String party) {
@@ -85,6 +92,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //TODO:Equipar armas
         View v = inflater.inflate(R.layout.fragment_gameplay_safe, container, false);
         db = FirebaseFirestore.getInstance();
         setElements(v);
@@ -108,9 +116,17 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         btn_sheathed_unsheathed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                btn_sheathed_unsheathed.setForeground(btn_sheathed_unsheathed.getForeground().equals(ContextCompat.getDrawable(getActivity(), R.drawable.sword)) ? ContextCompat.getDrawable(getActivity(), R.drawable.sword_off) : ContextCompat.getDrawable(getActivity(), R.drawable.sword));
             }
         });
+
+        btn_gold_game.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openPopUpGold();
+            }
+        });
+
 
         btn_goHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +136,51 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         });
         return v;
     }
+
+    private void openPopUpGold() {
+        Button btn_okay;
+        TextView showGold;
+        View v = getLayoutInflater().inflate(R.layout.popup_game_player_show_gold, null);
+
+        btn_okay = v.findViewById(R.id.txt_showMoney);
+        showGold = v.findViewById(R.id.btn_okayMoney);
+        String actualMoney = "pp:" + character.getMoneyPlatinum() + ", gp:"+ character.getMoneyGold() + ", sp:"+ character.getMoneySilver() + ", cp:"+character.getMoneyCopper();
+        showGold.setText(actualMoney);
+
+        PopUpCustom popUp = new PopUpCustom(v);
+        popUp.show(getParentFragmentManager(), "showMoney");
+        popUp.setCancelable(false);
+
+
+        btn_okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUp.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        listenerRegistration = db.collection("parties")
+                .document(partyCode)
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        return;
+                    }
+                    party = documentSnapshot.toObject(Party.class);
+                    ArrayList<Character> characters = party.getPlayers();
+                    for (Character charact: characters) {
+                        if(charact.getUserID().equals(User.getInstance().getId())){
+                            character = charact;
+                        }
+                    }
+                });
+    }
+
+
 
     private void getParty() {
         db.collection("parties").document(partyCode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -133,6 +194,8 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                             character = charact;
                         }
                     }
+                    setCharacterScreen();
+                    AdapterSpells();
                 }
             }
         });
@@ -145,7 +208,8 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         rtv_level_game.setText(character.getLevel());
         rtv_race_game.setText(character.getRace());
         rtv_class_game.setText(character.getClassPlayer());
-        txt_gold_game.setText(character.getMoney());
+        //TODO:Popup con monedas
+        //txt_gold_game.setText(character.getMoney());
         txt_life_game.setText(character.getCurrentHitPoints());
 
     }
@@ -179,11 +243,11 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         rtv_level_game = v.findViewById(R.id.rtv_level_game);
         rtv_race_game = v.findViewById(R.id.rtv_race_game);
         rtv_class_game = v.findViewById(R.id.rtv_class_game);
-        txt_gold_game = v.findViewById(R.id.txt_gold_game);
         txt_life_game = v.findViewById(R.id.txt_life_game);
 
         img_character_game = v.findViewById(R.id.img_character_game);
 
+        btn_gold_game = v.findViewById(R.id.txt_gold_game);
         btn_sheathed_unsheathed = v.findViewById(R.id.btn_sheathed_unsheathed);
         btn_goHome = v.findViewById(R.id.btn_goHome);
     }
@@ -211,7 +275,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         adapterAbilities = new AdapterAbilities(character.getFeaturesAndTraits(), getActivity(),this);
         rv_abilities.setAdapter(adapterAbilities);
 
-        adapterItems = new AdapterItemsGame(character.getEquipment(), getActivity(),this);
+        adapterItems = new AdapterItemsGame(character.getItems(), getActivity(),this);
         rv_objects.setAdapter(adapterItems);
     }
 
@@ -231,7 +295,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     }
 
     @Override
-    public void onItemClick(String nameObject) {
+    public void onItemClick(Item nameObject) {
 
     }
 }

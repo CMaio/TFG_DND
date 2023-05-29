@@ -10,17 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
+import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterObjects;
 
 import java.util.ArrayList;
 
 public class AdapterItemsGame extends RecyclerView.Adapter<AdapterItemsGame.ViewHolder> {
 
-    private ArrayList<String> data;
+    private ArrayList<Item> data;
     private Context context;
     private OnItemClickListener listener;
 
-    public AdapterItemsGame(ArrayList<String> data, Context context, OnItemClickListener listener) {
+    public AdapterItemsGame(ArrayList<Item> data, Context context, OnItemClickListener listener) {
         this.data = data;
         this.context = context;
         this.listener = listener;
@@ -36,8 +37,8 @@ public class AdapterItemsGame extends RecyclerView.Adapter<AdapterItemsGame.View
 
     @Override
     public void onBindViewHolder(@NonNull AdapterItemsGame.ViewHolder holder, int position) {
-        String nameObject = data.get(position);
-        holder.txt_LevelQuantity.setText(nameObject);
+        Item nameObject = data.get(position);
+        holder.txt_LevelQuantity.setText(nameObject.getName());
 
     }
 
@@ -64,7 +65,7 @@ public class AdapterItemsGame extends RecyclerView.Adapter<AdapterItemsGame.View
     }
 
     public interface OnItemClickListener {
-        void onItemClick(String nameObject);
+        void onItemClick(Item nameObject);
     }
 }
 

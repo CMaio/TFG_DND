@@ -1,4 +1,4 @@
-package com.claudiomaiorana.tfg_dnd.usecases.character.adapters;
+package com.claudiomaiorana.tfg_dnd.usecases.master.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,18 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Item;
-import com.claudiomaiorana.tfg_dnd.model.Spells;
+import com.claudiomaiorana.tfg_dnd.model.Character;
 
 import java.util.ArrayList;
 
-public class AdapterObjects extends RecyclerView.Adapter<AdapterObjects.ViewHolder> {
+public class AdapterPlayers extends RecyclerView.Adapter<AdapterPlayers.ViewHolder>{
 
-    private ArrayList<Item> data;
+    private ArrayList<Character> data;
     private Context context;
     private OnItemClickListener listener;
 
-    public AdapterObjects(ArrayList<Item> data, Context context, OnItemClickListener listener) {
+    public AdapterPlayers(ArrayList<Character> data, Context context, OnItemClickListener listener) {
         this.data = data;
         this.context = context;
         this.listener = listener;
@@ -30,16 +29,15 @@ public class AdapterObjects extends RecyclerView.Adapter<AdapterObjects.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_quantity_spell,parent,false);
-
-        return new AdapterObjects.ViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_player_master_gameplay,parent,false);
+        return new AdapterPlayers.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Item objectItem = data.get(position);
-        holder.txt_LevelQuantity.setText(objectItem.getName());
-
+        Character character = data.get(position);
+        holder.txt_name.setText(character.getName());
+        holder.txt_Life.setText(Integer.toString(character.getCurrentHitPoints()));
     }
 
     @Override
@@ -48,23 +46,24 @@ public class AdapterObjects extends RecyclerView.Adapter<AdapterObjects.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView txt_LevelQuantity;
+        TextView txt_name;
+        TextView txt_Life;
 
-
+        //TODO:Incluir todos los elementos de una fila
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txt_LevelQuantity = itemView.findViewById(R.id.rw_qt_spell);
+            txt_name = itemView.findViewById(R.id.rw_namePlayer_master_gameplay);
+            txt_Life = itemView.findViewById(R.id.rw_life_master_gameplay);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
-
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Item nameObject);
+        void onItemClick(Character character);
     }
 }

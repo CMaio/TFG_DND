@@ -114,12 +114,12 @@
                     android:orientation="vertical"
                     android:layout_margin = "5dp">
 
-                    <TextView
-                        android:id="@+id/txt_gold_character"
+                    <Button
+                        android:id="@+id/btn_gold_character"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="TextView"
+                        android:foreground="@drawable/btn_money_foreground"
                         android:gravity="center"/>
 
                     <TextView
@@ -127,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="TextView"
+                        android:foreground="@drawable/sword_off"
                         android:gravity="center"/>
 
 
@@ -148,6 +148,9 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="2"
+                    android:foreground="@drawable/btn_home_foreground"
+                    android:foregroundGravity="center"
+                    android:scaleType="center"
                     tools:ignore="SpeakableTextPresentCheck" />
 
             </LinearLayout>

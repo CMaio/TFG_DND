@@ -30,7 +30,6 @@ import java.util.List;
 public class MasterWaitingFragment extends Fragment {
     private ListenerRegistration listenerRegistration;
     private FirebaseFirestore db;
-    private String partyCodeParam;
     private Party party;
 
 
@@ -121,7 +120,6 @@ public class MasterWaitingFragment extends Fragment {
     }
 
     private void getParty(){
-        System.out.println(partyCodeParam +" -------------------------------------------------" );
         db.collection("parties").document(code).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

@@ -46,12 +46,15 @@ public class Character implements Parcelable{
     private int maxHitPoints;
     private int currentHitPoints;
 
-    private ArrayList<Weapons> weaponEquipped;
+    private ArrayList<Item> weaponEquipped;
+    private ArrayList<Item> items;
     private Spells spells;
-    private ArrayList<String> equipment;
     private ArrayList<ProfLang> featuresAndTraits;
 
-    private int money;
+    private int moneyPlatinum;
+    private int moneyGold;
+    private int moneySilver;
+    private int moneyCopper;
 
     //Se necesita
     public Character() {
@@ -87,11 +90,14 @@ public class Character implements Parcelable{
         this.typeHitDice = typeHitDice;
         this.maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
         this.currentHitPoints = this.maxHitPoints;
-        this.weaponEquipped = new ArrayList<Weapons>();
+        this.weaponEquipped = new ArrayList<Item>();
         this.spells = spells;
-        this.equipment = new ArrayList<String>();
+        this.items = new ArrayList<Item>();
         this.featuresAndTraits = traits;
-        this.money = 0;
+        this.moneyPlatinum = 0;
+        this.moneyGold = 0;
+        this.moneySilver = 0;
+        this.moneyCopper = 0;
 
     }
 
@@ -101,8 +107,9 @@ public class Character implements Parcelable{
                       int profBonus,ArrayList<String> savingThrows, ArrayList<Skill> skills,
                       ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
-                      ArrayList<Weapons> weapons, Spells spells, ArrayList<String> equipment,
-                      ArrayList<ProfLang> featuresAndTraits, int money) {
+                      ArrayList<Item> weapons, Spells spells, ArrayList<Item> equipment,
+                      ArrayList<ProfLang> featuresAndTraits, int moneyPlatinum,int moneyGold,int moneySilver,
+                      int moneyCopper) {
         this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = partyID;
@@ -128,9 +135,12 @@ public class Character implements Parcelable{
         this.currentHitPoints = currentHitPoints;
         this.weaponEquipped = weapons;
         this.spells = spells;
-        this.equipment = equipment;
+        this.items = equipment;
         this.featuresAndTraits = featuresAndTraits;
-        this.money = money;
+        this.moneyPlatinum = moneyPlatinum;
+        this.moneyGold = moneyGold;
+        this.moneySilver = moneySilver;
+        this.moneyCopper = moneyCopper;
     }
 
     private Character(Parcel in) {
@@ -170,13 +180,16 @@ public class Character implements Parcelable{
         maxHitPoints = typeHitDice + stats_mod.get(Constants.STAT_CON);
         currentHitPoints = in.readInt();
         weaponEquipped = new ArrayList<>();
-        in.readList(weaponEquipped, Weapons.class.getClassLoader());
+        in.readList(weaponEquipped, Item.class.getClassLoader());
         spells = in.readParcelable(Spells.class.getClassLoader());
-        equipment = new ArrayList<>();
-        in.readList(equipment, String.class.getClassLoader());
+        items = new ArrayList<>();
+        in.readList(items, Item.class.getClassLoader());
         featuresAndTraits = new ArrayList<>();
         in.readList(featuresAndTraits, ProfLang.class.getClassLoader());
-        money = in.readInt();
+        moneyPlatinum = in.readInt();
+        moneyGold = in.readInt();
+        moneySilver = in.readInt();
+        moneyCopper = in.readInt();
     }
 
     private void saveRCAInfo(RCAInfo[] rcaInfo) {
@@ -431,14 +444,6 @@ public class Character implements Parcelable{
         this.currentHitPoints = currentHitPoints;
     }
 
-    public ArrayList<Weapons> getWeapons() {
-        return weaponEquipped;
-    }
-
-    public void setWeapons(ArrayList<Weapons> weapons) {
-        this.weaponEquipped = weapons;
-    }
-
     public Spells getSpells() {
         return spells;
     }
@@ -447,12 +452,12 @@ public class Character implements Parcelable{
         this.spells = spells;
     }
 
-    public ArrayList<String> getEquipment() {
-        return equipment;
+    public ArrayList<Item> getItems() {
+        return items;
     }
 
-    public void setEquipment(ArrayList<String> equipment) {
-        this.equipment = equipment;
+    public void setItems(ArrayList<Item> items) {
+        this.items = items;
     }
 
     public ArrayList<ProfLang> getFeaturesAndTraits() {
@@ -463,14 +468,44 @@ public class Character implements Parcelable{
         this.featuresAndTraits = featuresAndTraits;
     }
 
-
-
-    public int getMoney() {
-        return money;
+    public ArrayList<Item> getWeaponEquipped() {
+        return weaponEquipped;
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void setWeaponEquipped(ArrayList<Item> weaponEquipped) {
+        this.weaponEquipped = weaponEquipped;
+    }
+
+    public int getMoneyPlatinum() {
+        return moneyPlatinum;
+    }
+
+    public void setMoneyPlatinum(int moneyPlatinum) {
+        this.moneyPlatinum = moneyPlatinum;
+    }
+
+    public int getMoneyGold() {
+        return moneyGold;
+    }
+
+    public void setMoneyGold(int moneyGold) {
+        this.moneyGold = moneyGold;
+    }
+
+    public int getMoneySilver() {
+        return moneySilver;
+    }
+
+    public void setMoneySilver(int moneySilver) {
+        this.moneySilver = moneySilver;
+    }
+
+    public int getMoneyCopper() {
+        return moneyCopper;
+    }
+
+    public void setMoneyCopper(int moneyCopper) {
+        this.moneyCopper = moneyCopper;
     }
 
     @Override
@@ -505,11 +540,57 @@ public class Character implements Parcelable{
         dest.writeInt(currentHitPoints);
         dest.writeList(weaponEquipped);
         dest.writeParcelable(spells,0);
-        dest.writeList(equipment);
+        dest.writeList(items);
         dest.writeList(featuresAndTraits);
-        dest.writeInt(money);
+        dest.writeInt(moneyPlatinum);
+        dest.writeInt(moneyGold);
+        dest.writeInt(moneySilver);
+        dest.writeInt(moneyCopper);
     }
 
+
+    public void addMoney(int copper, int silver, int gold, int platinum) {
+        this.moneyPlatinum += platinum;
+        this.moneyGold += gold;
+        this.moneySilver += silver;
+        this.moneyCopper += copper;
+        while (this.moneyCopper >= 100) {
+            this.moneyCopper -= 100;
+            this.moneySilver += 1;
+        }
+
+        while (this.moneySilver >= 100) {
+            this.moneySilver -= 100;
+            this.moneyGold += 100;
+        }
+
+        while (this.moneyGold >= 100) {
+            this.moneyGold -= 10;
+            this.moneyPlatinum += 1;
+        }
+    }
+
+    public void subtractMoney(int copper, int silver, int gold, int platinum) {
+        this.moneyPlatinum -= platinum;
+        this.moneyGold -= gold;
+        this.moneySilver -= silver;
+        this.moneyCopper -= copper;
+
+        while (this.moneyCopper < 0 && this.moneySilver > 0) {
+            this.moneyCopper += 100;
+            this.moneySilver -= 1;
+        }
+
+        while (this.moneySilver < 0 && this.moneyGold > 0) {
+            this.moneySilver += 10;
+            this.moneyGold -= 1;
+        }
+
+        while (this.moneyGold < 0 && this.moneyPlatinum > 0) {
+            this.moneyGold += 10;
+            this.moneyPlatinum -= 1;
+        }
+    }
 
 
     public static final Parcelable.Creator<Character> CREATOR = new Parcelable.Creator<Character>() {

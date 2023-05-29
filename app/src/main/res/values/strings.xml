@@ -21,6 +21,7 @@
     <string name="createNewParty">Access to a new party</string>
     <string name="cancelButton">Cancel</string>
     <string name="continueButton">Continue</string>
+    <string name="acceptButton">Accept</string>
     <string name="addStat">Throw a D20 \nand write the result for the <b>@sTat@</b> stat.</string>
     <string name="errorStat">You need to add a number between 1 and 20</string>
     <string name="quantitySkills">You can choose <b>@numToCh@</b> skill/s between this ones.</string>
@@ -77,6 +78,50 @@
     <string name="hintAlign">No alignment selected</string>
 
     <string name="cantrips">Cantrips</string>
+    <string name="switchBattleButton">Switch to battle</string>
+
+    <string name="giveMoneyToPlayer">Actual money: <b>@mon3y@</b>\n, how much money do you want to give </string>
+    <string name="takeMoneyFromPlayer">Actual money: <b>@mon3y@</b>\n, how much money do you want to take </string>
+    <string name="giveHealthToPlayer">Actual life: <b>@mon3y@</b>\n, how much life do you want to give </string>
+    <string name="takeHealthToPlayer">Actual life: <b>@mon3y@</b>\n, how much life do you want to take </string>
+    <string name="itemToPlayer">Select items you want to give to the character</string>
+    <string name="itemFromPlayer">Select items you want to remove from the character</string>
+
+    <string name="ErrorValueToPlayer">The value has to be higher than 0</string>
+    <string name="errorNotypeCoin">Select type of coin</string>
+
+    <string name="typeNewItem">Select type of item</string>
+    <string name="errorNotypeItem">Select type of item</string>
+
+    <string name="errorNoItemFill">Fill all the gaps</string>
+    <string name="hintForWeapon">Add damage dice</string>
+    <string name="hintForUsable">Add short description</string>
+    <string name="hintForShieldArmor">Add base armor</string>
+    <string name="nameItem">Name: </string>
+    <string name="elementWeaponItem">Damage dice: </string>
+    <string name="elementUsableItem">Description: </string>
+    <string name="elementShieldArmorItem">Base armor: </string>
+
+    <string name="typeElementTittle">Item of type: @it3m@</string>
+    <string name="addHitDice">Add hit dice here...</string>
+    <string name="newEnemy">Creating enemy</string>
+    <string name="addNewAttack">Add new attack</string>
+    <string name="addNewfeature">Add new feature</string>
+    <string name="addSpeed">Add speed here...</string>
+    <string name="addmaxHitPoints">Add hit points here...</string>
+    <string name="addarmorClassEnemy">Add armor here...</string>
+    <string name="btnCreateEnemy">Create enemy</string>
+
+    <string name="createAttack">Creating an attack</string>
+    <string name="nameAttack">Add a name for the attack...</string>
+    <string name="hitAttack">Add hit dice...</string>
+    <string name="createFeature">Creating a feature</string>
+    <string name="nameFeature">Add a name for the feature...</string>
+    <string name="actualMoney">Actual money</string>
+    <string name="money">Money</string>
+
+
+
 
 
     <string-array name="racesName">
@@ -207,5 +252,28 @@
         <item>Primordial</item>
         <item>Sylvan</item>
         <item>Undercommon</item>
+    </string-array>
+
+    <string-array name="moneyType">
+        <item>Select coin...</item>
+        <item>pp</item>
+        <item>gp</item>
+        <item>sp</item>
+        <item>cp</item>
+    </string-array>
+
+    <string-array name="itemType">
+        <item>Select type...</item>
+        <item>Weapon</item>
+        <item>Usable</item>
+        <item>Shield</item>
+        <item>Armor</item>
+    </string-array>
+    <string-array name="itemTypeName">
+        <item>Select type...</item>
+        <item>Weapon</item>
+        <item>Usable</item>
+        <item>Shield</item>
+        <item>Armor</item>
     </string-array>
 </resources>

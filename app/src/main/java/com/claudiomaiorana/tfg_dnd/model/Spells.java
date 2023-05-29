@@ -36,7 +36,7 @@ public class Spells implements Parcelable {
 
     }
 
-    private void addSpellsName(ArrayList<JSONArray> spellsAllLevels,JSONArray spellsClass) throws JSONException {
+    public void addSpellsName(ArrayList<JSONArray> spellsAllLevels,JSONArray spellsClass) throws JSONException {
         //TODO poner todos los hechizos bien, esto esta mal hay que poner solo los que esten en el otro array spellClass
         for(int i = 0; i<spellsAllLevels.size();i++){
             JSONArray spellsOfLevel = spellsAllLevels.get(i);

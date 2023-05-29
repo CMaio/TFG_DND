@@ -21,15 +21,20 @@ import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Item;
+import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
+import com.claudiomaiorana.tfg_dnd.model.Skill;
 import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
+import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterAbilities;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterObjects;
+import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSkills;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpells;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpellsQuantity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEquipment;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterItemsGame;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterSpellsGame;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
@@ -47,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.OnItemClickListener, AdapterAbilities.OnItemClickListener, AdapterItemsGame.OnItemClickListener {
+public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.OnItemClickListener{
 
     private static final String ARG_PARAM1 = "param1";
 
@@ -116,7 +121,8 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         btn_sheathed_unsheathed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btn_sheathed_unsheathed.setForeground(btn_sheathed_unsheathed.getForeground().equals(ContextCompat.getDrawable(getActivity(), R.drawable.sword)) ? ContextCompat.getDrawable(getActivity(), R.drawable.sword_off) : ContextCompat.getDrawable(getActivity(), R.drawable.sword));
+                //btn_sheathed_unsheathed.setForeground(btn_sheathed_unsheathed.getForeground().equals(ContextCompat.getDrawable(getActivity(), R.drawable.sword)) ? ContextCompat.getDrawable(getActivity(), R.drawable.sword_off) : ContextCompat.getDrawable(getActivity(), R.drawable.sword));
+                openPopUpEquipment();
             }
         });
 
@@ -158,6 +164,105 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                 popUp.dismiss();
             }
         });
+    }
+
+    private void openPopUpEquipment() {
+
+        Button btn_selectItems;
+        RecyclerView rv;
+        AdapterEquipment adapter;
+        View v = getLayoutInflater().inflate(R.layout.popup_gameplay_select_equipment, null);
+
+        rv = v.findViewById(R.id.rv_itemsSelector);
+        btn_selectItems = v.findViewById(R.id.btn_continueItems);
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
+        rv.setLayoutManager(layoutManager);
+
+        ArrayList<OptionsCharacter> dataSetSkills = takeAllToSelect();
+        adapter = new AdapterEquipment(dataSetSkills, getActivity());
+        rv.setAdapter(adapter);
+
+
+        PopUpCustom popUp = new PopUpCustom(v);
+        popUp.show(getParentFragmentManager(), "showEquipment");
+        popUp.setCancelable(false);
+
+
+        btn_selectItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btn_selectItems.setError(null);
+                ArrayList<OptionsCharacter> tmpData = adapter.getData();
+                ArrayList<Item> result = new ArrayList<>();
+                for (OptionsCharacter sk: tmpData) {
+                    if(sk.isSelected()) {
+                        Item item = getItem(sk.getName());
+                        if (item != null) {
+                            result.add(item);
+                        }
+                    }
+                }
+                int shields=0;
+                int weapons=0;
+                int armor=0;
+                for (Item item:result) {
+                    switch (item.getType()){
+                        case "armors":
+                            armor++;
+                            break;
+                        case "weapons":
+                            weapons ++;
+                            break;
+                        case "shields":
+                            shields++;
+                            break;
+                    }
+                }
+
+                if(weapons>2){
+                    btn_selectItems.setError("To many weapons");
+                } else if (shields>1) {
+                    btn_selectItems.setError("To many shields");
+                }else if(armor>1){
+                    btn_selectItems.setError("To many armors");
+                } else if (weapons==2 && shields ==1) {
+                    btn_selectItems.setError("Not enough hands");
+                }else{
+                    character.setWeaponEquipped(result);
+                }
+
+                popUp.dismiss();
+            }
+        });
+    }
+
+    private Item getItem(String name) {
+        ArrayList<Item> find = character.getItems();
+        for (Item item:find) {
+            if(item.getName().equals(name)){
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<OptionsCharacter> takeAllToSelect() {
+        ArrayList<OptionsCharacter> result = new ArrayList<>();
+        for (Item item: character.getWeaponEquipped()) {
+            OptionsCharacter tmp = new OptionsCharacter(item.getCode(),item.getName());
+            tmp.setSelected(true);
+            result.add(tmp);
+        }
+        for (Item item: character.getItems()) {
+            if(!item.getType().equals("usables")){
+                OptionsCharacter tmp = new OptionsCharacter(item.getCode(),item.getName());
+                tmp.setSelected(true);
+                result.add(tmp);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -272,10 +377,10 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         adapterSpells = new AdapterSpellsGame(spells, getActivity(),this);
         rv_spells.setAdapter(adapterSpells);
 
-        adapterAbilities = new AdapterAbilities(character.getFeaturesAndTraits(), getActivity(),this);
+        adapterAbilities = new AdapterAbilities(character.getFeaturesAndTraits(), getActivity());
         rv_abilities.setAdapter(adapterAbilities);
 
-        adapterItems = new AdapterItemsGame(character.getItems(), getActivity(),this);
+        adapterItems = new AdapterItemsGame(character.getItems(), getActivity());
         rv_objects.setAdapter(adapterItems);
     }
 
@@ -289,13 +394,4 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
 
     }
 
-    @Override
-    public void onItemClick(ProfLang nameTrait) {
-
-    }
-
-    @Override
-    public void onItemClick(Item nameObject) {
-
-    }
 }

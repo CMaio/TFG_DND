@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Armor;
 import com.claudiomaiorana.tfg_dnd.model.Character;
@@ -30,6 +31,7 @@ import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
 import com.claudiomaiorana.tfg_dnd.model.Shield;
 import com.claudiomaiorana.tfg_dnd.model.Skill;
+import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.Usable;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Weapons;
@@ -42,7 +44,9 @@ import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterFeaturesEnemy
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterItemsSelect;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterObjects;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterPlayers;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
+import com.claudiomaiorana.tfg_dnd.util.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,6 +54,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -88,6 +95,9 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
 
     ArrayList<ProfLang> features;
     ArrayList<Weapons> attacks;
+
+    ArrayList<JSONArray> allSpellsByLevel = null;
+    JSONArray tmpArray = null;
 
     public MasterGameplayFragment() {}
 
@@ -331,10 +341,103 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
 
     private void updateLevel(Character character) {
 //TODO:Updatear todo el character
+        Util.apiGETRequest("classes/"+character.getCodeClass() + "/levels/"+character.getLevel(), new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject levelUpdate) {
+                try{
+                    if(levelUpdate.has("features")){
+                        ArrayList<ProfLang> tmpFeatures = character.getFeaturesAndTraits();
+                        JSONArray featuresLevel = levelUpdate.getJSONArray("features");
+                        for(int i = 0;i<featuresLevel.length();i++){
+                            JSONObject tmp = featuresLevel.getJSONObject(i);
+                            tmpFeatures.add(new ProfLang(tmp.getString("index"),tmp.getString("name")));
+                        }
+                        character.setFeaturesAndTraits(tmpFeatures);
+                    }
 
-        updateCharacter(character);
+                    if(levelUpdate.has("spellcasting")){
+                        JSONObject spellCasting = levelUpdate.getJSONObject("spellcasting");
+
+                        for (int i = 0; i < 10; i++) {
+                            if (i == 0) {
+                                if (spellCasting.has("cantrips_known")) {
+                                    character.getSpells().setCantrips(spellCasting.getInt("cantrips_known"));
+                                    if(spellCasting.has("spells_known")){
+                                        character.getSpells().setSpells_known(spellCasting.getInt("spells_known"));
+                                    }else{
+                                        character.getSpells().setSpells_known(0);
+                                    }
+                                } else {
+                                    character.getSpells().setCantrips(0);
+                                    character.getSpells().setSpells_known(0);
+                                }
+                            }else{
+                                if(spellCasting.has("spell_slots_level_" + i)){
+                                    character.getSpells().getSpells().put(Integer.toString(i),spellCasting.getInt("spell_slots_level_" + i));
+                                }else{
+                                    character.getSpells().getSpells().put(Integer.toString(i),0);
+
+                                }
+                            }
+                        }
+                    }
+
+                    Util.apiGETRequest("classes/"+character.getCodeClass()+"/spells", new ApiCallback() {
+                        @Override
+                        public void onSuccess(JSONObject jsonObject) {
+                            try {
+                                tmpArray=  jsonObject.getJSONArray("results");
+                                addAllSpells(character.getLevel(),character.getLevel(),character);
+                            }catch (Exception e){
+
+                            }
+                        }
+
+                        @Override
+                        public void onError(VolleyError error) {
+
+                        }
+                    },getActivity());
+
+                }catch (Exception e){
+
+                }
+            }
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+
+
     }
 
+
+    private void addAllSpells(int level,int finalLevel,Character character){
+        Util.apiGETRequest("spells?level=" + level, new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
+                try{
+                    allSpellsByLevel.add(jsonObject.getJSONArray("results"));
+
+                    if(level == finalLevel){
+
+                        character.getSpells().addSpellsName(allSpellsByLevel,tmpArray);
+                        updateCharacter(character);
+                    }else{
+                        int tmpLevel = level + 1;
+                        addAllSpells(tmpLevel,finalLevel,character);
+                    }
+                }catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+            }
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        },getActivity());
+    }
 
     void setLife(Character character, boolean add){
         TextView txt_actualStat;

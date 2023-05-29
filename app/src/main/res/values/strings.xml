@@ -119,6 +119,7 @@
     <string name="nameFeature">Add a name for the feature...</string>
     <string name="actualMoney">Actual money</string>
     <string name="money">Money</string>
+    <string name="selectItems">Select all the items you want to equip,\n remember you can only equip items according to your physical capacities.</string>
 
 
 

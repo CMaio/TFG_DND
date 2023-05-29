@@ -19,12 +19,10 @@ public class AdapterAbilities extends RecyclerView.Adapter<AdapterAbilities.View
 
     private List<ProfLang> data;
     private Context context;
-    private OnItemClickListener listener;
 
-    public AdapterAbilities(List<ProfLang> data, Context context, OnItemClickListener listener) {
+    public AdapterAbilities(List<ProfLang> data, Context context) {
         this.data = data;
         this.context = context;
-        this.listener = listener;
     }
 
     @NonNull
@@ -46,21 +44,15 @@ public class AdapterAbilities extends RecyclerView.Adapter<AdapterAbilities.View
         return data.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView txt_LevelQuantity;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_LevelQuantity = itemView.findViewById(R.id.rw_qt_spell);
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
-
-        }
     }
 
     public interface OnItemClickListener {

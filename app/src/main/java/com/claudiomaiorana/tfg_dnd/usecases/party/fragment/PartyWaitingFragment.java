@@ -17,6 +17,7 @@ import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.User;
+import com.claudiomaiorana.tfg_dnd.usecases.party.PartyManagerActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
@@ -200,32 +201,8 @@ public class PartyWaitingFragment extends Fragment {
 
     void startPlaying(){
         Toast.makeText(getContext(), "Game started", Toast.LENGTH_SHORT).show();
-        /*Intent intent = new Intent(getApplicationContext(), NuevaActivity.class);
-        intent.putExtra("remitente", remitente);
-        intent.putExtra("contenido", contenido);
-
-        // Inicia la nueva Activity
-        startActivity(intent);*/
+        ((PartyManagerActivity)getActivity()).goToPlay(party);
     }
-
-   /* void timeToStart(){
-        RemoteMessage message = new RemoteMessage.Builder("SENDER_ID" + "@fcm.googleapis.com")
-                .setMessageId(Integer.toString(messageId++))
-                .addData("miCampo", "miValor")
-                .setToken(token)  // Reemplaza "token" con el token de registro del dispositivo receptor
-                .build();
-
-        firebaseMessaging.send(message)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        // El mensaje se envió correctamente
-                    } else {
-                        // Ocurrió un error al enviar el mensaje
-                    }
-                });
-    }*/
-
-
 
     private void setElements(View v) {
         txt_slot1 = v.findViewById(R.id.txt_slot1);

@@ -29,9 +29,6 @@ import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
 import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterAbilities;
-import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterObjects;
-import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSkills;
-import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpells;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpellsQuantity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEquipment;
@@ -44,6 +41,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -69,7 +69,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     private FirebaseFirestore db;
     FirebaseStorage dbStorage = FirebaseStorage.getInstance();
     private ListenerRegistration listenerRegistration;
-
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
 
     private AdapterSpellsQuantity adapterSpellsQ;
     private AdapterSpellsGame adapterSpells;
@@ -97,7 +97,6 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //TODO:Equipar armas
         View v = inflater.inflate(R.layout.fragment_gameplay_safe, container, false);
         db = FirebaseFirestore.getInstance();
         setElements(v);
@@ -143,13 +142,45 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+//TODO: plantear el cambio de nivel de tirar dado para aumentar salid
+        listenerRegistration = db.collection("parties")
+                .document(partyCode)
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        return;
+                    }
+                    Party newParty = documentSnapshot.toObject(Party.class);
+                    ArrayList<Character> characters = newParty.getPlayers();
+                    for (Character charact: characters) {
+                        if(charact.getUserID().equals(User.getInstance().getId())){
+                            character = charact;
+                        }
+                    }
+                    if((!party.getFighting()) && newParty.getFighting()){
+                        startFight();
+                    }
+
+
+                    party = newParty;
+        });
+    }
+
+    private void startFight(){
+
+    }
+
+
+
     private void openPopUpGold() {
         Button btn_okay;
         TextView showGold;
         View v = getLayoutInflater().inflate(R.layout.popup_game_player_show_gold, null);
 
-        btn_okay = v.findViewById(R.id.txt_showMoney);
-        showGold = v.findViewById(R.id.btn_okayMoney);
+        btn_okay = v.findViewById(R.id.btn_okayMoney);
+        showGold = v.findViewById(R.id.txt_showMoney);
         String actualMoney = "pp:" + character.getMoneyPlatinum() + ", gp:"+ character.getMoneyGold() + ", sp:"+ character.getMoneySilver() + ", cp:"+character.getMoneyCopper();
         showGold.setText(actualMoney);
 
@@ -265,25 +296,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         return result;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        listenerRegistration = db.collection("parties")
-                .document(partyCode)
-                .addSnapshotListener((documentSnapshot, error) -> {
-                    if (error != null) {
-                        return;
-                    }
-                    party = documentSnapshot.toObject(Party.class);
-                    ArrayList<Character> characters = party.getPlayers();
-                    for (Character charact: characters) {
-                        if(charact.getUserID().equals(User.getInstance().getId())){
-                            character = charact;
-                        }
-                    }
-                });
-    }
 
 
 
@@ -313,8 +326,6 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         rtv_level_game.setText(character.getLevel());
         rtv_race_game.setText(character.getRace());
         rtv_class_game.setText(character.getClassPlayer());
-        //TODO:Popup con monedas
-        //txt_gold_game.setText(character.getMoney());
         txt_life_game.setText(character.getCurrentHitPoints());
 
     }
@@ -393,5 +404,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     public void onItemClick(Spells.Spell spell) {
 
     }
+
+
 
 }

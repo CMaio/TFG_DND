@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CharacterSheetVisualizerFragment extends Fragment implements AdapterSpells.OnItemClickListener, AdapterAbilities.OnItemClickListener, AdapterObjects.OnItemClickListener {
+public class CharacterSheetVisualizerFragment extends Fragment implements AdapterSpells.OnItemClickListener, AdapterObjects.OnItemClickListener {
 
     private static final String ARG_PARAM1 = "character";
     private static final String ARG_PARAM2 = "imgCharacter";
@@ -67,7 +67,7 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
     public CharacterSheetVisualizerFragment() {}
 
 
-    // TODO: Rename and change types and number of parameters
+
     public static CharacterSheetVisualizerFragment newInstance(Character param1, Bitmap param2) {
         CharacterSheetVisualizerFragment fragment = new CharacterSheetVisualizerFragment();
         Bundle args = new Bundle();
@@ -129,8 +129,8 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         TextView showGold;
         View v = getLayoutInflater().inflate(R.layout.popup_game_player_show_gold, null);
 
-        btn_okay = v.findViewById(R.id.txt_showMoney);
-        showGold = v.findViewById(R.id.btn_okayMoney);
+        btn_okay = v.findViewById(R.id.btn_okayMoney);
+        showGold = v.findViewById(R.id.txt_showMoney);
         String actualMoney = "pp:" + mParam1.getMoneyPlatinum() + ", gp:"+ mParam1.getMoneyGold() + ", sp:"+ mParam1.getMoneySilver() + ", cp:"+mParam1.getMoneyCopper();
         showGold.setText(actualMoney);
 
@@ -170,7 +170,7 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         adapterSpells = new AdapterSpells(spells, getActivity(),this);
         rv_spells.setAdapter(adapterSpells);
 
-        adapterAbilities = new AdapterAbilities(mParam1.getFeaturesAndTraits(), getActivity(),this);
+        adapterAbilities = new AdapterAbilities(mParam1.getFeaturesAndTraits(), getActivity());
         rv_abilities.setAdapter(adapterAbilities);
 
         adapterObjects = new AdapterObjects(mParam1.getItems(), getActivity(),this);
@@ -184,8 +184,6 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         rtv_level_game.setText(Integer.toString(mParam1.getLevel()));
         rtv_race_game.setText(mParam1.getRace());
         rtv_class_game.setText(mParam1.getClassPlayer());
-        //TODO: popup con mondeas
-        //txt_gold_game.setText(Integer.toString(mParam1.getMoney()));
         txt_life_game.setText(Integer.toString(mParam1.getCurrentHitPoints()));
         if(mParam2 != null){
             Drawable drawable = new BitmapDrawable(getResources(), mParam2);
@@ -254,10 +252,6 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
 
     }
 
-    @Override
-    public void onItemClick(ProfLang nameTrait) {
-        Toast.makeText(getContext(), nameTrait.getName(), Toast.LENGTH_LONG).show();
-    }
 
     @Override
     public void onItemClick(Item nameObject) {

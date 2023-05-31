@@ -5,7 +5,7 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class ApiCallback {
-    public abstract void onSuccess(JSONObject jsonObject);
-    public abstract void onError(VolleyError error);
+public interface ApiCallback {
+    void onSuccess(JSONObject jsonObject);
+    void onError(VolleyError error);
 }

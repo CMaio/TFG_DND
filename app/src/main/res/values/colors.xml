@@ -11,5 +11,7 @@
     <color name="yellow">#FFBF00</color>
     <color name="green">#77FF00</color>
     <color name="grey">#006C6C6C</color>
+    <color name="clickedColor">#FFE06F</color>
+    <color name="defaultColor" />
 
 </resources>

@@ -70,9 +70,9 @@
             android:id="@+id/txt_titleGameplayFightWait"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/waitForYourTurn"
-            android:textSize="40sp"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp"
+            android:text="@string/waitForYourTurn"
+            android:textSize="40sp" />
     </LinearLayout>
 </FrameLayout>

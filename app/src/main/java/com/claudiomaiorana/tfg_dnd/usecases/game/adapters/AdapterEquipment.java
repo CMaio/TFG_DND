@@ -62,7 +62,6 @@ public class AdapterEquipment extends RecyclerView.Adapter<AdapterEquipment.View
     public class ViewHolder extends RecyclerView.ViewHolder{
         CheckBox chx_;
 
-        //TODO:Incluir todos los elementos de una fila
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             chx_ = itemView.findViewById(R.id.ck_skill);

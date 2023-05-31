@@ -18,6 +18,8 @@ public class Enemy {
     private ArrayList<ProfLang> featuresAndTraits;
     private ArrayList<Weapons> attacks;
 
+    private Boolean selected;
+
     public Enemy(){}
 
 
@@ -33,6 +35,7 @@ public class Enemy {
         this.speed = speed;
         this.featuresAndTraits = featuresAndTraits;
         this.attacks = attacks;
+        this.selected = false;
     }
 
     public String getID() {
@@ -113,5 +116,13 @@ public class Enemy {
 
     public void setAttacks(ArrayList<Weapons> attacks) {
         this.attacks = attacks;
+    }
+
+    public Boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }

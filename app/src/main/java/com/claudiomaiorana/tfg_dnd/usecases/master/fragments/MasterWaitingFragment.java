@@ -157,7 +157,18 @@ public class MasterWaitingFragment extends Fragment {
 
     void startPlaying(){
         Toast.makeText(getContext(), "Game started", Toast.LENGTH_SHORT).show();
-        ((MasterManagerActivity)getActivity()).goToPlay(party);
+        party.setOpen(true);
+        updateParty();
+
+    }
+
+    private void updateParty(){
+        db.collection("parties").document(party.getID()).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                ((MasterManagerActivity)getActivity()).goToPlay(party);
+            }
+        });
     }
 
 

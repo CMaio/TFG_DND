@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.claudiomaiorana.tfg_dnd.util.Constants;
+import com.claudiomaiorana.tfg_dnd.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class Character implements Parcelable{
 
     private boolean inspiration;
     private int profBonus;
+
+    private String spellCastingAbility;
+    private int spellCastingStatMod;
 
     private ArrayList<String> savingThrows;
     private ArrayList<Skill> skills;
@@ -65,7 +69,7 @@ public class Character implements Parcelable{
                      int level, String gender, String pronoun, List<Integer> stats,
                      ArrayList<String> savingThrows, ArrayList<Skill> skills,
                      ArrayList<ProfLang> proficienciesAndLanguages, int speed, int quantityHitDice,
-                     int typeHitDice,ArrayList<ProfLang> traits,Spells spells) {
+                     int typeHitDice,ArrayList<ProfLang> traits,Spells spells,String spellCastingAbility) {
         this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = "";
@@ -98,6 +102,8 @@ public class Character implements Parcelable{
         this.moneyGold = 0;
         this.moneySilver = 0;
         this.moneyCopper = 0;
+        this.spellCastingAbility = spellCastingAbility;
+        setSpellCastingAbilityMod(this.spellCastingAbility);
 
     }
 
@@ -109,7 +115,7 @@ public class Character implements Parcelable{
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<Item> weapons, Spells spells, ArrayList<Item> equipment,
                       ArrayList<ProfLang> featuresAndTraits, int moneyPlatinum,int moneyGold,int moneySilver,
-                      int moneyCopper) {
+                      int moneyCopper,String spellCastingAbility,int spellCastingStatMod) {
         this.ID = user.getUserName() + "_" + characterName + "_" + UUID.randomUUID().toString();
         this.userID = user.getId();
         this.partyID = partyID;
@@ -141,6 +147,9 @@ public class Character implements Parcelable{
         this.moneyGold = moneyGold;
         this.moneySilver = moneySilver;
         this.moneyCopper = moneyCopper;
+        this.spellCastingAbility = spellCastingAbility;
+        this.spellCastingStatMod = spellCastingStatMod;
+
     }
 
     private Character(Parcel in) {
@@ -190,6 +199,8 @@ public class Character implements Parcelable{
         moneyGold = in.readInt();
         moneySilver = in.readInt();
         moneyCopper = in.readInt();
+        spellCastingAbility = in.readString();
+        spellCastingStatMod = in.readInt();
     }
 
     private void saveRCAInfo(RCAInfo[] rcaInfo) {
@@ -209,7 +220,7 @@ public class Character implements Parcelable{
         }
     }
 
-    private int getProfBonus() {
+    public int getProfBonus() {
         if (0 < level && level < 5) {
             return 2;
         } else if (4 < level && level < 9) {
@@ -222,6 +233,10 @@ public class Character implements Parcelable{
             return 6;
         }
         return 0;
+    }
+
+    public int getSavingThrowSpell(){
+        return 8 + stats_mod.get(spellCastingStatMod);
     }
 
     public String getID() {
@@ -348,6 +363,8 @@ public class Character implements Parcelable{
         return stats_mod;
     }
 
+    public int getSpecificStats_Mod(int i){return stats_mod.get(i);}
+
     public void setStats_mod(List<Integer> stats_mod) {
         this.stats_mod = stats_mod;
     }
@@ -359,6 +376,7 @@ public class Character implements Parcelable{
     public void setInspiration(boolean inspiration) {
         this.inspiration = inspiration;
     }
+
 
     public void setProfBonus(int profBonus) {
         this.profBonus = profBonus;
@@ -508,6 +526,20 @@ public class Character implements Parcelable{
         this.moneyCopper = moneyCopper;
     }
 
+    public String getSpellCastingAbility() {
+        return spellCastingAbility;
+    }
+
+    public void setSpellCastingAbility(String spellCastingAbility){this.spellCastingAbility = spellCastingAbility; }
+
+    public void setSpellCastingAbilityMod(String spellCastingAbility) {
+        for (int i=0;i< Constants.TYPE_OF_STATS.length;i++){
+            if(Constants.TYPE_OF_STATS[i].equals(spellCastingAbility)){
+                this.spellCastingStatMod = i;
+            }
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -546,6 +578,8 @@ public class Character implements Parcelable{
         dest.writeInt(moneyGold);
         dest.writeInt(moneySilver);
         dest.writeInt(moneyCopper);
+        dest.writeString(spellCastingAbility);
+        dest.writeInt(spellCastingStatMod);
     }
 
 

@@ -109,7 +109,6 @@ public class SheetRCASelectorFragment extends Fragment implements AdapterRCASele
 
     @Override
     public void onItemClick(RCAInfo rcaInfo) {
-        //TODO esto es lo que se pasa al character info
         Bundle bundle = new Bundle();
         bundle.putString("typaRCA",TYPE_SELECTOR);
         bundle.putSerializable("rcainfo",rcaInfo);

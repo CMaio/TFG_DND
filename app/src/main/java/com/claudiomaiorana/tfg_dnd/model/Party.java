@@ -14,10 +14,15 @@ public class Party {
     String UsernameMaster;
     ArrayList<String> playersConnected;
     ArrayList<Character> players;
+    ArrayList<Enemy> enemiesFight;
 
     String nameParty;
-    Boolean open;
 
+    Boolean open;
+    Boolean fighting;
+
+    String turn;
+    String lastTurn;
 
     public Party() {}
 
@@ -29,6 +34,7 @@ public class Party {
         this.playersConnected = new ArrayList<>();
         this.open = false;
         this.UsernameMaster = usernameMaster;
+        this.turn = "";
     }
 
     public String getUsernameMaster() {
@@ -87,6 +93,37 @@ public class Party {
         this.open = open;
     }
 
+    public String getTurn() {
+        return turn;
+    }
+
+    public void setTurn(String turn) {
+        this.turn = turn;
+    }
+
+    public ArrayList<Enemy> getEnemiesFight() {
+        return enemiesFight;
+    }
+
+    public void setEnemiesFight(ArrayList<Enemy> enemiesFight) {
+        this.enemiesFight = enemiesFight;
+    }
+
+    public Boolean getFighting() {
+        return fighting;
+    }
+
+    public void setFighting(Boolean fighting) {
+        this.fighting = fighting;
+    }
+
+    public String getLastTurn() {
+        return lastTurn;
+    }
+
+    public void setLastTurn(String lastTurn) {
+        this.lastTurn = lastTurn;
+    }
 
     public static String generateID() {
         StringBuilder sb = new StringBuilder();

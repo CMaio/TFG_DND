@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterCreatePartyFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterWaitingFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
@@ -64,13 +65,19 @@ public class MasterManagerActivity extends AppCompatActivity {
             case "newParty":
                 if(fragment == null|| !(fragment instanceof MasterCreatePartyFragment)){
                     MasterCreatePartyFragment listFragment = MasterCreatePartyFragment.newInstance();
-                    ft.replace(R.id.fr_master_manager,listFragment,"fr_listMaster");
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_newPartyMaster");
                 }
                 break;
             case "waitingParty":
                 if(fragment == null|| !(fragment instanceof MasterWaitingFragment)){
                     MasterWaitingFragment listFragment = MasterWaitingFragment.newInstance(code);
-                    ft.replace(R.id.fr_master_manager,listFragment,"fr_listMaster");
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_waitingMaster");
+                }
+                break;
+            case "gameplay":
+                if(fragment == null|| !(fragment instanceof MasterGameplayFragment)){
+                    MasterGameplayFragment listFragment = MasterGameplayFragment.newInstance(code);
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
                 }
                 break;
         }
@@ -85,9 +92,9 @@ public class MasterManagerActivity extends AppCompatActivity {
 
 
     public void goToPlay(Party party) {
-
-        //TODO:party codee starts!
+        showFragment("gameplay",party.getID());
     }
+
     private void backToMainActivity(int result){
         Intent intent = new Intent();
         intent.putExtra("source","master");

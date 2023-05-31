@@ -78,7 +78,7 @@ public class AdapterParties extends RecyclerView.Adapter<AdapterParties.ViewHold
         TextView rtv_name;
         ImageView iv_character;
 
-        //TODO:Incluir todos los elementos de una fila
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             setComponents(itemView);

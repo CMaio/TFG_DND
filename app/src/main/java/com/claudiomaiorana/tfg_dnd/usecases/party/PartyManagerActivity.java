@@ -108,7 +108,6 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     public void goToPlay(Party party) {
-        //Toast.makeText(this,"das",Toast.LENGTH_LONG).show();
         //TODO:Aqui se va directamente a la pantalla de jugar
         Intent intent = new Intent(this, GameplayActivity.class);
         intent.putExtra("source","party");

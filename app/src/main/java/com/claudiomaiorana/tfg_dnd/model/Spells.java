@@ -5,6 +5,10 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.VolleyError;
+import com.claudiomaiorana.tfg_dnd.util.ApiCallback;
+import com.claudiomaiorana.tfg_dnd.util.Util;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,8 +22,9 @@ public class Spells implements Parcelable {
 
     private int cantrips = -1;
     private int spells_known = -1;
-    private Map<String,Integer> spells;
+    private Map<String,Integer> spells = new HashMap<>();
     private Map<String, List<Spell>> spellsName = new HashMap<>();
+    private Map<String, List<Spell>> spellsDamage = new HashMap<>();
 
     public Spells(){}
 
@@ -37,7 +42,6 @@ public class Spells implements Parcelable {
     }
 
     public void addSpellsName(ArrayList<JSONArray> spellsAllLevels,JSONArray spellsClass) throws JSONException {
-        //TODO poner todos los hechizos bien, esto esta mal hay que poner solo los que esten en el otro array spellClass
         for(int i = 0; i<spellsAllLevels.size();i++){
             JSONArray spellsOfLevel = spellsAllLevels.get(i);
             JSONObject spellOfLevel = null;
@@ -77,7 +81,14 @@ public class Spells implements Parcelable {
             spellsName.put(key, value);
         }
 
-
+        int spellsDamageSize = in.readInt();
+        spellsDamage = new HashMap<>();
+        for (int i = 0; i < spellsDamageSize; i++) {
+            String key = in.readString();
+            List<Spell> value = new ArrayList<>();
+            in.readTypedList(value, Spell.CREATOR);
+            spellsDamage.put(key, value);
+        }
     }
 
     public static final Creator<Spells> CREATOR = new Creator<Spells>() {
@@ -104,6 +115,12 @@ public class Spells implements Parcelable {
         parcel.writeMap(spells);
         parcel.writeInt(spellsName.size());
         for (Map.Entry<String, List<Spell>> entry : spellsName.entrySet()) {
+            parcel.writeString(entry.getKey());
+            parcel.writeTypedList(entry.getValue());
+        }
+
+        parcel.writeInt(spellsDamage.size());
+        for (Map.Entry<String, List<Spell>> entry : spellsDamage.entrySet()) {
             parcel.writeString(entry.getKey());
             parcel.writeTypedList(entry.getValue());
         }
@@ -142,12 +159,22 @@ public class Spells implements Parcelable {
         this.spellsName = spellsName;
     }
 
+    public Map<String, List<Spell>> getSpellsDamage() {
+        return spellsDamage;
+    }
+
+    public void setSpellsDamage(Map<String, List<Spell>> spellsDamage) {
+        this.spellsDamage = spellsDamage;
+    }
+
     public static class Spell implements Parcelable{
         private String code;
         private String name;
+        //TODO:Implementar esto
         private String desc;
-        private String damage;
-        private Map<String,String>slot_level;
+        private int hasDamage;
+        private int slotCharacter;
+        private Map<String,String>slot_level = new HashMap<>();
 
         public Spell(){
 
@@ -160,6 +187,11 @@ public class Spells implements Parcelable {
         protected Spell(Parcel in) {
             code = in.readString();
             name = in.readString();
+            desc = in.readString();
+            hasDamage = in.readInt();
+            slot_level = new HashMap<>();
+            in.readMap(slot_level, String.class.getClassLoader());
+            slotCharacter = in.readInt();
         }
 
         public static final Creator<Spell> CREATOR = new Creator<Spell>() {
@@ -190,6 +222,38 @@ public class Spells implements Parcelable {
             this.name = name;
         }
 
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public Map<String, String> getSlot_level() {
+            return slot_level;
+        }
+
+        public void setSlot_level(Map<String, String> slot_level) {
+            this.slot_level = slot_level;
+        }
+
+        public int getHasDamage() {
+            return hasDamage;
+        }
+
+        public void setHasDamage(int hasDamage) {
+            this.hasDamage = hasDamage;
+        }
+
+        public int getSlotCharacter() {
+            return slotCharacter;
+        }
+
+        public void setSlotCharacter(int slotCharacter) {
+            this.slotCharacter = slotCharacter;
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -199,6 +263,10 @@ public class Spells implements Parcelable {
         public void writeToParcel(@NonNull Parcel parcel, int i) {
             parcel.writeString(code);
             parcel.writeString(name);
+            parcel.writeString(desc);
+            parcel.writeInt(hasDamage);
+            parcel.writeMap(slot_level);
+            parcel.writeInt(slotCharacter);
         }
     }
 }

@@ -55,7 +55,6 @@ public class PartyJoinFragment extends Fragment {
                         getParty(txt_code.getText().toString(), new PartyCallback() {
                             @Override
                             public void onPartyLoaded(Party party) {
-                                //TODO:Hacer que se una el player seleccionado y de ahi que se añada a la party
                                 ((PartyManagerActivity)getActivity()).selectCharacter(party);
                             }
 

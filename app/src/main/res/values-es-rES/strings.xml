@@ -47,8 +47,8 @@
     <string name="popUpScope">Alcance: @scOp3@</string>
     <string name="popUpDuration">Duración: @Durat1oN@</string>
     <string name="popUpDesc">Descripcion: @d3sc@</string>
-    <string name="popUpMovementTittle">Elije cuantas casillas quieres moverte (1 square = 3.5m)</string>
-    <string name="popUpMovementInfo">Me estoy moviendo @mov3@ casillas(@mov3meters@m)</string>
+    <string name="popUpMovementTittle">Elije cuantos pies quieres moverte</string>
+    <string name="popUpMovementInfo">Me estoy moviendo @mov3@ pies</string>
     <string name="popUpMovementSelect">Me muevo</string>
 
     <string name="gameplayAttackSelect">Seleccionar ataque</string>
@@ -128,6 +128,14 @@
     <string name="money">Dinero</string>
 
     <string name="selectItems">Selecciona todos los items que te quieres equipar,\n recuerda que solo puedes equiparte items de acuerdo a tus capacidades fisicas.</string>
+
+    <string name="bonusDescription"></string>
+    <string name="armorClassThrow">Lanza un d20 para saber si aciertas el golpe</string>
+    <string name="hitDice">Lanza @h1tD1c3@ para saber cuanto daño haces</string>
+    <string name="noHitDice">No has impactado al objetivo</string>
+
+    <string name="savingThrow">Pide a tu objetivo que lanze un d20 y añada el modificador de salvación del hechizo @sp3ll@ para ver si impactas al objetivo</string>
+    <string name="isMeleeAttack">Ataque cuerpo a cuerpo</string>
 
 
 

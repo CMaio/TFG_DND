@@ -113,8 +113,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView rtv_name,rtv_pronoun,rtv_gender,rtv_level,rtv_race,rtv_class;
         ImageView iv_character;
-
-        //TODO:Incluir todos los elementos de una fila
+        
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             setComponents(itemView);

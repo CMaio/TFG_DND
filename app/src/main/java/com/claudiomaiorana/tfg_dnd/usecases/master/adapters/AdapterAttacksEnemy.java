@@ -39,6 +39,7 @@ public class AdapterAttacksEnemy extends RecyclerView.Adapter<AdapterAttacksEnem
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Weapons weapons = data.get(position);
         holder.txt_name.setText(weapons.getName());
+        holder.txt_hit.setText(weapons.getDamageDice());
     }
     @Override
     public int getItemCount() {
@@ -48,10 +49,12 @@ public class AdapterAttacksEnemy extends RecyclerView.Adapter<AdapterAttacksEnem
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txt_name;
+        TextView txt_hit;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_name = itemView.findViewById(R.id.rw_namePlayer_master_gameplay);
+            txt_hit = itemView.findViewById(R.id.rw_life_master_gameplay);
         }
     }
 }

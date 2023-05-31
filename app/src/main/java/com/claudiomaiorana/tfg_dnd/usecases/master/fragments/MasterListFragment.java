@@ -80,7 +80,7 @@ public class MasterListFragment extends Fragment implements AdapterParties.OnIte
 
     }
 
-    //TODO:Cambiar esto
+
     void loadingBar(int visibility){
         ((MasterManagerActivity)getActivity()).changeLoadingVisibility(visibility);
     }
@@ -96,13 +96,4 @@ public class MasterListFragment extends Fragment implements AdapterParties.OnIte
         ((MasterManagerActivity)getActivity()).changeFragment("waitingParty",party.getID());
     }
 
-    //TODO:Cambiar esto
-    /*@Override
-    public void onItemClick(Party party, boolean newParty) {
-        if(newParty){
-            ((PartyManagerActivity)getActivity()).changeFragment("newParty");
-        }else{
-            ((PartyManagerActivity)getActivity()).goToPlay(party);
-        }
-    }*/
 }

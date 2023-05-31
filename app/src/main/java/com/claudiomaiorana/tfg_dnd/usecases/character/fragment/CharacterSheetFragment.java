@@ -77,6 +77,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -126,6 +127,7 @@ public class CharacterSheetFragment extends Fragment {
     ArrayList<Integer> spellsLevelQuantity = new ArrayList<>();
     Spells spells;
     int spellsKnownQuantity;
+    String spellCastingAbility = "";
 
 
 
@@ -182,7 +184,7 @@ public class CharacterSheetFragment extends Fragment {
 
         stats = getResources().getStringArray(R.array.statsNames);
         indexStats = 0;
-
+        spells = new Spells();
 
 
         Bundle bundle = getArguments();
@@ -810,7 +812,8 @@ public class CharacterSheetFragment extends Fragment {
 
                     typeDice = chosenClass.getInt("hit_die");
 
-                    if(chosenClass.has("spells")){
+                    if(chosenClass.has("spellcasting")){
+                        spellCastingAbility = chosenClass.getJSONObject("spellcasting").getJSONObject("spellcasting_ability").getString("index");
                         getSpells();
                     }else{
                         callPopUpStatsBonus("bonusStats");
@@ -861,7 +864,7 @@ public class CharacterSheetFragment extends Fragment {
                                     }
                                 }
 
-                                addAllSpells(1, Integer.parseInt(txt_level.getText().toString()));
+                                addAllSpells(0, Integer.parseInt(txt_level.getText().toString()));
                             }catch (Exception e){
                                 throw new RuntimeException(e);
                             }
@@ -991,7 +994,6 @@ public class CharacterSheetFragment extends Fragment {
     }
 
 
-
     void createCharacter(ArrayList<Skill> skillsResult) {
         int quantityHitDice = 1;
         int typeHitDice = typeDice;
@@ -1002,12 +1004,12 @@ public class CharacterSheetFragment extends Fragment {
         Character character = new Character(User.getInstance(),txt_name.getText().toString(),"",
                 rcaInfoSaved,Integer.parseInt(txt_level.getText().toString()),genderSelected,
                 pronounSelected,Stats,dataSavingThrows,allSkillsPlayer,proficienciesAndLanguages,
-                speed,quantityHitDice,typeHitDice,dataTraitsChoices,spells);
+                speed,quantityHitDice,typeHitDice,dataTraitsChoices,spells,spellCastingAbility);
 
         StorageReference storageRef = dbStorage.getReference();
         String nameImage = "profileCharacter_" + character.getID() + ".jpg";
         StorageReference imageRef = storageRef.child("profileImages/" + nameImage);
-
+        spells.setSpellsDamage(new HashMap<>());
         if(profile_img.getDrawable() != null){
             character.setImgPlayerName("profileImages/" + nameImage);
             Drawable drawable = profile_img.getDrawable();
@@ -1021,23 +1023,93 @@ public class CharacterSheetFragment extends Fragment {
             imageRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    setDamageSpells(0,character);
                     saveCharacter(character);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     character.setImgPlayerName("");
+                    setDamageSpells(0,character);
                     saveCharacter(character);
                 }
             });
         }else{
             character.setImgPlayerName("");
+            setDamageSpells(0,character);
+
+        }
+    }
+
+    private void setDamageSpells(int level, Character character){
+        if(level>character.getLevel()){
             saveCharacter(character);
+        }else{
+            character.getSpells().getSpellsDamage().put(Integer.toString(level),new ArrayList<>());
+            List<Spells.Spell> spellList = character.getSpells().getSpellsName().get(Integer.toString(level));
+            getDamageOfThisSpells(level,0,spellList,character);
         }
 
 
+    }
 
+    private void getDamageOfThisSpells(int level, int i, List<Spells.Spell> spellList,Character character) {
+        if(i<spellList.size()){
+            Util.apiGETRequest("spells/" + spellList.get(i).getCode(), new ApiCallback() {
+                @Override
+                public void onSuccess(JSONObject jsonObject) {
+                    try {
+                        if(jsonObject.has("damage")){
+                            if(jsonObject.getJSONObject("damage").has("damage_at_slot_level")){
+                                JSONObject damageSlotLevelObject = jsonObject.getJSONObject("damage").getJSONObject("damage_at_slot_level");
 
+                                Iterator<String> slotLevelKeys = damageSlotLevelObject.keys();
+                                Spells.Spell spell = null;
+                                while (slotLevelKeys.hasNext()) {
+                                    String slotLevelKey = slotLevelKeys.next();
+                                    String damageValue = damageSlotLevelObject.getString(slotLevelKey);
+                                    spell =  spellList.get(i);
+                                    spell.setHasDamage(1);
+                                    spell.setSlotCharacter(0);
+                                    spell.getSlot_level().put(slotLevelKey,damageValue);
+
+                                }
+                                Log.d("spell",Integer.toString(level) + " " + spell);
+                                character.getSpells().getSpellsDamage().get(Integer.toString(level)).add(spell);
+                            }else if(jsonObject.getJSONObject("damage").has("damage_at_character_level")){
+                                JSONObject damageSlotLevelObject = jsonObject.getJSONObject("damage").getJSONObject("damage_at_character_level");
+
+                                Iterator<String> slotLevelKeys = damageSlotLevelObject.keys();
+                                Spells.Spell spell = null;
+                                while (slotLevelKeys.hasNext()) {
+                                    String slotLevelKey = slotLevelKeys.next();
+                                    String damageValue = damageSlotLevelObject.getString(slotLevelKey);
+                                    spell =  spellList.get(i);
+                                    spell.setHasDamage(1);
+                                    spell.setSlotCharacter(1);
+                                    spell.getSlot_level().put(slotLevelKey,damageValue);
+
+                                }
+                                character.getSpells().getSpellsDamage().get(Integer.toString(level)).add(spell);
+                            }
+                        }
+                        getDamageOfThisSpells(level,i+1,spellList,character);
+                    }catch (Exception e){
+                        System.out.println(e);
+                        getDamageOfThisSpells(level,i+1,spellList,character);
+                    }
+
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+                    getDamageOfThisSpells(level,i+1,spellList,character);
+                }
+            },getActivity());
+
+        }else{
+            setDamageSpells(level+1,character);
+        }
     }
 
     private void saveCharacter(Character character) {

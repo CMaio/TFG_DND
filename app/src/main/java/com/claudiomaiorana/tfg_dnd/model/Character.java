@@ -60,6 +60,8 @@ public class Character implements Parcelable{
     private int moneySilver;
     private int moneyCopper;
 
+    private boolean selected;
+
     //Se necesita
     public Character() {
     }
@@ -104,6 +106,7 @@ public class Character implements Parcelable{
         this.moneyCopper = 0;
         this.spellCastingAbility = spellCastingAbility;
         setSpellCastingAbilityMod(this.spellCastingAbility);
+        this.selected = false;
 
     }
 
@@ -149,7 +152,7 @@ public class Character implements Parcelable{
         this.moneyCopper = moneyCopper;
         this.spellCastingAbility = spellCastingAbility;
         this.spellCastingStatMod = spellCastingStatMod;
-
+        this.selected = false;
     }
 
     private Character(Parcel in) {
@@ -201,6 +204,7 @@ public class Character implements Parcelable{
         moneyCopper = in.readInt();
         spellCastingAbility = in.readString();
         spellCastingStatMod = in.readInt();
+        this.selected = false;
     }
 
     private void saveRCAInfo(RCAInfo[] rcaInfo) {
@@ -540,6 +544,14 @@ public class Character implements Parcelable{
         }
     }
 
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -580,6 +592,7 @@ public class Character implements Parcelable{
         dest.writeInt(moneyCopper);
         dest.writeString(spellCastingAbility);
         dest.writeInt(spellCastingStatMod);
+        this.selected = false;
     }
 
 

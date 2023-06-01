@@ -144,8 +144,6 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
 
         btn_finishBattle = v.findViewById(R.id.btn_switchBattle);
         turnDisplay = v.findViewById(R.id.turnDisplay);
-
-
     }
 
     @Override

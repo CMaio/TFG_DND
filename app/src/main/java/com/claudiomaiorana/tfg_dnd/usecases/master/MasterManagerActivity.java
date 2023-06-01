@@ -114,4 +114,7 @@ public class MasterManagerActivity extends AppCompatActivity {
         }
     }
 
+    public void finishAttack(String code) {
+
+    }
 }

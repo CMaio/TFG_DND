@@ -79,6 +79,8 @@
 
     <string name="cantrips">Cantrips</string>
     <string name="switchBattleButton">Switch to battle</string>
+    <string name="finishBattleButton">Finish battle</string>
+
 
     <string name="giveMoneyToPlayer">Actual money: <b>@mon3y@</b>\n, how much money do you want to give </string>
     <string name="takeMoneyFromPlayer">Actual money: <b>@mon3y@</b>\n, how much money do you want to take </string>

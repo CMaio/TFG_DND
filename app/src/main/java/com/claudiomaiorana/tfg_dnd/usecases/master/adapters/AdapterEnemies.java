@@ -58,7 +58,7 @@ public class AdapterEnemies extends RecyclerView.Adapter<AdapterEnemies.ViewHold
         @Override
         public void onClick(View view) {
             int clickedPosition = getAbsoluteAdapterPosition();
-            if(clickedPosition == 0){
+            if(clickedPosition == 0 && data.get(getAbsoluteAdapterPosition()).getName().equals("")){
                 listener.newEnemy();
             }else {
                 listener.onItemClick(data.get(getAbsoluteAdapterPosition()));

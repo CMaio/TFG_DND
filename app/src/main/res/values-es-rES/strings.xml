@@ -81,6 +81,7 @@
     <string name="cantrips">Trucos</string>
 
     <string name="switchBattleButton">Cambiar a pelea</string>
+    <string name="finishBattleButton">Terminar pelea</string>
 
     <string name="giveMoneyToPlayer">Dinero actual: <b>@mon3y@</b>\n, cuanto dinero quieres dar</string>
     <string name="takeMoneyFromPlayer">Dinero actual: <b>@mon3y@</b>\n, cuanto dinero quieres quitar</string>

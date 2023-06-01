@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Enemy {
 
-    private String ID;
-    private String name;
+    private String ID="";
+    private String name="";
 
     private String hitDice;
     private int maxHitPoints;

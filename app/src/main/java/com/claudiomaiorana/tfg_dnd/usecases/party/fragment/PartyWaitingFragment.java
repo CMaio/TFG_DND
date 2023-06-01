@@ -109,7 +109,9 @@ public class PartyWaitingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+        }
         ArrayList<String> charConnected = party.getPlayersConnected();
         String nameCharacter = deleteCharacter(party.getPlayers());
         if(charConnected.contains(nameCharacter)){

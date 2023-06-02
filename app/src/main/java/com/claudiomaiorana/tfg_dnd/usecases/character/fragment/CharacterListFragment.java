@@ -54,9 +54,9 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        partyCode="";
         if (getArguments() != null) {
             partyCode = getArguments().getString(PARTY_CODE);
+            if(partyCode == null){partyCode = "";}
         }
     }
 
@@ -128,7 +128,7 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
 
     @Override
     public void newCharacter() {
-        if(!!partyCode.equals("")){
+        if(!partyCode.equals("")){
             ((CharacterManagerActivity)getActivity()).selectNewCharacter();
         }else{
             ((CharacterManagerActivity)getActivity()).changeFragment("sheet");
@@ -157,7 +157,14 @@ public class CharacterListFragment extends Fragment implements AdapterCharacters
                                         db.collection("parties").document(party.getID()).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                ((CharacterManagerActivity)getActivity()).goWaitingRoom(party.getID());
+                                                User.getInstance().getParties().add(partyCode);
+                                                db.collection("users").document(User.getInstance().getId()).set(User.getInstance()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        ((CharacterManagerActivity)getActivity()).goWaitingRoom(party.getID());
+                                                    }
+                                                });
+
                                             }
                                         });
                                         //volver a la waiting list

@@ -101,8 +101,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         db = FirebaseFirestore.getInstance();
         setElements(v);
         getParty();
-        setCharacterScreen();
-        setImagePlayer();
+
 
         RecyclerView.LayoutManager layoutManagerQS = new GridLayoutManager(getContext(),4);
         rv_spQuantity.setLayoutManager(layoutManagerQS);

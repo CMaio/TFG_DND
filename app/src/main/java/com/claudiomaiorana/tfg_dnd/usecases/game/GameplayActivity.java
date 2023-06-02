@@ -44,7 +44,15 @@ public class GameplayActivity extends AppCompatActivity {
                 }
             }
         });
-        changeFragment(state);
+
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("idParty")) {
+            String partyCode = intent.getStringExtra("idParty");
+            showFragment(state,partyCode);
+        }else{
+            changeFragment(state);
+        }
+
 
     }
 
@@ -59,19 +67,19 @@ public class GameplayActivity extends AppCompatActivity {
             case "gameplaySafe":
                 if(fragment == null|| !(fragment instanceof GameplaySafeFragment)){
                     GameplaySafeFragment listFragment = GameplaySafeFragment.newInstance(code);
-                    ft.replace(R.id.fr_master_manager,listFragment,"fr_safeGameplay");
+                    ft.replace(R.id.Fr_gameplayManager,listFragment,"fr_safeGameplay");
                 }
                 break;
             case "gameplayFight":
                 if(fragment == null|| !(fragment instanceof GameplayFightFragment)){
                     GameplayFightFragment listFragment = GameplayFightFragment.newInstance(code,"no");
-                    ft.replace(R.id.fr_master_manager,listFragment,"fr_attackGameplay");
+                    ft.replace(R.id.Fr_gameplayManager,listFragment,"fr_attackGameplay");
                 }
                 break;
             case "fightOptions":
                 if(fragment == null|| !(fragment instanceof GameplayAttackOptionsFragment)){
                     GameplayAttackOptionsFragment listFragment = GameplayAttackOptionsFragment.newInstance(code);
-                    ft.replace(R.id.fr_master_manager,listFragment,"fr_optionsAttack");
+                    ft.replace(R.id.Fr_gameplayManager,listFragment,"fr_optionsAttack");
                 }
                 break;
         }
@@ -92,7 +100,7 @@ public class GameplayActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentById(R.id.Fr_gameplayManager);
         FragmentTransaction ft = fm.beginTransaction();
         GameplayFightFragment listFragment = GameplayFightFragment.newInstance(code,"yes");
-        ft.replace(R.id.fr_master_manager,listFragment,"fr_attackGameplay");
+        ft.replace(R.id.Fr_gameplayManager,listFragment,"fr_attackGameplay");
         ft.addToBackStack(null);
         ft.commit();
 

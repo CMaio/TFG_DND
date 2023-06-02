@@ -157,12 +157,13 @@ public class CharacterSheetFragment extends Fragment {
 
     public CharacterSheetFragment() {}
 
-    public static CharacterSheetFragment newInstance(String idParty) {
+    public static CharacterSheetFragment newInstance(String idParty ) {
         CharacterSheetFragment fragment = new CharacterSheetFragment();
         Bundle args = new Bundle();
         args.putString(PARTY_CODE, idParty);
         fragment.setArguments(args);
         PARTY_CODE = idParty;
+
         return fragment;
     }
 
@@ -185,7 +186,6 @@ public class CharacterSheetFragment extends Fragment {
         stats = getResources().getStringArray(R.array.statsNames);
         indexStats = 0;
         spells = new Spells();
-
 
         Bundle bundle = getArguments();
         if (bundle != null && bundle.getString("typaRCA") != null) {
@@ -1127,8 +1127,20 @@ public class CharacterSheetFragment extends Fragment {
                                         ArrayList<Character> characters = party.getPlayers();
                                         characters.add(character);
                                         party.setPlayers(characters);
+                                        db.collection("parties").document(party.getID()).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                User.getInstance().getParties().add(partyCode);
+                                                db.collection("users").document(User.getInstance().getId()).set(User.getInstance()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        ((CharacterManagerActivity)getActivity()).goWaitingRoom(party.getID());
+                                                    }
+                                                });
+
+                                            }
+                                        });
                                         //volver a la waiting list
-                                        ((CharacterManagerActivity)getActivity()).goWaitingRoom(party.getID());
                                     }
                                 }
                             });

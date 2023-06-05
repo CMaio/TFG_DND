@@ -26,6 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PartyListFragment extends Fragment implements AdapterParties.OnItemClickListener{
     private RecyclerView rv_list;
@@ -64,7 +65,28 @@ public class PartyListFragment extends Fragment implements AdapterParties.OnItem
         dataSet = new ArrayList<>();
         dataSet.add(new Party());
         if(User.getInstance().getParties()!= null && !User.getInstance().getParties().isEmpty()){
-            Query query = partiesRef.whereIn("id", User.getInstance().getParties());
+            int batchSize = 10;
+            for (int i = 0; i < User.getInstance().getParties().size(); i += batchSize) {
+                List<String> batch = User.getInstance().getParties().subList(i, Math.min(i + batchSize, User.getInstance().getParties().size()));
+
+                Query query = partiesRef.whereIn("id", batch);
+                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                dataSet.add(document.toObject(Party.class));
+                            }
+                            adapter.notifyDataSetChanged();
+
+                        } else {
+                            // Manejar el error
+                        }
+                    }
+                });
+            }
+            loadingBar(View.INVISIBLE);
+           /* Query query = partiesRef.whereIn("id", User.getInstance().getParties());
             query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -76,7 +98,7 @@ public class PartyListFragment extends Fragment implements AdapterParties.OnItem
                         loadingBar(View.INVISIBLE);
                     }
                 }
-            });
+            });*/
         }else{
             //adapter.notifyDataSetChanged();
             loadingBar(View.INVISIBLE);
@@ -91,7 +113,12 @@ public class PartyListFragment extends Fragment implements AdapterParties.OnItem
 
     @Override
     public void selectParty(Party party) {
-        ((PartyManagerActivity)getActivity()).goToPlay(party);
+        if(party.getOpen()){
+            ((PartyManagerActivity)getActivity()).goToPlay(party);
+
+        }else{
+            ((PartyManagerActivity)getActivity()).changeFragment("waitingParty",party.getID());
+        }
     }
 
 

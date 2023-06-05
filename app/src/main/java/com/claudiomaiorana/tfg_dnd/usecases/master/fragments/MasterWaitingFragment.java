@@ -87,7 +87,7 @@ public class MasterWaitingFragment extends Fragment {
         db.collection("parties").document(code).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                startPlaying();
+                ((MasterManagerActivity)getActivity()).goToPlay(party);
             }
         });
     }

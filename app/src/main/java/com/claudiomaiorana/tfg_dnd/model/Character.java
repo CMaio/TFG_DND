@@ -43,6 +43,7 @@ public class Character implements Parcelable{
 
     private int armorClass;
     private int initiative;
+    private int initiativeMod;
     private int speed;
 
     private int quantityHitDice;
@@ -90,7 +91,8 @@ public class Character implements Parcelable{
         this.skills = skills;
         this.proficienciesAndLanguages = proficienciesAndLanguages;
         this.armorClass = 10 + stats_mod.get(Constants.STAT_CON);
-        this.initiative = stats_mod.get(Constants.STAT_DEX);
+        this.initiative = 0;
+        this.initiativeMod = stats_mod.get(Constants.STAT_DEX);
         this.speed = speed;
         this.quantityHitDice = quantityHitDice;
         this.typeHitDice = typeHitDice;
@@ -114,7 +116,7 @@ public class Character implements Parcelable{
     private Character(User user, String partyID, String characterName, String imgPlayer, RCAInfo[] rcaInfo,
                       int level, String gender, String pronoun, List<Integer> stats, List<Integer> stats_mod, Boolean inspiration,
                       int profBonus,ArrayList<String> savingThrows, ArrayList<Skill> skills,
-                      ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,
+                      ArrayList<ProfLang> proficienciesAndLanguages, int armorClass, int initiative,int initiativeMod,
                       int speed, int quantityHitDice, int typeHitDice, int maxHitPoints, int currentHitPoints,
                       ArrayList<Item> weapons, Spells spells, ArrayList<Item> equipment,
                       ArrayList<ProfLang> featuresAndTraits, int moneyPlatinum,int moneyGold,int moneySilver,
@@ -137,6 +139,7 @@ public class Character implements Parcelable{
         this.proficienciesAndLanguages = proficienciesAndLanguages;
         this.armorClass = armorClass;
         this.initiative = initiative;
+        this.initiativeMod = initiativeMod;
         this.speed = speed;
         this.quantityHitDice = quantityHitDice;
         this.typeHitDice = typeHitDice;
@@ -185,7 +188,8 @@ public class Character implements Parcelable{
         proficienciesAndLanguages = new ArrayList<>();
         in.readList(proficienciesAndLanguages, ProfLang.class.getClassLoader());
         armorClass = 10 + stats_mod.get(Constants.STAT_CON);
-        initiative = stats_mod.get(Constants.STAT_DEX);
+        initiative = in.readInt();
+        initiativeMod = stats_mod.get(Constants.STAT_DEX);
         speed = in.readInt();
         quantityHitDice = in.readInt();
         typeHitDice = in.readInt();
@@ -536,6 +540,14 @@ public class Character implements Parcelable{
 
     public void setSpellCastingAbility(String spellCastingAbility){this.spellCastingAbility = spellCastingAbility; }
 
+    public int getInitiativeMod() {
+        return initiativeMod;
+    }
+
+    public void setInitiativeMod(int initiativeMod) {
+        this.initiativeMod = initiativeMod;
+    }
+
     public void setSpellCastingAbilityMod(String spellCastingAbility) {
         for (int i=0;i< Constants.TYPE_OF_STATS.length;i++){
             if(Constants.TYPE_OF_STATS[i].equals(spellCastingAbility)){
@@ -551,6 +563,7 @@ public class Character implements Parcelable{
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
 
     @Override
     public int describeContents() {
@@ -578,6 +591,7 @@ public class Character implements Parcelable{
         dest.writeList(savingThrows);
         dest.writeList(skills);
         dest.writeList(proficienciesAndLanguages);
+        dest.writeInt(initiative);
         dest.writeInt(speed);
         dest.writeInt(quantityHitDice);
         dest.writeInt(typeHitDice);

@@ -170,7 +170,6 @@ public class Spells implements Parcelable {
     public static class Spell implements Parcelable{
         private String code;
         private String name;
-        //TODO:Implementar esto
         private String desc;
         private int hasDamage;
         private int slotCharacter;

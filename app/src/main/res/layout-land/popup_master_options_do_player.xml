@@ -16,28 +16,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/giveMoney"
             android:layout_margin="10dp"/>
         <Button
             android:id="@+id/btn_giveLife"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/giveLife"
             android:layout_margin="10dp"/>
         <Button
             android:id="@+id/btn_giveItem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/giveItem"
+
             android:layout_margin="10dp"/>
         <Button
             android:id="@+id/btn_increaseLevel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/increaseLevel"
+
             android:layout_margin="10dp"/>
     </LinearLayout>
     <LinearLayout
@@ -50,21 +52,21 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/takeMoney"
             android:layout_margin="10dp"/>
         <Button
             android:id="@+id/btn_takeLife"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/takeLife"
             android:layout_margin="10dp"/>
         <Button
             android:id="@+id/btn_takeItem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button"
+            android:text="@string/takeItem"
             android:layout_margin="10dp"/>
 
         <Space

@@ -15,6 +15,7 @@
     <string name="hintuser">usuario...</string>
     <string name="hintlevel">Selecciona el nivel</string>
     <string name="select">Escoger</string>
+    <string name="cancel">Cancelar</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tittle_characters_screen">Personajes</string>
     <string name="tittle_party_screen">Parties</string>
@@ -139,7 +140,31 @@
     <string name="isMeleeAttack">Ataque cuerpo a cuerpo</string>
 
 
+    <string name="giveMoney">Dar dinero</string>
+    <string name="takeMoney">Quitar dinero</string>
+    <string name="giveLife">Dar puntos de vida</string>
+    <string name="takeLife">Quitar puntos de vida</string>
+    <string name="giveItem">Dar item</string>
+    <string name="takeItem">Quitar item</string>
+    <string name="increaseLevel">Incrementar nivel</string>
 
+    <string name="selectEnemies">Selecciona la cantidad que quieres de cada enemigo</string>
+    <string name="createEnemies">Crea un enemigo por lo menos</string>
+
+    <string name="initiativeToPlay">Lanza un d20 y escríbelo aquí para establecer tu iniciativa en la lucha</string>
+    <string name="levelUp">Tira un @dIcE@ y escríbe el valor aquí para aumentar tu vida</string>
+    <string name="createItem">Crea un nuevo item</string>
+    <string name="createEnemy">Crea un nuevo enemigo</string>
+    <string name="hp">PG</string>
+
+    <string name="nameEnemy">Nombre: </string>
+    <string name="hitDiceEnemy">Dado de golpe: </string>
+    <string name="armorEnemy">Armadura: </string>
+    <string name="hitPointsEnemy">PG: </string>
+    <string name="speedEnemy">Velocidad: </string>
+
+    <string name="attacksRV">Ataques del enemigo:</string>
+    <string name="featuresRV">Rasgos del enemigo:</string>
 
 
 
@@ -178,7 +203,7 @@
     </string-array>
     <string-array name="statsNames">
         <item>Fuerza</item>
-        <item>desrteza</item>
+        <item>Destreza</item>
         <item>Constitución</item>
         <item>Inteligencia</item>
         <item>Sabiduria</item>

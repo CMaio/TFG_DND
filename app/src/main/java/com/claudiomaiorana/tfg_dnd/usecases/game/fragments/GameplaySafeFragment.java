@@ -1,5 +1,6 @@
 package com.claudiomaiorana.tfg_dnd.usecases.game.fragments;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -34,6 +35,7 @@ import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEquipment;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterItemsGame;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterSpellsGame;
+import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -100,7 +102,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         View v = inflater.inflate(R.layout.fragment_gameplay_safe, container, false);
         db = FirebaseFirestore.getInstance();
         setElements(v);
-        getParty();
+
 
 
         RecyclerView.LayoutManager layoutManagerQS = new GridLayoutManager(getContext(),4);
@@ -114,7 +116,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
 
         RecyclerView.LayoutManager layoutManagerO = new GridLayoutManager(getContext(),2);
         rv_objects.setLayoutManager(layoutManagerO);
-        AdapterSpells();
+        getParty();
 
         btn_sheathed_unsheathed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,41 +137,173 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         btn_goHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                goBackHome();
             }
         });
         return v;
     }
 
+    private void goBackHome() {
+        getParentFragmentManager().popBackStack();
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
-//TODO: plantear el cambio de nivel de tirar dado para aumentar salid
         listenerRegistration = db.collection("parties")
                 .document(partyCode)
                 .addSnapshotListener((documentSnapshot, error) -> {
                     if (error != null) {
+                        System.out.println("error estamos");
                         return;
                     }
                     Party newParty = documentSnapshot.toObject(Party.class);
                     ArrayList<Character> characters = newParty.getPlayers();
-                    for (Character charact: characters) {
-                        if(charact.getUserID().equals(User.getInstance().getId())){
-                            character = charact;
+                    if(!newParty.getOpen()){
+                        closeParty();
+                    }else {
+                        if(party != null){
+                            System.out.println(party.getTurn());
+                            System.out.println(newParty.getFighting());
+                            if((!party.getFighting()) && newParty.getFighting()){
+                                party = newParty;
+                                callPopUpInitiative();
+                            }
+
+                            if(character!=null){
+                                for (Character charact: characters) {
+                                    if(charact.getUserID().equals(User.getInstance().getId())){
+                                        if(character.getLevel()<charact.getLevel()){
+                                            party = newParty;
+                                            callLevelUpPopUp();
+                                        }
+                                    }
+                                }
+                            }
+
+
                         }
-                    }
-                    if((!party.getFighting()) && newParty.getFighting()){
-                        startFight();
+                        for (Character charact: characters) {
+                            if(charact.getUserID().equals(User.getInstance().getId())){
+                                character = charact;
+                            }
+                        }
+                        party = newParty;
+                        setCharacterScreen();
+                        AdapterSpells();
                     }
 
 
-                    party = newParty;
+
         });
     }
 
-    private void startFight(){
+    private void closeParty() {
+        System.out.println("error estamos2");
 
+        ((GameplayActivity)getActivity()).backToMainActivity(Activity.RESULT_OK);
     }
+
+    private void callLevelUpPopUp() {
+        Button btn_Continue;
+        TextView txt_text,txt_value;
+
+        View view = getLayoutInflater().inflate(R.layout.fragment_character_stats, null);
+
+        btn_Continue = view.findViewById(R.id.btn_continue);
+        txt_text = view.findViewById(R.id.txt_statToThrow);
+        txt_value = view.findViewById(R.id.txt_numberStat);
+
+        PopUpCustom popUp = new PopUpCustom(view);
+        popUp.show(getParentFragmentManager(), "initiativeEnemy");
+        popUp.setCancelable(false);
+
+        txt_text.setText(getResources().getString(R.string.levelUp).replace("@dIcE@","d"+Integer.toString(character.getTypeHitDice())));
+
+        btn_Continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!txt_value.getText().toString().equals("")){
+                    int tmpValue = Integer.parseInt(txt_value.getText().toString());
+                    if(0<tmpValue && tmpValue<character.getTypeHitDice()+1){
+                        for(int i =0; i<party.getPlayers().size();i++){
+                            if(party.getPlayers().get(i).getID().equals(character.getID())){
+                                party.getPlayers().get(i).setMaxHitPoints(party.getPlayers().get(i).getMaxHitPoints() + tmpValue);
+                                party.getPlayers().get(i).setCurrentHitPoints(party.getPlayers().get(i).getMaxHitPoints());
+                                break;
+                            }
+                        }
+                        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                popUp.dismiss();
+                            }
+                        });
+                    }else{
+                        txt_value.setError(getResources().getString(R.string.errorStat));
+                    }
+                }else{
+                    txt_value.setError(getResources().getString(R.string.errorStat));
+                }
+            }
+        });
+    }
+
+
+
+    private void startFight(){
+        ((GameplayActivity)getActivity()).attackDone(partyCode,"no");
+    }
+
+    private void callPopUpInitiative(){
+        Button btn_Continue;
+        TextView txt_text,txt_value;
+
+        View view = getLayoutInflater().inflate(R.layout.fragment_character_stats, null);
+
+        btn_Continue = view.findViewById(R.id.btn_continue);
+        txt_text = view.findViewById(R.id.txt_statToThrow);
+        txt_value = view.findViewById(R.id.txt_numberStat);
+
+        PopUpCustom popUp = new PopUpCustom(view);
+        popUp.show(getParentFragmentManager(), "initiativePlayer");
+        popUp.setCancelable(false);
+
+        txt_text.setText(getResources().getText(R.string.initiativeToPlay));
+
+        btn_Continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!txt_value.getText().toString().equals("")){
+                    int tmpValue = Integer.parseInt(txt_value.getText().toString());
+                    if(0<tmpValue && tmpValue<21){
+
+                        for(int i =0; i<party.getPlayers().size();i++){
+                            if(party.getPlayers().get(i).getID().equals(character.getID())){
+                                party.getPlayers().get(i).setInitiative(tmpValue + party.getPlayers().get(i).getInitiativeMod());
+                                break;
+                            }
+                        }
+                        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                popUp.dismiss();
+                                startFight();
+                            }
+                        });
+
+
+                    }else{
+                        txt_value.setError(getResources().getString(R.string.errorStat));
+                    }
+                }else{
+                    txt_value.setError(getResources().getString(R.string.errorStat));
+                }
+            }
+        });
+    }
+
 
 
 
@@ -300,6 +434,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
 
 
     private void getParty() {
+        System.out.println("dd "+partyCode);
         db.collection("parties").document(partyCode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -322,28 +457,29 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
         rtv_name_game.setText(character.getName());
         rtv_pronoun_game.setText(character.getPronoun());
         rtv_gender_game.setText(character.getGender());
-        rtv_level_game.setText(character.getLevel());
+        rtv_level_game.setText(Integer.toString(character.getLevel()));
         rtv_race_game.setText(character.getRace());
         rtv_class_game.setText(character.getClassPlayer());
-        txt_life_game.setText(character.getCurrentHitPoints());
+        txt_life_game.setText(Integer.toString(character.getCurrentHitPoints()));
+        if(!character.getImgPlayerName().equals("")){
+            StorageReference storageRef = dbStorage.getReference();
+            String imageName = character.getImgPlayerName();
+            StorageReference imageRef = storageRef.child(imageName);
 
+            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(getContext())
+                            .load(uri)
+                            .into(img_character_game);
+                }
+            });
+        }else{
+            Glide.with(getContext())
+                    .load(R.drawable.avatar_1)
+                    .into(img_character_game);
+        }
     }
-
-    private void setImagePlayer() {
-        StorageReference storageRef = dbStorage.getReference();
-        String imageName = character.getImgPlayerName();
-        StorageReference imageRef = storageRef.child(imageName);
-
-        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(getContext())
-                        .load(uri)
-                        .into(img_character_game);
-            }
-        });
-    }
-
 
     void setElements(View v){
         rv_spells = v.findViewById(R.id.rv_spells);

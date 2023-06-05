@@ -134,7 +134,7 @@ public class AdapterCharacters extends RecyclerView.Adapter<AdapterCharacters.Vi
         }
 
         @Override
-        public void onClick(View v) {//iniciem el detall del cocktail seleccionat
+        public void onClick(View v) {
             int clickedPosition = getAbsoluteAdapterPosition();
             if(clickedPosition == 0){
                 listener.newCharacter();

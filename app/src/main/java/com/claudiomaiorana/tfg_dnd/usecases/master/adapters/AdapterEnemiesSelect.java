@@ -1,6 +1,8 @@
 package com.claudiomaiorana.tfg_dnd.usecases.master.adapters;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,13 +42,28 @@ public class AdapterEnemiesSelect extends RecyclerView.Adapter<AdapterEnemiesSel
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         EnemySelector current = data.get(position);
 
-        holder.name.setText(current.getName());
+        holder.name.setText(current.getName() + " ");
         holder.life.setText(String.valueOf(current.getHitPoints()));
-        holder.quantityEnemies.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                String userValueString = holder.quantityEnemies.getText().toString();
-                int userValue = Integer.parseInt(userValueString);
-                current.setUserValue(userValue);
+
+
+        holder.quantityEnemies.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No se requiere implementación
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No se requiere implementación
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String userValueString = s.toString();
+                if (!userValueString.equals("")) {
+                    int userValue = Integer.parseInt(userValueString);
+                    current.setUserValue(userValue);
+                }
             }
         });
     }
@@ -63,7 +80,7 @@ public class AdapterEnemiesSelect extends RecyclerView.Adapter<AdapterEnemiesSel
         TextView life;
         EditText quantityEnemies;
 
-        //TODO:Incluir todos los elementos de una fila
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 

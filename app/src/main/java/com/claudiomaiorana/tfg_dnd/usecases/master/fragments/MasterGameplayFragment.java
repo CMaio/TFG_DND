@@ -141,19 +141,33 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         btn_switchBattle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startFight();
+                if(enemies.isEmpty()){
+                    btn_switchBattle.setError(getResources().getText(R.string.createEnemies));
+                }else{
+                    startFight();
+                }
             }
         });
 
         btn_closeParty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                closeParty();
             }
         });
 
 
         return v;
+    }
+
+    private void closeParty() {
+        party.setOpen(false);
+        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                ((MasterManagerActivity)getActivity()).changeFragment("listMaster");
+            }
+        });
     }
 
     @Override
@@ -778,10 +792,20 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                     Enemy enemy = new Enemy(txt_nameEnemy+User.getInstance().getId(),txt_nameEnemy,
                             txt_hitDiceEnemy,Integer.parseInt(txt_maxHitPoints),Integer.parseInt(txt_armorClassEnemy),
                             Integer.parseInt(txt_speed),features,attacks);
+                    saveEnemy(enemy);
                     enemies.add(enemy);
                     setAdapters();
                     popUp.dismiss();
                 }
+            }
+        });
+    }
+
+    private void saveEnemy(Enemy enemy) {
+        db.collection("enemies").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).document().set(enemy).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                setAdapters();
             }
         });
     }
@@ -916,16 +940,16 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         adapterA = new AdapterAttacksEnemy(enemy.getAttacks(),getActivity());
         rvFeatures.setAdapter(adapterA);
 
-        edt_nameEnemy.setText(txt_nameEnemy);
-        edt_hitDiceEnemy.setText(txt_hitDiceEnemy);
-        edt_armorClassEnemy.setText(txt_armorClassEnemy);
-        edt_maxHitPoints.setText(txt_maxHitPoints);
-        edt_speed.setText(txt_speed);
+        edt_nameEnemy.setText(getResources().getText(R.string.nameEnemy) + txt_nameEnemy);
+        edt_hitDiceEnemy.setText(getResources().getText(R.string.hitDiceEnemy) + txt_hitDiceEnemy);
+        edt_armorClassEnemy.setText(getResources().getText(R.string.armorEnemy) + txt_armorClassEnemy);
+        edt_maxHitPoints.setText(getResources().getText(R.string.hitPointsEnemy) + txt_maxHitPoints);
+        edt_speed.setText(getResources().getText(R.string.speedEnemy) + txt_speed);
 
 
         PopUpCustom popUp = new PopUpCustom(v);
         popUp.show(getParentFragmentManager(), "showEnemy");
-        popUp.setCancelable(false);
+
 
 
 
@@ -1189,7 +1213,6 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
 
 
         txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
-//TODO:poner en gone los layouts y no los elementos
         switch (optionType){
             case "Weapon":
                 edt_maxBonus.setVisibility(View.GONE);
@@ -1243,48 +1266,33 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                     if(edt_maxBonus.getText().toString().equals("")){
                         btn_accept.setError(getResources().getString(R.string.errorNoItemFill));
                     }else{
-                        switch (optionType){
-                            case "Weapon":
-                                Weapons weapon = new Weapons(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(), isMelee.isChecked());
-                                items.add(weapon);
-                                break;
-                            case "Usable":
-                                Usable usable = new Usable(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
-                                items.add(usable);
-                                break;
-                            case "Shield":
-                                Shield shield = new Shield(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
-                                items.add(shield);
-                                break;
-                            case "Armor":
-                                Armor armor = new Armor(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(),Integer.parseInt(edt_maxBonus.getText().toString()));
-                                items.add(armor);
-                                break;
-                        }
-                        saveItems();
+                        Armor armor = new Armor(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(),Integer.parseInt(edt_maxBonus.getText().toString()));
+                        items.add(armor);
+
+                        saveItems(armor);
                         setAdapters();
                         popUp.dismiss();
                     }
                 }else{
                     switch (optionType){
                         case "Weapon":
-                            Weapons weapon = new Weapons(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(), isMelee.isChecked());
+                            Weapons weapon = new Weapons(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(), isMelee.isChecked());
+                            saveItems(weapon);
                             items.add(weapon);
                             break;
                         case "Usable":
-                            Usable usable = new Usable(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
+                            Usable usable = new Usable(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
+                            saveItems(usable);
                             items.add(usable);
+
                             break;
                         case "Shield":
-                            Shield shield = new Shield(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
+                            Shield shield = new Shield(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
+                            saveItems(shield);
                             items.add(shield);
-                            break;
-                        case "Armor":
-                            Armor armor = new Armor(txt_nameItemMaster.getText().toString(),txt_nameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(),Integer.parseInt(edt_maxBonus.getText().toString()));
-                            items.add(armor);
+
                             break;
                     }
-                    saveItems();//TODO: guardar items y enemigso
 
                     setAdapters();
                     popUp.dismiss();
@@ -1301,8 +1309,8 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
 
     }
 
-    private void saveItems() {
-        db.collection("items").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).document().set(items).addOnCompleteListener(new OnCompleteListener<Void>() {
+    private void saveItems(Item item) {
+        db.collection("items").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).document().set(item).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 setAdapters();
@@ -1311,25 +1319,30 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     }
 
     public void startFight(){
-        //TODO:Setear enemigos y pedir la inicativa de los enemigos pasar a modo pelea y que pida iniciativa a los jugdores
         party.setFighting(true);
         callPopUpEnemies();
-
     }
 
     void callPopUpEnemies(){
-        Button selectEnemies;
+        Button selectEnemies,cancel;
         ArrayList<EnemySelector> enemiesFighting;
         RecyclerView rv;
         AdapterEnemiesSelect adapter;
+        TextView tittle;
 
         View view = getLayoutInflater().inflate(R.layout.fragment_character_skills, null);
 
         rv = view.findViewById(R.id.rv_skillsSelector);
         selectEnemies = view.findViewById(R.id.btn_continueSkills);
+        cancel = view.findViewById(R.id.btn_cancelSkills);
+        cancel.setVisibility(View.VISIBLE);
+        tittle = view.findViewById(R.id.txv_skillsToSelect);
+
+        tittle.setText(getResources().getText(R.string.selectEnemies));
+
         enemiesFighting = new ArrayList<>();
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),3);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),1);
         rv.setLayoutManager(layoutManager);
 
         enemiesFighting = getEnemiesToSelect();
@@ -1340,7 +1353,6 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         //loadingBar(View.INVISIBLE);
         PopUpCustom popUp = new PopUpCustom(view);
         popUp.show(getParentFragmentManager(), "enemiesPopUp");
-        popUp.setCancelable(false);
 
         selectEnemies.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1351,6 +1363,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                 party.setEnemiesFight(new ArrayList<>());
                 for (EnemySelector sk: tmpData) {
                     if(sk.getUserValue()>0){
+                        System.out.println("added new------");
                         quantity ++;
                         Enemy enemy = null;
                         for (Enemy enemyInList:enemies) {
@@ -1360,16 +1373,28 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                         }
                         if(enemy!=null){
                             for(int i = 0;i<sk.getUserValue();i++){
-                                party.getEnemiesFight().add(enemy);
+                                party.getEnemiesFight().add(new Enemy(enemy.getID()+"num"+ i,enemy.getName()+i,enemy.getHitDice(),
+                                        enemy.getMaxHitPoints(),enemy.getArmorClass(),enemy.getSpeed(),enemy.getFeaturesAndTraits(),
+                                        enemy.getAttacks()));
                             }
                         }
                     }
                 }
                 if(quantity<1){
+                    System.out.println("eerror new------");
+
                     selectEnemies.setError("Add enemies");
                 }else{
                     setInitiativeEnemies(0);
+                    popUp.dismiss();
+
                 }
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUp.dismiss();
             }
         });
     }
@@ -1380,7 +1405,9 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         ArrayList<EnemySelector> result = new ArrayList<>();
 
         for (Enemy enemyList: enemies) {
-            result.add(new EnemySelector(enemyList.getName(),enemyList.getMaxHitPoints()));
+            if(!enemyList.getName().equals("")){
+                result.add(new EnemySelector(enemyList.getName(),enemyList.getMaxHitPoints()));
+            }
         }
         return result;
     }
@@ -1410,8 +1437,13 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                     if(0<tmpValue && tmpValue<21){
                         popUp.dismiss();
                         party.getEnemiesFight().get(index).setInitiative(tmpValue);
-                        if(index == party.getEnemiesFight().size()){
-                            ((MasterManagerActivity)getActivity()).goToPlay(party);
+                        if(index == party.getEnemiesFight().size()-1){
+                            db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    ((MasterManagerActivity)getActivity()).goToFight(party);
+                                }
+                            });
                         }else{
                             setInitiativeEnemies(index+1);
                         }

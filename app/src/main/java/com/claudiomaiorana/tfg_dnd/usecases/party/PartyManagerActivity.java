@@ -89,6 +89,7 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     private void backToMainActivity(int result){
+        System.out.println("ne entro aqui----------");
         Intent intent = new Intent();
         intent.putExtra("source","party");
         setResult(result,intent);
@@ -108,12 +109,12 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     public void goToPlay(Party party) {
-        //TODO:Aqui se va directamente a la pantalla de jugar
-        Intent intent = new Intent(this, GameplayActivity.class);
+
+        Intent intent = new Intent(PartyManagerActivity.this, GameplayActivity.class);
         intent.putExtra("source","party");
         intent.putExtra("idParty",party.getID());
-        myActivityResultLauncher.launch(intent);
-        finish();
+        startActivity(intent);
+        //finish();
     }
 
     public void selectCharacter(Party id) {

@@ -37,16 +37,35 @@
             app:spanCount="2">
 
         </androidx.recyclerview.widget.RecyclerView>
-
-        <Button
-            android:id="@+id/btn_continueSkills"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:text="@string/select" />
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|center">
+
+            <Button
+                android:id="@+id/btn_cancelSkills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/btn_continueSkills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:text="@string/select" />
+        </LinearLayout>
+
+
 
     </LinearLayout>
 

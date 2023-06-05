@@ -135,18 +135,28 @@ public class GameplayFightFragment extends Fragment {
                         indexCharacter++;
                         if(characterParty.getUserID().equals(User.getInstance().getId())){
                             character = characterParty;
+                            break;
                         }
                     }
-                    if(tmpParty.getFighting()){
-                        if(tmpParty.getTurn().equals(character.getID())){
-                            ly_loading.setVisibility(View.INVISIBLE);
+                    if(tmpParty.getFighting() && tmpParty.getAllReady()){
+                        if(!tmpParty.getTurn().equals("") && !tmpParty.getTurn().equals("none")){
+                            System.out.println(tmpParty.getTurn() + "---------------");
+                            String[] turn = tmpParty.getTurn().split("/");
+                            if(turn[1].equals(character.getID())){
+                                ly_loading.setVisibility(View.INVISIBLE);
 
+                            }else{
+                                ly_loading.setVisibility(View.VISIBLE);
+
+                            }
                         }else{
                             ly_loading.setVisibility(View.VISIBLE);
 
                         }
 
+
                     }else if(!tmpParty.getFighting() && party.getFighting()){
+                        party = tmpParty;
                         fightingIsFinished();
                     }
                     
@@ -156,11 +166,10 @@ public class GameplayFightFragment extends Fragment {
     }
 
     private void fightingIsFinished() {
-        //TODO:Change back to safe gameplay fragment
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                ((GameplayActivity)getActivity()).changeFragment("gameplaySafe");
+                ((GameplayActivity)getActivity()).changeFragment("gameplaySafe",partyCode);
             }
         });
     }
@@ -278,6 +287,7 @@ public class GameplayFightFragment extends Fragment {
     private void finishTurn() {
         party.getPlayers().set(indexCharacter,character);
         party.setTurn("");
+        party.setLastTurn("pl/"+character.getID());
         updateParty();
 
     }

@@ -19,6 +19,7 @@ import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Enemy;
 import com.claudiomaiorana.tfg_dnd.model.Party;
+import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterEnemies;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterObjects;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterPlayers;
@@ -28,6 +29,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class MasterGameplayAttackFragment extends Fragment implements AdapterPlayers.OnItemClickListener, AdapterEnemies.OnItemClickListener{
@@ -49,6 +58,10 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
     private TextView turnDisplay;
 
 
+
+    private Boolean allReady;
+
+
     public MasterGameplayAttackFragment() {}
 
     public static MasterGameplayAttackFragment newInstance(String param1) {
@@ -62,6 +75,7 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        allReady = false;
         if (getArguments() != null) {
             partyCode = getArguments().getString(ARG_PARAM1);
         }
@@ -81,10 +95,23 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
             @Override
             public void onClick(View view) {
                 party.setFighting(false);
-                updateParty();
+                party.setEnemiesFight(new ArrayList<>());
+                for(int i = 0;i<party.getPlayers().size();i++){
+                    party.getPlayers().get(i).setInitiative(0);
+                }
+                db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        goBackMasterGameplay();
+                    }
+                });
             }
         });
         return v;
+    }
+
+    private void goBackMasterGameplay() {
+        ((MasterManagerActivity)getActivity()).goToPlay(party);
     }
 
     private void getParty() {
@@ -109,10 +136,120 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
                         return;
                     }
                     party = documentSnapshot.toObject(Party.class);
-                    turnDisplay.setText(party.getTurn());
+                    if(party.getAllReady()){
+                        establishCorrectOrder(party.getOrderParty());
+                        System.out.println("stablishingturn");
+                        establishTurn();
+                        getTurnName();
+                        udaptePartyTurn();
+
+                    }else{
+                        checkAllReady();
+                    }
+
                 });
     }
 
+    private void udaptePartyTurn() {
+        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                setAdapters();
+                isEnemyTurn();
+            }
+        });
+    }
+
+    private void isEnemyTurn() {
+        String[] turnActual = party.getTurn().split("/");
+        if(turnActual[0].equals("en")){
+            ((MasterManagerActivity)getActivity()).changeFragment("fightingEnemyOptions",partyCode);
+        }
+    }
+
+    private void establishTurn() {
+        String lastTurnParty = party.getLastTurn();
+        Boolean found = false;
+        if(party.getTurn().equals("") || party.getTurn().equals("none")){
+            for(String key: party.getOrderParty().keySet()){
+                if(found){
+                    party.setTurn(key);
+                    found = false;
+                    break;
+                }
+
+                found = key.equals(lastTurnParty);
+            }
+
+
+        }
+    }
+
+    private void getTurnName(){
+        String newTurnName = "";
+        if(!party.getTurn().equals("") && !party.getTurn().equals("none")){
+            String[] turn = party.getTurn().split("/");
+            if(turn[0].equals("pl")){
+                for (Character character: party.getPlayers()) {
+                    if(character.getID().equals(turn[1])){
+                        newTurnName = character.getName();
+                    }
+                }
+            } else if (turn[0].equals("en")) {
+                for (Enemy enemyTurnList: party.getEnemiesFight()) {
+                    if(enemyTurnList.getID().equals(turn[1])){
+                        newTurnName = enemyTurnList.getName();
+
+                    }
+                }
+            }
+            turnDisplay.setText(newTurnName);
+        }
+
+    }
+
+    private void checkAllReady(){
+        int totalPlayers = party.getPlayers().size() + party.getEnemiesFight().size();
+        int actualReady = 0;
+        Map<String, Integer> map = new HashMap<>();
+        for (Character character: party.getPlayers()) {
+            if(character.getInitiative()>0){
+                actualReady ++;
+                map.put("pl/"+character.getID(),character.getInitiative());
+            }
+        }
+        for (Enemy enemyTurnList: party.getEnemiesFight()) {
+            if(enemyTurnList.getInitiative()>0){
+                actualReady ++;
+                map.put("en/"+enemyTurnList.getID(),enemyTurnList.getInitiative());
+
+            }
+        }
+        if(actualReady == totalPlayers){
+            party.setAllReady(true);
+
+
+            establishCorrectOrder(map);
+            updateParty();
+        }
+
+    }
+
+    private void establishCorrectOrder(Map<String, Integer> map) {
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(map.entrySet());
+        entryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        Map<String, Integer> sortedMap = new LinkedHashMap<>();
+        Boolean first = true;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+            if(first){
+                party.setTurn(entry.getKey());
+                party.setLastTurn(entry.getKey());
+                first = false;
+            }
+        }
+        party.setOrderParty(sortedMap);
+    }
 
     private void updateParty(){
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -245,11 +382,24 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
 
     @Override
     public void onItemClick(Character character) {
-        Button  btn_giveLife, btn_takeLife;
+        Button btn_giveMoney, btn_giveLife, btn_giveItem, btn_increaseLevel, btn_takeMoney, btn_takeLife, btn_takeItem;
+
 
         View v = getLayoutInflater().inflate(R.layout.popup_master_options_do_player, null);
+        btn_giveMoney = v.findViewById(R.id.btn_giveMoney);
         btn_giveLife = v.findViewById(R.id.btn_giveLife);
+        btn_giveItem = v.findViewById(R.id.btn_giveItem);
+        btn_increaseLevel = v.findViewById(R.id.btn_increaseLevel);
+        btn_takeMoney = v.findViewById(R.id.btn_takeMoney);
         btn_takeLife = v.findViewById(R.id.btn_takeLife);
+        btn_takeItem = v.findViewById(R.id.btn_takeItem);
+
+
+        btn_giveMoney.setVisibility(View.GONE);
+        btn_giveItem.setVisibility(View.GONE);
+        btn_increaseLevel.setVisibility(View.GONE);
+        btn_takeMoney.setVisibility(View.GONE);
+        btn_takeItem.setVisibility(View.GONE);
 
         PopUpCustom popUp = new PopUpCustom(v);
         popUp.show(getParentFragmentManager(), "optionsCharacter");

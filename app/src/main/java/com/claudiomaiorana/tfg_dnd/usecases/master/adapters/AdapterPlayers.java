@@ -37,7 +37,7 @@ public class AdapterPlayers extends RecyclerView.Adapter<AdapterPlayers.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Character character = data.get(position);
         holder.txt_name.setText(character.getName());
-        holder.txt_Life.setText(Integer.toString(character.getCurrentHitPoints()));
+        holder.txt_Life.setText(context.getText(R.string.hp) + ":" + Integer.toString(character.getCurrentHitPoints()));
     }
 
     @Override

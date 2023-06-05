@@ -235,7 +235,7 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
         db.collection("parties").document(partyCode).set(actualParty).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                ((MasterManagerActivity) getActivity()).finishAttack(partyCode);
+                ((MasterManagerActivity) getActivity()).finishAttack(partyCode,1);
             }
         });
     }

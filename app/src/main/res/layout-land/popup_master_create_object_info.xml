@@ -115,7 +115,22 @@
                     android:hint="maxBonus"
                     android:inputType="number" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="40dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
+                <CheckBox
+                    android:id="@+id/chk_isMelee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/isMeleeAttack" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,21 +163,7 @@
                     android:text="@string/acceptButton" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="40dp"
-                android:orientation="horizontal">
 
-
-                <CheckBox
-                    android:id="@+id/chk_isMelee"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/isMeleeAttack" />
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

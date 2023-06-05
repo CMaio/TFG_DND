@@ -118,10 +118,14 @@ public class CharacterSheetVisualizerFragment extends Fragment implements Adapte
         btn_goHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                goBackHome();
             }
         });
         return v;
+    }
+
+    private void goBackHome() {
+        getParentFragmentManager().popBackStack();
     }
 
     private void openPopUpGold() {

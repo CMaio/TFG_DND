@@ -57,6 +57,7 @@ public class GameplayActivity extends AppCompatActivity {
     }
 
     public void changeFragment(String state){showFragment(state,"");}
+    public void changeFragment(String state,String code){showFragment(state,code);}
 
 
     private void showFragment(String state,String code){
@@ -95,20 +96,20 @@ public class GameplayActivity extends AppCompatActivity {
 
 
 
-    public void attackDone(String code){
+    public void attackDone(String code,String attackDone){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.Fr_gameplayManager);
         FragmentTransaction ft = fm.beginTransaction();
-        GameplayFightFragment listFragment = GameplayFightFragment.newInstance(code,"yes");
+        GameplayFightFragment listFragment = GameplayFightFragment.newInstance(code,attackDone);
         ft.replace(R.id.Fr_gameplayManager,listFragment,"fr_attackGameplay");
         ft.addToBackStack(null);
         ft.commit();
 
     }
 
-    private void backToMainActivity(int result){
+    public void backToMainActivity(int result){
         Intent intent = new Intent();
-        intent.putExtra("source","party");
+        intent.putExtra("source","parties");
         setResult(result,intent);
         finish();
     }
@@ -118,7 +119,7 @@ public class GameplayActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment currentFragment = fragmentManager.findFragmentById(R.id.Fr_gameplayManager);
 
-        if (currentFragment instanceof PartyListFragment) {
+        if (currentFragment instanceof GameplaySafeFragment) {
             backToMainActivity(RESULT_OK);
         }else{
             fragmentManager.popBackStack();

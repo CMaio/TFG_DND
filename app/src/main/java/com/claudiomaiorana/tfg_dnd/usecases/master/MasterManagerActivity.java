@@ -16,8 +16,11 @@ import android.widget.LinearLayout;
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterCreatePartyFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayAttackEnemyFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayAttackFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterListFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterOptionsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterWaitingFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
 
@@ -80,6 +83,24 @@ public class MasterManagerActivity extends AppCompatActivity {
                     ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
                 }
                 break;
+            case "fightingMaster":
+                if(fragment == null|| !(fragment instanceof MasterGameplayAttackFragment)){
+                    MasterGameplayAttackFragment listFragment = MasterGameplayAttackFragment.newInstance(code);
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
+                }
+                break;
+            case "fightingEnemyOptions":
+                if(fragment == null|| !(fragment instanceof MasterOptionsFragment)){
+                    MasterOptionsFragment listFragment = MasterOptionsFragment.newInstance(code,0);
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
+                }
+                break;
+            case "fightingEnemyAttack":
+                if(fragment == null|| !(fragment instanceof MasterGameplayAttackEnemyFragment)){
+                    MasterGameplayAttackEnemyFragment listFragment = MasterGameplayAttackEnemyFragment.newInstance(code);
+                    ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
+                }
+                break;
         }
 
         ft.addToBackStack(null);
@@ -93,6 +114,9 @@ public class MasterManagerActivity extends AppCompatActivity {
 
     public void goToPlay(Party party) {
         showFragment("gameplay",party.getID());
+    }
+    public void goToFight(Party party) {
+        showFragment("fightingMaster",party.getID());
     }
 
     private void backToMainActivity(int result){
@@ -114,7 +138,13 @@ public class MasterManagerActivity extends AppCompatActivity {
         }
     }
 
-    public void finishAttack(String code) {
-
+    public void finishAttack(String code,int attackDone) {
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fr_master_manager);
+        FragmentTransaction ft = fm.beginTransaction();
+        MasterOptionsFragment listFragment = MasterOptionsFragment.newInstance(code,attackDone);
+        ft.replace(R.id.fr_master_manager,listFragment,"fr_gameplayMaster");
+        ft.addToBackStack(null);
+        ft.commit();
     }
 }

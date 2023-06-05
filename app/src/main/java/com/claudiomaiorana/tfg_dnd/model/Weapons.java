@@ -11,6 +11,7 @@ public class Weapons extends Item {
     //TODO:Implementar esto
     private boolean hitMelee;
 
+    public Weapons(){}
 
     public Weapons(String name, String code, String damageDice, boolean hitMelee) {
         super("weapons",name,code);

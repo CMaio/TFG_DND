@@ -22,8 +22,6 @@ public class Enemy {
 
     public Enemy(){}
 
-
-
     public Enemy(String ID, String name, String hitDice, int maxHitPoints, int armorClass, int speed, ArrayList<ProfLang> featuresAndTraits, ArrayList<Weapons> attacks) {
         this.ID = ID;
         this.name = name;

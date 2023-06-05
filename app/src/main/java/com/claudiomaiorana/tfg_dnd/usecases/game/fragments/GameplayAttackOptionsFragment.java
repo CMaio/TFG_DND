@@ -294,7 +294,7 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
         db.collection("parties").document(partyCode).set(actualParty).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                ((GameplayActivity) getActivity()).attackDone(partyCode);
+                ((GameplayActivity) getActivity()).attackDone(partyCode,"yes");
             }
         });
     }

@@ -55,6 +55,16 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="10dp" />
+            <TextView
+                android:id="@+id/edt_NameAttacksRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="@string/attacksRV"
+                android:textSize="16sp"/>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="2dp" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_attacks"
                 android:layout_width="match_parent"
@@ -88,7 +98,16 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="10dp" />
-
+            <TextView
+                android:id="@+id/edt_NameFeaturesRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:text="@string/featuresRV"
+                android:textSize="16sp"/>
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="2dp" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_features"
                 android:layout_width="match_parent"

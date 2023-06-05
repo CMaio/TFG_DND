@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <application
         android:allowBackup="true"
         android:appCategory="audio"
@@ -16,6 +17,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.TFG_DND"
+        android:enableOnBackInvokedCallback="true"
+
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.gms.car.application"

@@ -86,8 +86,8 @@ public class PartyWaitingFragment extends Fragment {
                     if (error != null) {
                         return;
                     }
-
-                    updateScreen(documentSnapshot.toObject(Party.class));
+                    party = documentSnapshot.toObject(Party.class);
+                    updateScreen();
                 });
     }
 
@@ -140,7 +140,7 @@ public class PartyWaitingFragment extends Fragment {
             db.collection("parties").document(partyCodeParam).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    updateScreen(party);
+                    updateScreen();
                 }
             });
         }
@@ -171,7 +171,7 @@ public class PartyWaitingFragment extends Fragment {
         return "";
     }
 
-    private void updateScreen(Party party) {
+    private void updateScreen() {
         List<String> characters = party.getPlayersConnected();
         txt_masterSlot.setText(party.getUsernameMaster());
         setElementsEmpty();

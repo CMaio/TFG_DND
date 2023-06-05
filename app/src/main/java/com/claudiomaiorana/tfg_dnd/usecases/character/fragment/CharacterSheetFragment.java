@@ -162,7 +162,7 @@ public class CharacterSheetFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(PARTY_CODE, idParty);
         fragment.setArguments(args);
-        PARTY_CODE = idParty;
+
 
         return fragment;
     }
@@ -219,7 +219,6 @@ public class CharacterSheetFragment extends Fragment {
                             Bundle extras = result.getData().getExtras();
                             System.out.println(result.getData().getData() + "-----------------URI");
                             //Drawable imageBitmap = (Drawable) extras.get("data");
-                            //TODO:Regoger imagen y guardarla y ponerla
                             urlImg = result.getData().getData();
                             System.out.println(urlImg + "-----------------URI");
                             Glide.with(getContext())
@@ -839,7 +838,6 @@ public class CharacterSheetFragment extends Fragment {
                         @Override
                         public void onSuccess(JSONObject jsonObject){
                             try{
-                                //TODO: llenar list de integer para la cantidad que puede usar
                                 JSONObject spellCasting = jsonObject.getJSONObject("spellcasting");
                                 spellsLevelQuantity = new ArrayList<>();
                                 for (int i = 0; i < 10; i++) {
@@ -1024,14 +1022,12 @@ public class CharacterSheetFragment extends Fragment {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     setDamageSpells(0,character);
-                    saveCharacter(character);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     character.setImgPlayerName("");
                     setDamageSpells(0,character);
-                    saveCharacter(character);
                 }
             });
         }else{
@@ -1043,11 +1039,15 @@ public class CharacterSheetFragment extends Fragment {
 
     private void setDamageSpells(int level, Character character){
         if(level>character.getLevel()){
-            saveCharacter(character);
+            setLevelFeatures(1,character);
         }else{
             character.getSpells().getSpellsDamage().put(Integer.toString(level),new ArrayList<>());
             List<Spells.Spell> spellList = character.getSpells().getSpellsName().get(Integer.toString(level));
-            getDamageOfThisSpells(level,0,spellList,character);
+            if(spellList != null && !spellList.isEmpty()){
+                getDamageOfThisSpells(level,0,spellList,character);
+            }else{
+                setDamageSpells(level+1,character);
+            }
         }
 
 
@@ -1112,8 +1112,49 @@ public class CharacterSheetFragment extends Fragment {
         }
     }
 
+    private void setLevelFeatures(int level, Character character){
+        if(level>character.getLevel()){
+            saveCharacter(character);
+        }else{
+            updateLevel(level,character);
+        }
+
+
+    }
+
+    private void updateLevel(int level,Character character) {
+
+        Util.apiGETRequest("classes/"+character.getCodeClass() + "/levels/"+ level, new ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject levelUpdate) {
+                try{
+                    if(levelUpdate.has("features")){
+                        ArrayList<ProfLang> tmpFeatures = character.getFeaturesAndTraits();
+                        JSONArray featuresLevel = levelUpdate.getJSONArray("features");
+                        for(int i = 0;i<featuresLevel.length();i++){
+                            JSONObject tmp = featuresLevel.getJSONObject(i);
+                            tmpFeatures.add(new ProfLang(tmp.getString("index"),tmp.getString("name")));
+                        }
+                        character.setFeaturesAndTraits(tmpFeatures);
+                    }
+                    setLevelFeatures(level+1,character);
+                }catch (Exception e){
+                    setLevelFeatures(level+1,character);
+                }
+            }
+            @Override
+            public void onError(VolleyError error) {
+                setLevelFeatures(level+1,character);
+            }
+        },getActivity());
+
+
+    }
+
     private void saveCharacter(Character character) {
         if(!partyCode.equals("")){
+            System.out.println("-----------------tamo esoty");
+
             character.setPartyID(partyCode);
             db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
                     .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -1147,6 +1188,7 @@ public class CharacterSheetFragment extends Fragment {
                         }
                     });
         }else{
+            System.out.println("-----------------aqui esoty");
             db.collection("characters").document(character.getUserID()).collection(User.getInstance().getUserName())
                     .document(character.getID()).set(character).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

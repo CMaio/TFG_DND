@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                 } else if (result.getResultCode() ==  RESULT_CANCELED) {
+                    System.out.println("aqui esoty--------------------");
                     String source = intent.getStringExtra("source");
                     switch (source){
                         case "login":
@@ -202,17 +203,23 @@ public class MainActivity extends AppCompatActivity {
     private void goToCharacters(){
         Intent intent = new Intent(this, CharacterManagerActivity.class);
         myActivityResultLauncher.launch(intent);
+
+
     }
 
 
     private void goToParties() {
         Intent intent = new Intent(this, PartyManagerActivity.class);
         myActivityResultLauncher.launch(intent);
+
+
     }
 
     private void goToMaster() {
         Intent intent = new Intent(this, MasterManagerActivity.class);
         myActivityResultLauncher.launch(intent);
+
+
     }
 
 }

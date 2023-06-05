@@ -3,7 +3,9 @@ package com.claudiomaiorana.tfg_dnd.model;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -19,10 +21,14 @@ public class Party {
     String nameParty;
 
     Boolean open;
-    Boolean fighting;
+    Boolean fighting = false;
 
     String turn;
     String lastTurn;
+
+    Boolean allReady;
+
+    Map<String,Integer> orderParty;
 
     public Party() {}
 
@@ -34,7 +40,12 @@ public class Party {
         this.playersConnected = new ArrayList<>();
         this.open = false;
         this.UsernameMaster = usernameMaster;
-        this.turn = "";
+        this.turn = "none";
+        this.lastTurn = "none";
+        this.fighting = false;
+        this.enemiesFight = new ArrayList<>();
+        this.allReady = false;
+        this.orderParty = new LinkedHashMap<>();
     }
 
     public String getUsernameMaster() {
@@ -123,6 +134,22 @@ public class Party {
 
     public void setLastTurn(String lastTurn) {
         this.lastTurn = lastTurn;
+    }
+
+    public Boolean getAllReady() {
+        return allReady;
+    }
+
+    public void setAllReady(Boolean allReady) {
+        this.allReady = allReady;
+    }
+
+    public Map<String, Integer> getOrderParty() {
+        return orderParty;
+    }
+
+    public void setOrderParty(Map<String, Integer> orderParty) {
+        this.orderParty = orderParty;
     }
 
     public static String generateID() {

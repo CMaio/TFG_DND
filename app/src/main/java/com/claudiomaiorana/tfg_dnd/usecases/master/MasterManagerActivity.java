@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterCreatePartyFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayAttackEnemyFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayAttackFragment;
@@ -120,9 +121,9 @@ public class MasterManagerActivity extends AppCompatActivity {
     }
 
     private void backToMainActivity(int result){
-        Intent intent = new Intent();
+        Intent intent = new Intent(this,MainActivity.class);
         intent.putExtra("source","master");
-        setResult(result,intent);
+        startActivity(intent);
         finish();
     }
 

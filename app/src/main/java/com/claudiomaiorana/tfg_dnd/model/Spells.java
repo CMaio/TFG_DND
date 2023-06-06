@@ -232,6 +232,20 @@ public class Spells implements Parcelable {
         public Map<String, String> getSlot_level() {
             return slot_level;
         }
+        public String getSlot_exactLevel(int level) {
+            String dice = slot_level.get(Integer.toString(level));
+            System.out.println("dice in spell " + dice + "sp " + getName());
+            if(dice == null){
+                for (int i=level;i>0;i--){
+                    if( slot_level.get(Integer.toString(i)) != null){
+                        dice =slot_level.get(Integer.toString(i));
+                        return dice;
+                    }
+                }
+            }
+
+            return dice;
+        }
 
         public void setSlot_level(Map<String, String> slot_level) {
             this.slot_level = slot_level;

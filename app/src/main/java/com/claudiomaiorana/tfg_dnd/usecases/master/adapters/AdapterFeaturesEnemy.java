@@ -10,12 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Armor;
 import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
-import com.claudiomaiorana.tfg_dnd.model.Shield;
-import com.claudiomaiorana.tfg_dnd.model.Usable;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 
 import java.util.ArrayList;
 

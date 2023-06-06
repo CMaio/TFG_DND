@@ -12,6 +12,8 @@ public class PossibleAttack {
         this.name = name;
         this.hitDice = hitDice;
         this.type = type;
+        this.clicked = false;
+        this.hitMelee = false;
     }
 
     public String getName() {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="clickedColor">#FFE06F</color>
-    <color name="defaultColor" />
+    <color name="defaultColor">#006C6C6C</color>
+
 </resources>

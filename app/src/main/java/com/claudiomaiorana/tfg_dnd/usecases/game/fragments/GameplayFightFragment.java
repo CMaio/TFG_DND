@@ -138,27 +138,33 @@ public class GameplayFightFragment extends Fragment {
                             break;
                         }
                     }
-                    if(tmpParty.getFighting() && tmpParty.getAllReady()){
-                        if(!tmpParty.getTurn().equals("") && !tmpParty.getTurn().equals("none")){
-                            System.out.println(tmpParty.getTurn() + "---------------");
-                            String[] turn = tmpParty.getTurn().split("/");
-                            if(turn[1].equals(character.getID())){
-                                ly_loading.setVisibility(View.INVISIBLE);
+                    if(character.getCurrentHitPoints()>0){
+                        if(tmpParty.getFighting() && tmpParty.getAllReady()){
+                            if(!tmpParty.getTurn().equals("") && !tmpParty.getTurn().equals("none")){
+                                System.out.println(tmpParty.getTurn() + "---------------");
+                                String[] turn = tmpParty.getTurn().split("/");
+                                if(turn[1].equals(character.getID())){
+                                    ly_loading.setVisibility(View.INVISIBLE);
 
+                                }else{
+                                    ly_loading.setVisibility(View.VISIBLE);
+
+                                }
                             }else{
                                 ly_loading.setVisibility(View.VISIBLE);
 
                             }
-                        }else{
-                            ly_loading.setVisibility(View.VISIBLE);
 
+
+                        }else if(!tmpParty.getFighting() && party.getFighting()){
+                            party = tmpParty;
+                            fightingIsFinished();
                         }
-
-
-                    }else if(!tmpParty.getFighting() && party.getFighting()){
-                        party = tmpParty;
-                        fightingIsFinished();
+                    }else{
+                        finishTurn();
+                        ly_loading.setVisibility(View.VISIBLE);
                     }
+
                     
                     party = tmpParty;
 
@@ -186,6 +192,7 @@ public class GameplayFightFragment extends Fragment {
                         indexCharacter++;
                         if(charact.getUserID().equals(User.getInstance().getId())){
                             character = charact;
+                            break;
                         }
                     }
 
@@ -198,6 +205,7 @@ public class GameplayFightFragment extends Fragment {
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                ly_loading.setVisibility(View.VISIBLE);
 
             }
         });
@@ -218,7 +226,7 @@ public class GameplayFightFragment extends Fragment {
 
         String movementInfoUpdated = getResources().getString(R.string.popUpMovementInfo);
 
-        movementInfoUpdated.replace("@mov3",Integer.toString(feets));
+        movementInfoUpdated = movementInfoUpdated.replace("@mov3@",Integer.toString(feets));
         movementInfo.setText(movementInfoUpdated);
 
         PopUpCustom popUp = new PopUpCustom(v);
@@ -230,7 +238,7 @@ public class GameplayFightFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 String update = movementInfo.getText().toString();
-                update.replace(Integer.toString(feets),Integer.toString(i));
+                update = update.replace(Integer.toString(feets),Integer.toString(i));
                 feets = i;
                 movementInfo.setText(update);
 
@@ -286,14 +294,15 @@ public class GameplayFightFragment extends Fragment {
 
     private void finishTurn() {
         party.getPlayers().set(indexCharacter,character);
+        party.setLastTurn(party.getTurn());
         party.setTurn("");
-        party.setLastTurn("pl/"+character.getID());
+        System.out.println("last turn " +party.getLastTurn() + "turn " + party.getTurn() );
         updateParty();
 
     }
 
     void setElements(View v){
-        ly_loading = v.findViewById(R.id.ly_loading);
+        ly_loading = v.findViewById(R.id.ly_loadingFight);
 
         btn_movement = v.findViewById(R.id.btn_movement);
         btn_attack = v.findViewById(R.id.btn_attack);

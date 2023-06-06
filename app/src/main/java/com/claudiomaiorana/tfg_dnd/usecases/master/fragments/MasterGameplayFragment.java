@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -21,18 +22,15 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Armor;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Enemy;
 import com.claudiomaiorana.tfg_dnd.model.EnemySelector;
 import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
 import com.claudiomaiorana.tfg_dnd.model.Party;
+import com.claudiomaiorana.tfg_dnd.model.PossibleAttack;
 import com.claudiomaiorana.tfg_dnd.model.ProfLang;
-import com.claudiomaiorana.tfg_dnd.model.Shield;
-import com.claudiomaiorana.tfg_dnd.model.Usable;
 import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterAttacksEnemy;
 import com.claudiomaiorana.tfg_dnd.usecases.master.adapters.AdapterEnemies;
@@ -77,8 +75,8 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     AdapterObjects adapterObjects;
     AdapterEnemies adapterEnemies;
 
-    ArrayList<Enemy> enemies;
-    ArrayList<Item> items;
+    ArrayList<Enemy> enemies = new ArrayList<>();
+    ArrayList<Item> items = new ArrayList<>();
 
 
     private FirebaseFirestore db;
@@ -93,7 +91,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     String txt_nameEnemy = "",txt_hitDiceEnemy= "",txt_armorClassEnemy= "",txt_maxHitPoints= "",txt_speed= "";
 
     ArrayList<ProfLang> features;
-    ArrayList<Weapons> attacks;
+    ArrayList<Item> attacks;
 
     ArrayList<JSONArray> allSpellsByLevel = null;
     JSONArray tmpArray = null;
@@ -123,7 +121,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         View v = inflater.inflate(R.layout.fragment_master_gameplay, container, false);
         db = FirebaseFirestore.getInstance();
         setElements(v);
-        getParty();
+        //getParty();
 
         RecyclerView.LayoutManager layoutManagerP = new GridLayoutManager(getContext(),1);
         rv_playersDisplay.setLayoutManager(layoutManagerP);
@@ -191,7 +189,10 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     party = task.getResult().toObject(Party.class);
-                    getItems();
+                    if( items == null || items.isEmpty()){
+                        getItems();
+
+                    }
                 }
             }
         });
@@ -200,7 +201,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
 
     private void getItems() {
         items =  new ArrayList<>();
-        items.add(new Usable());
+        items.add(new Item());
 
         try{
             db.collection("items").document(User.getInstance().getId()).collection(User.getInstance().getUserName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -208,20 +209,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot document: task.getResult()) {
-                            switch (document.get("type",String.class)){
-                                case "usables":
-                                    items.add(document.toObject(Usable.class));
-                                    break;
-                                case "weapons":
-                                    items.add(document.toObject(Weapons.class));
-                                    break;
-                                case "shields":
-                                    items.add(document.toObject(Shield.class));
-                                    break;
-                                case "armors":
-                                    items.add(document.toObject(Armor.class));
-                                    break;
-                            }
+                            items.add(document.toObject(Item.class));
                         }
                     }
 
@@ -229,7 +217,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                 }
             });
         }catch (Exception e){
-            getEnemies();
+            //getEnemies();
         }
 
     }
@@ -257,9 +245,13 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     }
 
     private void updateParty(){
+        System.out.println("party ging to update----");
+
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                System.out.println("party update----");
+
                 setAdapters();
             }
         });
@@ -277,6 +269,15 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     }
 
     private void setAdapters(){
+        RecyclerView.LayoutManager layoutManagerP = new GridLayoutManager(getContext(),1);
+        rv_playersDisplay.setLayoutManager(layoutManagerP);
+
+        RecyclerView.LayoutManager layoutManagerE = new GridLayoutManager(getContext(),1);
+        rv_enemiesDisplay.setLayoutManager(layoutManagerE);
+
+        RecyclerView.LayoutManager layoutManagerO = new GridLayoutManager(getContext(),1);
+        rv_objectsDisplay.setLayoutManager(layoutManagerO);
+
         adapterPlayers = new AdapterPlayers(party.getPlayers(),getActivity(),this);
         adapterEnemies = new AdapterEnemies(enemies,getActivity(),this);
         adapterObjects = new AdapterObjects(items,getActivity(),this);
@@ -646,16 +647,19 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
             public void onClick(View view) {
                 btn_accept.setError(null);
                 ArrayList<OptionsCharacter> tmpData = adapter.getData();
+                ArrayList<OptionsCharacter> resultData = new ArrayList<>();
                 int quantity = 0;
                 for (OptionsCharacter sk: tmpData) {
                     if(sk.isSelected()){
                         quantity ++;
+                        resultData.add(sk);
                     }
                 }
                 if(quantity<1){
                     btn_accept.setError("Select at least 1");
                 }else{
-                    updateItems(character,tmpData,add);
+                    System.out.println("addedItems----");
+                    updateItems(character,resultData,add);
                     popUp.dismiss();
                 }
             }
@@ -672,46 +676,82 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
     }
 
     private void updateItems(Character character,ArrayList<OptionsCharacter> tmpData, boolean add) {
+        System.out.println("addedItemsVoid----");
+
         ArrayList<Item> characterItems = character.getItems();
         if(add){
             for (OptionsCharacter item: tmpData) {
                 for (Item itemMaster: items) {
+                    System.out.println("ItemsVoid----" + itemMaster.getCode());
+                    System.out.println("ItemsVoid----" + item.getCode());
+                    System.out.println( "");
                     if(item.getCode().equals(itemMaster.getCode())){
-                        characterItems.add(itemMaster);
+                        switch (itemMaster.getType()){
+                            case "weapons":
+                                characterItems.add(new Item("weapons",itemMaster.getName(),itemMaster.getCode(),"","",0,"", itemMaster.getDamageDice(),itemMaster.isHitMelee()));
+                                System.out.println("added");
+                                break;
+                            case "usables":
+                                characterItems.add(new Item("usables",itemMaster.getName(),itemMaster.getCode(),"","",0,itemMaster.getDesc(),"",false));
+                                break;
+                            case "shields":
+                                characterItems.add(new Item("shields",itemMaster.getName(),itemMaster.getCode(),itemMaster.getArmorClass(),"",0,"","",false));
+                                break;
+                            case "armors":
+                                characterItems.add(new Item("armors",itemMaster.getName(),itemMaster.getCode(),"", itemMaster.getBase(), itemMaster.getMaxBonus(),"","",false));
+                                break;
+                        }
+
                         break;
                     }
                 }
             }
         }else{
+            System.out.println("substractItemsVoid----");
+            int indexItems = 0;
             for (OptionsCharacter item: tmpData) {
                 for (Item itemCharacter: characterItems) {
                     if(item.getCode().equals(itemCharacter.getCode())){
-                        characterItems.remove(itemCharacter);
+                        characterItems.remove(indexItems);
                         break;
                     }
+                    indexItems++;
                 }
             }
         }
         character.setItems(characterItems);
+        System.out.println("ItemsVoid----" + character.getItems().get(0));
+
         updateCharacter(character);
     }
 
     private ArrayList<OptionsCharacter> returnListItems(ArrayList<Item> itemsList) {
         ArrayList<OptionsCharacter> result = new ArrayList<>();
         for (Item item: itemsList) {
-            result.add(new OptionsCharacter(item.getCode(),item.getName()));
+            if(item != null ){
+                if(item.getCode() != null){
+                    result.add(new OptionsCharacter(item.getCode(),item.getName()));
+
+                }
+            }
         }
         return result;
     }
 
 
     private void updateCharacter(Character character) {
+        System.out.println("character ging to update----");
+
         for(int i=0;i<party.getPlayers().size();i++){
             if(party.getPlayers().get(i).getID().equals(character.getID())){
                 party.getPlayers().set(i,character);
+                System.out.println("character ----" + i + "  " + character.getID());
+
                 break;
             }
         }
+        System.out.println("character update----");
+
         updateParty();
     }
 
@@ -789,6 +829,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                 }else if (txt_speed.equals("")) {
                     edt_speed.setError("");
                 }else{
+                    attacks.add(new Item("weapons",getResources().getString(R.string.normalAttack),getResources().getString(R.string.normalAttack),"","",0,"",txt_hitDiceEnemy,true));
                     Enemy enemy = new Enemy(txt_nameEnemy+User.getInstance().getId(),txt_nameEnemy,
                             txt_hitDiceEnemy,Integer.parseInt(txt_maxHitPoints),Integer.parseInt(txt_armorClassEnemy),
                             Integer.parseInt(txt_speed),features,attacks);
@@ -848,8 +889,8 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                             if(0>=firstNum){
                                 hitDice.setError("");
                             }else{
-                                Weapons weapons = new Weapons(nameAttack.getText().toString(),nameAttack.getText().toString(),hitDice.getText().toString(), isMelee.isChecked());
-                                attacks.add(weapons);
+                                Item item = new Item("weapons",nameAttack.getText().toString(),nameAttack.getText().toString(),"","",0,"",hitDice.getText().toString(),isMelee.isChecked());
+                                attacks.add(item);
                                 newEnemy();
                                 popUp.dismiss();
                             }
@@ -928,7 +969,7 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         rvAttacks = v.findViewById(R.id.rv_attacks);
         rvFeatures = v.findViewById(R.id.rv_features);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),1);
         rvAttacks.setLayoutManager(layoutManager);
 
         RecyclerView.LayoutManager layoutManagerF = new GridLayoutManager(getContext(),2);
@@ -938,13 +979,14 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         rvFeatures.setAdapter(adapterF);
 
         adapterA = new AdapterAttacksEnemy(enemy.getAttacks(),getActivity());
-        rvFeatures.setAdapter(adapterA);
+        rvAttacks.setAdapter(adapterA);
 
-        edt_nameEnemy.setText(getResources().getText(R.string.nameEnemy) + txt_nameEnemy);
-        edt_hitDiceEnemy.setText(getResources().getText(R.string.hitDiceEnemy) + txt_hitDiceEnemy);
-        edt_armorClassEnemy.setText(getResources().getText(R.string.armorEnemy) + txt_armorClassEnemy);
-        edt_maxHitPoints.setText(getResources().getText(R.string.hitPointsEnemy) + txt_maxHitPoints);
-        edt_speed.setText(getResources().getText(R.string.speedEnemy) + txt_speed);
+        System.out.println();
+        edt_nameEnemy.setText(getResources().getText(R.string.nameEnemy) + enemy.getName());
+        edt_hitDiceEnemy.setText(getResources().getText(R.string.hitDiceEnemy) + enemy.getHitDice());
+        edt_armorClassEnemy.setText(getResources().getText(R.string.armorEnemy) + Integer.toString(enemy.getArmorClass()));
+        edt_maxHitPoints.setText(getResources().getText(R.string.hitPointsEnemy) + Integer.toString(enemy.getMaxHitPoints()));
+        edt_speed.setText(getResources().getText(R.string.speedEnemy) + Integer.toString(enemy.getSpeed()));
 
 
         PopUpCustom popUp = new PopUpCustom(v);
@@ -1022,173 +1064,166 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
         });
     }
 
+
+
+
     @Override
-    public void onItemClick(Weapons weapons) {
-        TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
+    public void onItemClick(Item item) {
+        if(item.getType().equals("weapons")){
+            Item weapons = item;
+            TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
 
-        Button btn_okay;
+            Button btn_okay;
 
-        View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
-
-
-        txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
-        etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
-        txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
-        edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
-        txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
-        edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
-        btn_okay = view.findViewById(R.id.btn_okay);
-
-        txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
-        etx_setNameItemMaster.setText(weapons.getName());
-
-        edt_maxBonus.setVisibility(View.INVISIBLE);
-        txt_maxBonusArmor.setVisibility(View.INVISIBLE);
-        edt_elementAddForType.setText(weapons.getDamageDice());
-        txt_elementAdd.setText(getResources().getText(R.string.elementWeaponItem));
+            View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
 
 
+            txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
+            etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
+            txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
+            edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
+            txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
+            edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
+            btn_okay = view.findViewById(R.id.btn_okay);
 
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getParentFragmentManager(), "showWeapon");
-        popUp.setCancelable(false);
+            txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
+            etx_setNameItemMaster.setText(weapons.getName());
+
+            edt_maxBonus.setVisibility(View.INVISIBLE);
+            txt_maxBonusArmor.setVisibility(View.INVISIBLE);
+            edt_elementAddForType.setText(weapons.getDamageDice());
+            txt_elementAdd.setText(getResources().getText(R.string.elementWeaponItem));
 
 
-        btn_okay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popUp.dismiss();
-            }
-        });
+
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), "showWeapon");
+            popUp.setCancelable(false);
+
+
+            btn_okay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUp.dismiss();
+                }
+            });
+        } else if (item.getType().equals("usables")) {
+            Item usable = item;
+            TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
+
+            Button btn_okay;
+
+            View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
+
+
+            txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
+            etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
+            txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
+            edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
+            txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
+            edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
+            btn_okay = view.findViewById(R.id.btn_okay);
+
+            txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
+            etx_setNameItemMaster.setText(usable.getName());
+
+            edt_maxBonus.setVisibility(View.INVISIBLE);
+            txt_maxBonusArmor.setVisibility(View.INVISIBLE);
+            txt_elementAdd.setText(getResources().getText(R.string.elementUsableItem));
+            edt_elementAddForType.setText(usable.getDesc());
+
+
+
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), "showUsable");
+            popUp.setCancelable(false);
+
+
+            btn_okay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUp.dismiss();
+                }
+            });
+
+        } else if (item.getType().equals("shields")) {
+            Item shield = item;
+            TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
+
+            Button btn_okay;
+
+            View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
+
+
+            txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
+            etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
+            txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
+            edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
+            txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
+            edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
+            btn_okay = view.findViewById(R.id.btn_okay);
+
+            txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
+            etx_setNameItemMaster.setText(shield.getName());
+
+            edt_maxBonus.setVisibility(View.INVISIBLE);
+            txt_maxBonusArmor.setVisibility(View.INVISIBLE);
+            txt_elementAdd.setText(getResources().getText(R.string.elementShieldArmorItem));
+            edt_elementAddForType.setText(shield.getArmorClass());
+
+
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), "showShield");
+            popUp.setCancelable(false);
+
+
+            btn_okay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUp.dismiss();
+                }
+            });
+        } else if (item.getType().equals("armors")) {
+            Item armor = item;
+            TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
+
+            Button btn_okay;
+
+            View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
+
+
+            txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
+            etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
+            txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
+            edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
+            txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
+            edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
+            btn_okay = view.findViewById(R.id.btn_okay);
+
+            txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
+            etx_setNameItemMaster.setText(armor.getName());
+
+            edt_elementAddForType.setVisibility(View.VISIBLE);
+            txt_maxBonusArmor.setVisibility(View.VISIBLE);
+            txt_elementAdd.setText(getResources().getText(R.string.elementShieldArmorItem));
+            edt_elementAddForType.setText(armor.getBase());
+            edt_maxBonus.setText(armor.getMaxBonus());
+
+            PopUpCustom popUp = new PopUpCustom(view);
+            popUp.show(getParentFragmentManager(), "showArmor");
+            popUp.setCancelable(false);
+
+
+            btn_okay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popUp.dismiss();
+                }
+            });
+        }
+
 
     }
-
-    @Override
-    public void onItemClick(Usable usable) {
-
-        TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
-
-        Button btn_okay;
-
-        View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
-
-
-        txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
-        etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
-        txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
-        edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
-        txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
-        edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
-        btn_okay = view.findViewById(R.id.btn_okay);
-
-        txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
-        etx_setNameItemMaster.setText(usable.getName());
-
-        edt_maxBonus.setVisibility(View.INVISIBLE);
-        txt_maxBonusArmor.setVisibility(View.INVISIBLE);
-        txt_elementAdd.setText(getResources().getText(R.string.elementUsableItem));
-        edt_elementAddForType.setText(usable.getDesc());
-
-
-
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getParentFragmentManager(), "showUsable");
-        popUp.setCancelable(false);
-
-
-        btn_okay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popUp.dismiss();
-            }
-        });
-
-
-
-    }
-
-    @Override
-    public void onItemClick(Shield shield) {
-
-        TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
-
-        Button btn_okay;
-
-        View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
-
-
-        txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
-        etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
-        txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
-        edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
-        txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
-        edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
-        btn_okay = view.findViewById(R.id.btn_okay);
-
-        txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
-        etx_setNameItemMaster.setText(shield.getName());
-
-        edt_maxBonus.setVisibility(View.INVISIBLE);
-        txt_maxBonusArmor.setVisibility(View.INVISIBLE);
-        txt_elementAdd.setText(getResources().getText(R.string.elementShieldArmorItem));
-        edt_elementAddForType.setText(shield.getArmorClass());
-
-
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getParentFragmentManager(), "showShield");
-        popUp.setCancelable(false);
-
-
-        btn_okay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popUp.dismiss();
-            }
-        });
-
-
-    }
-
-    @Override
-    public void onItemClick(Armor armor) {
-        TextView txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor, etx_setNameItemMaster,edt_elementAddForType,edt_maxBonus;
-
-        Button btn_okay;
-
-        View view = getLayoutInflater().inflate(R.layout.popup_master_show_object_info, null);
-
-
-        txt_nameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfoTittle);
-        etx_setNameItemMaster = view.findViewById(R.id.txt_nameItemMasterInfo);
-        txt_elementAdd = view.findViewById(R.id.txt_elementAddTittle);
-        edt_elementAddForType = view.findViewById(R.id.txt_elementAdd);
-        txt_maxBonusArmor = view.findViewById(R.id.txt_maxBonusArmorTittle);
-        edt_maxBonus = view.findViewById(R.id.txt_maxBonusArmor);
-        btn_okay = view.findViewById(R.id.btn_okay);
-
-        txt_nameItemMaster.setText(getResources().getText(R.string.nameItem));
-        etx_setNameItemMaster.setText(armor.getName());
-
-        edt_elementAddForType.setVisibility(View.VISIBLE);
-        txt_maxBonusArmor.setVisibility(View.VISIBLE);
-        txt_elementAdd.setText(getResources().getText(R.string.elementShieldArmorItem));
-        edt_elementAddForType.setText(armor.getBase());
-        edt_maxBonus.setText(armor.getMaxBonus());
-
-        PopUpCustom popUp = new PopUpCustom(view);
-        popUp.show(getParentFragmentManager(), "showArmor");
-        popUp.setCancelable(false);
-
-
-        btn_okay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popUp.dismiss();
-            }
-        });
-
-
-}
 
     private void callPopUpItemInfo(@NonNull String optionType) {
         TextView tittleType,txt_nameItemMaster,txt_elementAdd,txt_maxBonusArmor;
@@ -1266,30 +1301,29 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
                     if(edt_maxBonus.getText().toString().equals("")){
                         btn_accept.setError(getResources().getString(R.string.errorNoItemFill));
                     }else{
-                        Armor armor = new Armor(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(),Integer.parseInt(edt_maxBonus.getText().toString()));
-                        items.add(armor);
-
-                        saveItems(armor);
+                        Item itemArmor = new Item("armors",etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),"",edt_elementAddForType.getText().toString(),Integer.parseInt(edt_maxBonus.getText().toString()),"","",false);
+                        saveItems(itemArmor);
+                        items.add(itemArmor);
                         setAdapters();
                         popUp.dismiss();
                     }
                 }else{
+
                     switch (optionType){
                         case "Weapon":
-                            Weapons weapon = new Weapons(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(), isMelee.isChecked());
-                            saveItems(weapon);
-                            items.add(weapon);
+                            Item item = new Item("weapons",etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),"","",0,"",edt_elementAddForType.getText().toString(),isMelee.isChecked());
+                            saveItems(item);
+                            items.add(item);
                             break;
                         case "Usable":
-                            Usable usable = new Usable(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
-                            saveItems(usable);
-                            items.add(usable);
-
+                            Item itemUsable = new Item("usables",etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),"","",0,edt_elementAddForType.getText().toString(),"",false);
+                            saveItems(itemUsable);
+                            items.add(itemUsable);
                             break;
                         case "Shield":
-                            Shield shield = new Shield(etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString());
-                            saveItems(shield);
-                            items.add(shield);
+                            Item itemShield = new Item("shields",etx_setNameItemMaster.getText().toString(),etx_setNameItemMaster.getText().toString(),edt_elementAddForType.getText().toString(),"",0,"","",false);
+                            saveItems(itemShield);
+                            items.add(itemShield);
 
                             break;
                     }

@@ -70,6 +70,7 @@
             android:layout_margin="10dp"/>
 
         <Space
+            android:id="@+id/spaceNextButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />

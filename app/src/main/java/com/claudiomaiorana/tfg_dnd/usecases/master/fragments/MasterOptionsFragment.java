@@ -16,20 +16,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Enemy;
-import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.Party;
-import com.claudiomaiorana.tfg_dnd.model.PossibleAttack;
-import com.claudiomaiorana.tfg_dnd.model.Spells;
-import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
-import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
-import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterAttacksPossibles;
-import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEnemiesShown;
-import com.claudiomaiorana.tfg_dnd.usecases.game.fragments.GameplayAttackOptionsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
-import com.claudiomaiorana.tfg_dnd.util.Constants;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,12 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MasterOptionsFragment extends Fragment {
-    //TODO:modificar para que sea como el jugador
-    //TODO: al terminar el turno tienes que pone el id en/+id en lastturn y poner none o comillas en el actualturn
     private LinearLayout ly_loading;
     private Button btn_movement,btn_attack,btn_bonus,btn_finish;
 
@@ -141,19 +127,22 @@ public class MasterOptionsFragment extends Fragment {
                     if (error != null) {
                         return;
                     }
-                    Party tmpParty = documentSnapshot.toObject(Party.class);
-                    ArrayList<Enemy> enemies = tmpParty.getEnemiesFight();
+                    party = documentSnapshot.toObject(Party.class);
+                    ArrayList<Enemy> enemies = party.getEnemiesFight();
                     indexEnemy = -1;
-                    for (Enemy enemyList: enemies) {
-                        indexEnemy++;
-                        if(enemyList.getID().equals(party.getTurn().split("/")[1])){
-                            actualEnemy = enemyList;
-                            ly_loading.setVisibility(View.INVISIBLE);
+                    if(!party.getTurn().equals("") && !party.getTurn().equals("none")){
+                        for (Enemy enemyList: enemies) {
+                            indexEnemy++;
+                            if(enemyList.getID().equals(party.getTurn().split("/")[1])){
+                                actualEnemy = enemyList;
+                                if(actualEnemy.getCurrentHitPoints()<=0){finishTurn();}
+                                ly_loading.setVisibility(View.INVISIBLE);
 
-                            break;
+                                break;
+                            }
                         }
                     }
-                    party = tmpParty;
+
 
                 });
     }
@@ -170,6 +159,7 @@ public class MasterOptionsFragment extends Fragment {
                         indexEnemy++;
                         if(enemyList.getID().equals(party.getTurn().split("/")[1])){
                             actualEnemy = enemyList;
+                            if(actualEnemy.getCurrentHitPoints()<=0){finishTurn();}
                             ly_loading.setVisibility(View.INVISIBLE);
                             break;
 
@@ -186,6 +176,7 @@ public class MasterOptionsFragment extends Fragment {
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                ((MasterManagerActivity) getActivity()).changeFragment("fightingMaster",partyCode);
 
             }
         });
@@ -206,8 +197,9 @@ public class MasterOptionsFragment extends Fragment {
 
         String movementInfoUpdated = getResources().getString(R.string.popUpMovementInfo);
 
-        movementInfoUpdated.replace("@mov3",Integer.toString(feets));
+        movementInfoUpdated = movementInfoUpdated.replace("@mov3@",Integer.toString(feets));
         movementInfo.setText(movementInfoUpdated);
+        System.out.println("replace done " + movementInfoUpdated);
 
         PopUpCustom popUp = new PopUpCustom(v);
         popUp.show(getParentFragmentManager(), "showMoney");
@@ -217,8 +209,11 @@ public class MasterOptionsFragment extends Fragment {
         movementCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
                 String update = movementInfo.getText().toString();
-                update.replace(Integer.toString(feets),Integer.toString(i));
+                System.out.println("replace done change " + update);
+
+                update = update.replace(Integer.toString(feets),Integer.toString(i));
                 feets = i;
                 movementInfo.setText(update);
 
@@ -246,7 +241,7 @@ public class MasterOptionsFragment extends Fragment {
     }
 
     private void selectAttack() {
-        ((MasterManagerActivity) getActivity()).changeFragment("fightingMaster",partyCode);
+        ((MasterManagerActivity) getActivity()).changeFragment("fightingEnemyAttack",partyCode);
     }
 
     private void callPopUpBonus() {
@@ -274,8 +269,8 @@ public class MasterOptionsFragment extends Fragment {
 
     private void finishTurn() {
         party.getEnemiesFight().set(indexEnemy,actualEnemy);
+        party.setLastTurn(party.getTurn());
         party.setTurn("");
-        party.setLastTurn("en/"+actualEnemy.getID());
         updateParty();
 
     }

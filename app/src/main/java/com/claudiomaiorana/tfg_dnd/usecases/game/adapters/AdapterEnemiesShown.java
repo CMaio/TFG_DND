@@ -42,6 +42,7 @@ public class AdapterEnemiesShown extends RecyclerView.Adapter<AdapterEnemiesShow
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Enemy enemy = data.get(position);
         holder.txt_name.setText(enemy.getName());
+        holder.txt_life.setText("");
 
         if (enemy.isSelected()) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.clickedColor));
@@ -57,10 +58,12 @@ public class AdapterEnemiesShown extends RecyclerView.Adapter<AdapterEnemiesShow
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView txt_name;
+        TextView txt_life;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_name = itemView.findViewById(R.id.rw_namePlayer_master_gameplay);
+            txt_life = itemView.findViewById(R.id.rw_life_master_gameplay);
             itemView.setOnClickListener(this);
         }
 

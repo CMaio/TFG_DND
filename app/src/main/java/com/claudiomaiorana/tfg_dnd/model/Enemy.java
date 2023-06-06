@@ -16,13 +16,13 @@ public class Enemy {
     private int speed;
 
     private ArrayList<ProfLang> featuresAndTraits;
-    private ArrayList<Weapons> attacks;
+    private ArrayList<Item> attacks;
 
     private Boolean selected;
 
     public Enemy(){}
 
-    public Enemy(String ID, String name, String hitDice, int maxHitPoints, int armorClass, int speed, ArrayList<ProfLang> featuresAndTraits, ArrayList<Weapons> attacks) {
+    public Enemy(String ID, String name, String hitDice, int maxHitPoints, int armorClass, int speed, ArrayList<ProfLang> featuresAndTraits, ArrayList<Item> attacks) {
         this.ID = ID;
         this.name = name;
         this.hitDice = hitDice;
@@ -108,11 +108,11 @@ public class Enemy {
         this.featuresAndTraits = featuresAndTraits;
     }
 
-    public ArrayList<Weapons> getAttacks() {
+    public ArrayList<Item> getAttacks() {
         return attacks;
     }
 
-    public void setAttacks(ArrayList<Weapons> attacks) {
+    public void setAttacks(ArrayList<Item> attacks) {
         this.attacks = attacks;
     }
 

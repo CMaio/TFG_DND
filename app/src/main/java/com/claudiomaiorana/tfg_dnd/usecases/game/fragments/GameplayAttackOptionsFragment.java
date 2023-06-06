@@ -23,7 +23,7 @@ import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.PossibleAttack;
 import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
+
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSkills;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterAttacksPossibles;
@@ -66,7 +66,7 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
     private ArrayList<PossibleAttack> possibleAttacks;
     Enemy enemySelected = null;
     PossibleAttack possibleAttackSelected = null;
-    Weapons attackUsed = null;
+    Item attackUsed = null;
 
 
 
@@ -93,20 +93,9 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_gameplay_attack_options, container, false);
+        db=FirebaseFirestore.getInstance();
         setElements(v);
         getParty();
-        getAllAttacks();
-        db=FirebaseFirestore.getInstance();
-
-        RecyclerView.LayoutManager lyManagerA = new GridLayoutManager(getContext(),1);
-        rv_attackNames.setLayoutManager(lyManagerA);
-        adapterAttacks = new AdapterAttacksPossibles(possibleAttacks,getActivity(),this);
-        rv_attackNames.setAdapter(adapterAttacks);
-
-        RecyclerView.LayoutManager lyManagerE = new GridLayoutManager(getContext(),1);
-        rv_enemiesName.setLayoutManager(lyManagerE);
-        adapterEnemies = new AdapterEnemiesShown(actualParty.getEnemiesFight(),getActivity(),this);
-        rv_enemiesName.setAdapter(adapterEnemies);
 
 
         btn_attackSelected.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +114,18 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
             }
         });
         return v;
+    }
+
+    private void setAdapters() {
+        RecyclerView.LayoutManager lyManagerA = new GridLayoutManager(getContext(),1);
+        rv_attackNames.setLayoutManager(lyManagerA);
+        adapterAttacks = new AdapterAttacksPossibles(possibleAttacks,getActivity(),this);
+        rv_attackNames.setAdapter(adapterAttacks);
+
+        RecyclerView.LayoutManager lyManagerE = new GridLayoutManager(getContext(),1);
+        rv_enemiesName.setLayoutManager(lyManagerE);
+        adapterEnemies = new AdapterEnemiesShown(actualParty.getEnemiesFight(),getActivity(),this);
+        rv_enemiesName.setAdapter(adapterEnemies);
     }
 
     private void popUpSavingThrow() {
@@ -216,11 +217,13 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
 
     private void noHitPopUp() {
         Button btn_okay;
-        TextView showGold;
+        TextView showGold,txt_tittle;
         View v = getLayoutInflater().inflate(R.layout.popup_game_player_show_gold, null);
 
         btn_okay = v.findViewById(R.id.btn_okayMoney);
         showGold = v.findViewById(R.id.txt_showMoney);
+        txt_tittle = v.findViewById(R.id.tittleCreateAttack);
+        txt_tittle.setText(R.string.noHit);
         showGold.setText(getResources().getText(R.string.noHitDice));
 
         PopUpCustom popUp = new PopUpCustom(v);
@@ -272,17 +275,9 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
 
     private void setDamage(int tmpValue) {
         int actualLife = enemySelected.getCurrentHitPoints() - tmpValue;
-        if(actualLife <= 0){
-            for(int i = 0;i<actualParty.getEnemiesFight().size();i++){
-                if(actualParty.getEnemiesFight().get(i).getID().equals(enemySelected.getID())){
-                    actualParty.getEnemiesFight().remove(i);
-                }
-            }
-        }else{
-            for(int i = 0;i<actualParty.getEnemiesFight().size();i++){
-                if(actualParty.getEnemiesFight().get(i).getID().equals(enemySelected.getID())){
-                    actualParty.getEnemiesFight().get(i).setCurrentHitPoints(actualLife);
-                }
+        for(int i = 0;i<actualParty.getEnemiesFight().size();i++){
+            if(actualParty.getEnemiesFight().get(i).getID().equals(enemySelected.getID())){
+                actualParty.getEnemiesFight().get(i).setCurrentHitPoints(actualLife);
             }
         }
 
@@ -301,20 +296,25 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
 
     private void getAllAttacks() {
         possibleAttacks = new ArrayList<>();
+        if(character.getWeaponEquipped().isEmpty()){
+            possibleAttacks.add(new PossibleAttack(getResources().getString(R.string.normalAttack),"1d"+Integer.toString(character.getTypeHitDice()),"weapons",true));
+        }
         for (Item item: character.getWeaponEquipped()) {
             if(item.getType().equals("weapons")){
-                Weapons weapon = (Weapons) item;
-                possibleAttacks.add(new PossibleAttack(weapon.getName(),weapon.getDamageDice(),weapon.getType(),weapon.isHitMelee()));
+
+                possibleAttacks.add(new PossibleAttack(item.getName(),item.getDamageDice(),item.getType(),item.isHitMelee()));
             }
         }
         if(!character.getSpells().getSpellsDamage().isEmpty()){
             for(int i = 0;i<character.getSpells().getSpellsDamage().keySet().size(); i++){
                 List<Spells.Spell> spells = character.getSpells().getSpellsDamage().get(Integer.toString(i));
                 for (Spells.Spell spell: spells) {
-                    possibleAttacks.add(new PossibleAttack(spell.getName(),spell.getSlot_level().get(Integer.toString(character.getLevel())),"spells",false));
+                    possibleAttacks.add(new PossibleAttack(spell.getName(),spell.getSlot_exactLevel(character.getLevel()),"spells",false));
                 }
             }
         }
+
+        setAdapters();
     }
 
     void setElements(View v){
@@ -334,6 +334,8 @@ public class GameplayAttackOptionsFragment extends Fragment implements AdapterEn
                     for (Character charact: characters) {
                         if(charact.getUserID().equals(User.getInstance().getId())){
                             character = charact;
+                            getAllAttacks();
+                            break;
                         }
                     }
                 }

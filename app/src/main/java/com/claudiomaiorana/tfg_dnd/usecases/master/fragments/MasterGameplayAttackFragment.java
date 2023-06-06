@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -95,7 +97,11 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
             @Override
             public void onClick(View view) {
                 party.setFighting(false);
+                party.setAllReady(false);
                 party.setEnemiesFight(new ArrayList<>());
+                party.setOrderParty(new LinkedHashMap<>());
+                party.setTurn("");
+                party.setLastTurn("");
                 for(int i = 0;i<party.getPlayers().size();i++){
                     party.getPlayers().get(i).setInitiative(0);
                 }
@@ -137,11 +143,30 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
                     }
                     party = documentSnapshot.toObject(Party.class);
                     if(party.getAllReady()){
-                        establishCorrectOrder(party.getOrderParty());
-                        System.out.println("stablishingturn");
-                        establishTurn();
-                        getTurnName();
-                        udaptePartyTurn();
+                        establishCorrectOrder(party.getOrderParty(),false);
+                        if(allOnSideDead()){
+                            party.setFighting(false);
+                            party.setAllReady(false);
+                            party.setEnemiesFight(new ArrayList<>());
+                            party.setOrderParty(new LinkedHashMap<>());
+                            party.setTurn("");
+                            party.setLastTurn("");
+                            for(int i = 0;i<party.getPlayers().size();i++){
+                                party.getPlayers().get(i).setInitiative(0);
+                            }
+                            db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    goBackMasterGameplay();
+                                }
+                            });
+                        }else{
+                            System.out.println("stablishingturn");
+                            establishTurn();
+                            getTurnName();
+                            updatePartyTurn();
+
+                        }
 
                     }else{
                         checkAllReady();
@@ -150,7 +175,67 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
                 });
     }
 
-    private void udaptePartyTurn() {
+    private boolean allOnSideDead() {
+        Boolean allDead = true;
+        for(int i =0;i<party.getPlayers().size();i++){
+            if(party.getPlayers().get(i).getCurrentHitPoints()>0){
+                allDead = false;
+                System.out.println("muertosno");
+            }
+        }
+        if(allDead){return true;}
+
+        for(int i = 0;i<party.getEnemiesFight().size();i++){
+            if(party.getEnemiesFight().get(i).getCurrentHitPoints()>0){
+                allDead = false;
+                System.out.println("muertosnoEnemigos");
+
+            }
+        }
+        if(allDead){return true;}
+
+
+        return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+        }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+        }
+        party.setFighting(false);
+        party.setAllReady(false);
+        party.setEnemiesFight(new ArrayList<>());
+        party.setOrderParty(new HashMap<>());
+        party.setTurn("");
+        party.setLastTurn("");
+        System.out.println("destroyParty");
+        for(int i = 0;i<party.getPlayers().size();i++){
+            party.getPlayers().get(i).setInitiative(0);
+        }
+        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //goBackMasterGameplay();
+            }
+        });
+    }
+
+
+
+
+    private void updatePartyTurn() {
         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -169,19 +254,20 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
 
     private void establishTurn() {
         String lastTurnParty = party.getLastTurn();
-        Boolean found = false;
-        if(party.getTurn().equals("") || party.getTurn().equals("none")){
-            for(String key: party.getOrderParty().keySet()){
-                if(found){
-                    party.setTurn(key);
-                    found = false;
-                    break;
+        if (party.getTurn().equals("") || party.getTurn().equals("none")) {
+            if (party.getLastTurn().equals("")) {
+                party.setTurn(party.getOrderParty().keySet().iterator().next());
+            } else {
+                List<String> keys = new ArrayList<>(party.getOrderParty().keySet());
+                int index = keys.indexOf(lastTurnParty);
+
+                if (index != -1) {
+                    int nextIndex = (index + 1) % keys.size();
+                    party.setTurn(keys.get(nextIndex));
+                } else {
+                    party.setTurn(party.getOrderParty().keySet().iterator().next());
                 }
-
-                found = key.equals(lastTurnParty);
             }
-
-
         }
     }
 
@@ -229,26 +315,42 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
             party.setAllReady(true);
 
 
-            establishCorrectOrder(map);
+            establishCorrectOrder(map,true);
             updateParty();
         }
 
     }
 
-    private void establishCorrectOrder(Map<String, Integer> map) {
+    private void establishCorrectOrder(Map<String, Integer> map,Boolean firstTime) {
         List<Map.Entry<String, Integer>> entryList = new ArrayList<>(map.entrySet());
         entryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
         Map<String, Integer> sortedMap = new LinkedHashMap<>();
         Boolean first = true;
         for (Map.Entry<String, Integer> entry : entryList) {
-            sortedMap.put(entry.getKey(), entry.getValue());
-            if(first){
-                party.setTurn(entry.getKey());
-                party.setLastTurn(entry.getKey());
-                first = false;
+            if(!isDead(entry.getKey())){
+                sortedMap.put(entry.getKey(), entry.getValue());
+                System.out.println("order "+ entry.getKey());
             }
         }
         party.setOrderParty(sortedMap);
+    }
+
+    private boolean isDead(String characterOrEnemy) {
+        String[] isCharacterOrEnemy = characterOrEnemy.split("/");
+        if(isCharacterOrEnemy[0].equals("pl")){
+            for (Character character: party.getPlayers()) {
+                if(character.getID().equals(isCharacterOrEnemy[1]) && character.getCurrentHitPoints()<=0){
+                    return true;
+                }
+            }
+        }else{
+            for (Enemy enemyTurnList: party.getEnemiesFight()) {
+                if(enemyTurnList.getID().equals(isCharacterOrEnemy[1]) && enemyTurnList.getCurrentHitPoints()<=0){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void updateParty(){
@@ -289,7 +391,7 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
     @Override
     public void onItemClick(Enemy enemy) {
         Button btn_giveMoney, btn_giveLife, btn_giveItem, btn_increaseLevel, btn_takeMoney, btn_takeLife, btn_takeItem;
-
+        Space spaceButton;
         View v = getLayoutInflater().inflate(R.layout.popup_master_options_do_player, null);
 
         btn_giveMoney = v.findViewById(R.id.btn_giveMoney);
@@ -299,6 +401,7 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
         btn_takeMoney = v.findViewById(R.id.btn_takeMoney);
         btn_takeLife = v.findViewById(R.id.btn_takeLife);
         btn_takeItem = v.findViewById(R.id.btn_takeItem);
+        spaceButton = v.findViewById(R.id.spaceNextButton);
 
 
         btn_giveMoney.setVisibility(View.GONE);
@@ -306,7 +409,14 @@ public class MasterGameplayAttackFragment extends Fragment implements AdapterPla
         btn_increaseLevel.setVisibility(View.GONE);
         btn_takeMoney.setVisibility(View.GONE);
         btn_takeItem.setVisibility(View.GONE);
+        spaceButton.setVisibility(View.GONE);
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        btn_giveLife.setLayoutParams(layoutParams);
+        btn_takeLife.setLayoutParams(layoutParams);
 
 
         PopUpCustom popUp = new PopUpCustom(v);

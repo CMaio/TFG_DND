@@ -40,6 +40,7 @@ public class AdapterPlayersShown extends RecyclerView.Adapter<AdapterPlayersShow
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Character character = data.get(position);
         holder.txt_name.setText(character.getName());
+        holder.txt_life.setText(Integer.toString(character.getCurrentHitPoints()));
 
         if (character.isSelected()) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.clickedColor));
@@ -55,10 +56,12 @@ public class AdapterPlayersShown extends RecyclerView.Adapter<AdapterPlayersShow
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView txt_name;
+        TextView txt_life;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_name = itemView.findViewById(R.id.rw_namePlayer_master_gameplay);
+            txt_life = itemView.findViewById(R.id.rw_life_master_gameplay);
             itemView.setOnClickListener(this);
         }
 

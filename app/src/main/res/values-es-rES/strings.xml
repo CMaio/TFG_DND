@@ -135,6 +135,7 @@
     <string name="armorClassThrow">Lanza un d20 para saber si aciertas el golpe</string>
     <string name="hitDice">Lanza @h1tD1c3@ para saber cuanto daño haces</string>
     <string name="noHitDice">No has impactado al objetivo</string>
+    <string name="noHit">Sin impacto</string>
 
     <string name="savingThrow">Pide a tu objetivo que lanze un d20 y añada el modificador de salvación del hechizo @sp3ll@ para ver si impactas al objetivo</string>
     <string name="isMeleeAttack">Ataque cuerpo a cuerpo</string>
@@ -165,6 +166,8 @@
 
     <string name="attacksRV">Ataques del enemigo:</string>
     <string name="featuresRV">Rasgos del enemigo:</string>
+
+    <string name="normalAttack">Ataque normal</string>
 
 
 

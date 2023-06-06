@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,27 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.claudiomaiorana.tfg_dnd.R;
+
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Item;
 import com.claudiomaiorana.tfg_dnd.model.OptionsCharacter;
 import com.claudiomaiorana.tfg_dnd.model.Party;
-import com.claudiomaiorana.tfg_dnd.model.ProfLang;
-import com.claudiomaiorana.tfg_dnd.model.Skill;
+
 import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterAbilities;
 import com.claudiomaiorana.tfg_dnd.usecases.character.adapters.AdapterSpellsQuantity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEquipment;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterItemsGame;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterSpellsGame;
-import com.claudiomaiorana.tfg_dnd.usecases.master.MasterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.util.PopUpCustom;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,9 +41,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -71,7 +66,6 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
     private FirebaseFirestore db;
     FirebaseStorage dbStorage = FirebaseStorage.getInstance();
     private ListenerRegistration listenerRegistration;
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
 
     private AdapterSpellsQuantity adapterSpellsQ;
     private AdapterSpellsGame adapterSpells;
@@ -160,6 +154,7 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                     }
                     Party newParty = documentSnapshot.toObject(Party.class);
                     ArrayList<Character> characters = newParty.getPlayers();
+
                     if(!newParty.getOpen()){
                         closeParty();
                     }else {
@@ -184,11 +179,57 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
 
 
                         }
+                        int index = -1;
                         for (Character charact: characters) {
+                            index ++;
                             if(charact.getUserID().equals(User.getInstance().getId())){
                                 character = charact;
+                                break;
                             }
                         }
+
+/*
+                        // Accede al campo "players" dentro de la Party
+                        List<Map<String, Object>> playersList = (List<Map<String, Object>>) documentSnapshot.get("players");
+
+                        Map<String, Object> targetPlayer = null;
+                        if (playersList != null) {
+                            for (Map<String, Object> playerMap : playersList) {
+                                String playerID = (String) playerMap.get("id");
+                                if (playerID.equals(character.getID())) {
+                                    targetPlayer = playerMap;
+                                    break;
+                                }
+                            }
+                        }
+                        ArrayList<Item> items = new ArrayList<>();
+                        if (targetPlayer != null) {
+                            List<Map<String, Object>> itemList = (List<Map<String, Object>>) targetPlayer.get("items");
+
+                            if (itemList != null) {
+                                for (Map<String, Object> itemMap : itemList) {
+                                    // Realiza las operaciones necesarias en cada elemento
+                                    String itemType = (String) itemMap.get("type");
+                                    switch (itemType) {
+                                        case "usables":
+                                            items.add(convertMapToUsable(itemMap));
+                                            break;
+                                        case "weapons":
+                                            items.add(convertMapToWeapons(itemMap));
+                                            break;
+                                        case "shields":
+                                            items.add(convertMapToShield(itemMap));
+                                            break;
+                                        case "armors":
+                                            items.add(convertMapToArmor(itemMap));
+                                            break;
+                                        default:
+                                            // Manejar caso inesperado
+                                            break;
+                                    }
+                                }
+                            }
+                        }*/
                         party = newParty;
                         setCharacterScreen();
                         AdapterSpells();
@@ -281,10 +322,14 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
 
                         for(int i =0; i<party.getPlayers().size();i++){
                             if(party.getPlayers().get(i).getID().equals(character.getID())){
+                                if(party.getPlayers().get(i).getCurrentHitPoints()<=0){
+                                    party.getPlayers().get(i).setCurrentHitPoints(1);
+                                }
                                 party.getPlayers().get(i).setInitiative(tmpValue + party.getPlayers().get(i).getInitiativeMod());
                                 break;
                             }
                         }
+
                         db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -361,9 +406,21 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                 ArrayList<Item> result = new ArrayList<>();
                 for (OptionsCharacter sk: tmpData) {
                     if(sk.isSelected()) {
-                        Item item = getItem(sk.getName());
-                        if (item != null) {
-                            result.add(item);
+
+                        for (Item itemCharacter: character.getItems()) {
+                            if(sk.getCode().equals(itemCharacter.getCode())){
+                                switch (itemCharacter.getType()){
+                                    case "armors":
+                                        result.add(new Item("armors",itemCharacter.getName(),itemCharacter.getCode(),"",itemCharacter.getBase(),itemCharacter.getMaxBonus(),"","",false));
+                                        break;
+                                    case "weapons":
+                                        result.add(new Item("weapons",itemCharacter.getName(),itemCharacter.getCode(),"","",0,"",itemCharacter.getDamageDice(),itemCharacter.isHitMelee()));
+                                        break;
+                                    case "shields":
+                                        result.add(new Item("shields",itemCharacter.getName(),itemCharacter.getCode(),itemCharacter.getArmorClass(),"",0,"","",false));
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
@@ -373,12 +430,17 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                 for (Item item:result) {
                     switch (item.getType()){
                         case "armors":
+                            System.out.println("armor-------------");
                             armor++;
                             break;
                         case "weapons":
+                            System.out.println("weapons-------------");
+
                             weapons ++;
                             break;
                         case "shields":
+                            System.out.println("shields-------------");
+
                             shields++;
                             break;
                     }
@@ -394,9 +456,27 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                     btn_selectItems.setError("Not enough hands");
                 }else{
                     character.setWeaponEquipped(result);
+                    updateParty();
                 }
 
                 popUp.dismiss();
+            }
+        });
+    }
+
+    private void updateParty() {
+        int indexCharacter = -1;
+        for (Character characterParty: party.getPlayers()) {
+            indexCharacter++;
+            if(characterParty.getUserID().equals(characterParty.getID())){
+                party.getPlayers().set(indexCharacter,character);
+                break;
+            }
+        }
+        db.collection("parties").document(partyCode).set(party).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
             }
         });
     }
@@ -418,12 +498,20 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
             tmp.setSelected(true);
             result.add(tmp);
         }
+        boolean inEquiped = false;
         for (Item item: character.getItems()) {
-            if(!item.getType().equals("usables")){
+            for (Item itemEquiped: character.getWeaponEquipped()) {
+                if(item.getName().equals(itemEquiped.getName())){
+                    inEquiped = true;
+                    break;
+                }
+            }
+            if(!item.getType().equals("usables") && !inEquiped){
                 OptionsCharacter tmp = new OptionsCharacter(item.getCode(),item.getName());
-                tmp.setSelected(true);
+                tmp.setSelected(false);
                 result.add(tmp);
             }
+            inEquiped = false;
         }
 
         return result;

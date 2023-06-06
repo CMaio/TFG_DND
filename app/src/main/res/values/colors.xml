@@ -12,7 +12,7 @@
     <color name="green">#77FF00</color>
     <color name="grey">#006C6C6C</color>
     <color name="clickedColor">#FFE06F</color>
-    <color name="defaultColor" />
+    <color name="defaultColor">#006C6C6C</color>
     <color name="soft_gray">#A0A0A0</color>
 
 </resources>

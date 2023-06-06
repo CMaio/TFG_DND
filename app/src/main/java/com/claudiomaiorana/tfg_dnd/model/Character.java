@@ -198,8 +198,8 @@ public class Character implements Parcelable{
         weaponEquipped = new ArrayList<>();
         in.readList(weaponEquipped, Item.class.getClassLoader());
         spells = in.readParcelable(Spells.class.getClassLoader());
-        items = new ArrayList<>();
-        in.readList(items, Item.class.getClassLoader());
+        ArrayList<Item> itemList = new ArrayList<>();
+        in.readList(itemList, Item.class.getClassLoader());
         featuresAndTraits = new ArrayList<>();
         in.readList(featuresAndTraits, ProfLang.class.getClassLoader());
         moneyPlatinum = in.readInt();
@@ -210,6 +210,8 @@ public class Character implements Parcelable{
         spellCastingStatMod = in.readInt();
         this.selected = false;
     }
+
+
 
     private void saveRCAInfo(RCAInfo[] rcaInfo) {
         this.race = rcaInfo[0].getTittleText();
@@ -500,6 +502,23 @@ public class Character implements Parcelable{
 
     public void setWeaponEquipped(ArrayList<Item> weaponEquipped) {
         this.weaponEquipped = weaponEquipped;
+        String shielded = "";
+        for (Item item: this.weaponEquipped) {
+            switch (item.getType()){
+                case "armors":
+                    String base = item.getBase();
+                    this.armorClass = Integer.parseInt(base) + item.getMaxBonus();
+                    if(!shielded.equals("")){
+                        this.armorClass += Integer.parseInt(shielded);
+                    }
+                    break;
+
+                case "shields":
+                    shielded = item.getArmorClass();
+                    this.armorClass += Integer.parseInt(shielded);
+                    break;
+            }
+        }
     }
 
     public int getMoneyPlatinum() {

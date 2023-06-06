@@ -17,6 +17,7 @@ import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.usecases.character.CharacterManagerActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyJoinFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyListFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.party.fragment.PartyWaitingFragment;
@@ -89,10 +90,9 @@ public class PartyManagerActivity extends AppCompatActivity {
     }
 
     private void backToMainActivity(int result){
-        System.out.println("ne entro aqui----------");
-        Intent intent = new Intent();
-        intent.putExtra("source","party");
-        setResult(result,intent);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("source","master");
+        startActivity(intent);
         finish();
     }
 

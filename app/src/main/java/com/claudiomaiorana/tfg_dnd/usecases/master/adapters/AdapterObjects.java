@@ -10,12 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Armor;
 import com.claudiomaiorana.tfg_dnd.model.Character;
 import com.claudiomaiorana.tfg_dnd.model.Item;
-import com.claudiomaiorana.tfg_dnd.model.Shield;
-import com.claudiomaiorana.tfg_dnd.model.Usable;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 import java.util.ArrayList;
@@ -83,20 +79,7 @@ public class AdapterObjects extends RecyclerView.Adapter<AdapterObjects.ViewHold
                 listener.newObject();
             }else {
 
-                switch (data.get(getAbsoluteAdapterPosition()).getType()){
-                    case "weapons":
-                        listener.onItemClick((Weapons) data.get(getAbsoluteAdapterPosition()));
-                        break;
-                    case "usables":
-                        listener.onItemClick((Usable) data.get(getAbsoluteAdapterPosition()));
-                        break;
-                    case "shields":
-                        listener.onItemClick((Shield) data.get(getAbsoluteAdapterPosition()));
-                        break;
-                    case "armors":
-                        listener.onItemClick((Armor) data.get(getAbsoluteAdapterPosition()));
-                        break;
-                }
+                listener.onItemClick(data.get(getAbsoluteAdapterPosition()));
 
             }
         }
@@ -106,9 +89,6 @@ public class AdapterObjects extends RecyclerView.Adapter<AdapterObjects.ViewHold
 
     public interface OnItemClickListener {
         void newObject();
-        void onItemClick(Weapons weapons);
-        void onItemClick(Usable usable);
-        void onItemClick(Shield shield);
-        void onItemClick(Armor armor);
+        void onItemClick(Item item);
     }
 }

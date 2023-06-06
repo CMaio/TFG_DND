@@ -10,20 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.claudiomaiorana.tfg_dnd.R;
-import com.claudiomaiorana.tfg_dnd.model.Armor;
 import com.claudiomaiorana.tfg_dnd.model.Item;
-import com.claudiomaiorana.tfg_dnd.model.Shield;
-import com.claudiomaiorana.tfg_dnd.model.Usable;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 
 import java.util.ArrayList;
 
 public class AdapterAttacksEnemy extends RecyclerView.Adapter<AdapterAttacksEnemy.ViewHolder>{
 
-    private ArrayList<Weapons> data;
+    private ArrayList<Item> data;
     private Context context;
 
-    public AdapterAttacksEnemy(ArrayList<Weapons> data, Context context) {
+    public AdapterAttacksEnemy(ArrayList<Item> data, Context context) {
         this.data = data;
         this.context = context;
     }
@@ -37,7 +33,7 @@ public class AdapterAttacksEnemy extends RecyclerView.Adapter<AdapterAttacksEnem
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Weapons weapons = data.get(position);
+        Item weapons = data.get(position);
         holder.txt_name.setText(weapons.getName());
         holder.txt_hit.setText(weapons.getDamageDice());
     }

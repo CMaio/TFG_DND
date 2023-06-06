@@ -42,7 +42,7 @@ public class AdapterEnemies extends RecyclerView.Adapter<AdapterEnemies.ViewHold
             Enemy enemy = data.get(position);
             if(enemy.getName() != null && !enemy.getName().equals("") ){
                 holder.txt_name.setText(enemy.getName());
-                holder.txt_type.setText(context.getText(R.string.hp)+":" + Integer.toString(enemy.getMaxHitPoints()));
+                holder.txt_type.setText(context.getText(R.string.hp)+":" + Integer.toString(enemy.getCurrentHitPoints()));
             }else{
                 holder.txt_name.setText(context.getResources().getText(R.string.createEnemy));
                 holder.txt_type.setText("");
@@ -50,7 +50,7 @@ public class AdapterEnemies extends RecyclerView.Adapter<AdapterEnemies.ViewHold
         }else if(holder.getItemViewType() == Constants.TYPE_FILLED){
             Enemy enemy = data.get(position);
             holder.txt_name.setText(enemy.getName());
-            holder.txt_type.setText(context.getText(R.string.hp)+":" + Integer.toString(enemy.getMaxHitPoints()));
+            holder.txt_type.setText(context.getText(R.string.hp)+":" + Integer.toString(enemy.getCurrentHitPoints()));
         }
 
 

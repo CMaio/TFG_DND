@@ -22,6 +22,7 @@ import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetFra
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSheetVisualizerFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.CharacterSkillsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.character.fragment.SheetRCASelectorFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.util.Constants;
 
 public class CharacterManagerActivity extends AppCompatActivity {
@@ -125,9 +126,9 @@ public class CharacterManagerActivity extends AppCompatActivity {
     }
 
     private void backToMainActivity(int result){
-        Intent intent = new Intent();
-        intent.putExtra("source","characters");
-        setResult(result,intent);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("source","master");
+        startActivity(intent);
         finish();
     }
 

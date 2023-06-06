@@ -127,6 +127,7 @@
     <string name="armorClassThrow">Throw a d20 to know if you hit</string>
     <string name="hitDice">Throw @h1tD1c3@ to know how many damage you do</string>
     <string name="noHitDice">You did not hit the enemy</string>
+    <string name="noHit">No hit</string>
     <string name="savingThrow">Ask your objective to throw a d20 and to add the saving modifier of the spell @sp3ll@ to know if you hit</string>
     <string name="isMeleeAttack">Melee attack</string>
 
@@ -161,6 +162,7 @@
 
     <string name="attacksRV">Attacks of the enemy:</string>
     <string name="featuresRV">Features of the enemy:</string>
+    <string name="normalAttack">Normal attack</string>
 
 
 

@@ -21,7 +21,6 @@ import com.claudiomaiorana.tfg_dnd.model.Party;
 import com.claudiomaiorana.tfg_dnd.model.PossibleAttack;
 import com.claudiomaiorana.tfg_dnd.model.Spells;
 import com.claudiomaiorana.tfg_dnd.model.User;
-import com.claudiomaiorana.tfg_dnd.model.Weapons;
 import com.claudiomaiorana.tfg_dnd.usecases.game.GameplayActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterAttacksPossibles;
 import com.claudiomaiorana.tfg_dnd.usecases.game.adapters.AdapterEnemiesShown;
@@ -61,7 +60,7 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
     private ArrayList<PossibleAttack> possibleAttacks;
     Character enemyPlayer = null;
     PossibleAttack possibleAttackSelected = null;
-    Weapons attackUsed = null;
+    Item attackUsed = null;
 
 
 
@@ -88,21 +87,13 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_master_gameplay_attack_enemy, container, false);
+        db=FirebaseFirestore.getInstance();
         setElements(v);
         getParty();
-        getAllAttacks();
-        db=FirebaseFirestore.getInstance();
-
-        RecyclerView.LayoutManager lyManagerA = new GridLayoutManager(getContext(),1);
-        rv_attackNames.setLayoutManager(lyManagerA);
-        adapterAttacks = new AdapterAttacksPossibles(possibleAttacks,getActivity(),this);
-        rv_attackNames.setAdapter(adapterAttacks);
 
 
-        RecyclerView.LayoutManager lyManagerE = new GridLayoutManager(getContext(),1);
-        rv_enemiesName.setLayoutManager(lyManagerE);
-        adapterPlayers = new AdapterPlayersShown(actualParty.getPlayers(),getActivity(),this);
-        rv_enemiesName.setAdapter(adapterPlayers);
+
+
 
 
         btn_attackSelected.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +109,18 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
         return v;
     }
 
+    private void setAdapters() {
+        RecyclerView.LayoutManager lyManagerA = new GridLayoutManager(getContext(),1);
+        rv_attackNames.setLayoutManager(lyManagerA);
+        adapterAttacks = new AdapterAttacksPossibles(possibleAttacks,getActivity(),this);
+        rv_attackNames.setAdapter(adapterAttacks);
+
+
+        RecyclerView.LayoutManager lyManagerE = new GridLayoutManager(getContext(),1);
+        rv_enemiesName.setLayoutManager(lyManagerE);
+        adapterPlayers = new AdapterPlayersShown(actualParty.getPlayers(),getActivity(),this);
+        rv_enemiesName.setAdapter(adapterPlayers);
+    }
 
 
     private void popUpPassingArmor() {
@@ -181,6 +184,11 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
         btn_okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                for(int i = 0;i<actualParty.getEnemiesFight().size();i++){
+                    if(actualParty.getPlayers().get(i).getID().equals(enemyPlayer.getID())){
+                        actualParty.getPlayers().get(i).setSelected(false);
+                    }
+                }
                 returnToOptions();
                 popUp.dismiss();
             }
@@ -225,6 +233,7 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
         for(int i = 0;i<actualParty.getEnemiesFight().size();i++){
             if(actualParty.getPlayers().get(i).getID().equals(enemyPlayer.getID())){
                 actualParty.getPlayers().get(i).setCurrentHitPoints(actualLife);
+                actualParty.getPlayers().get(i).setSelected(false);
             }
         }
         returnToOptions();
@@ -244,10 +253,10 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
         possibleAttacks = new ArrayList<>();
         for (Item item: enemyTurn.getAttacks()) {
             if(item.getType().equals("weapons")){
-                Weapons weapon = (Weapons) item;
-                possibleAttacks.add(new PossibleAttack(weapon.getName(),weapon.getDamageDice(),weapon.getType(),weapon.isHitMelee()));
+                possibleAttacks.add(new PossibleAttack(item.getName(),item.getDamageDice(),item.getType(),item.isHitMelee()));
             }
         }
+        setAdapters();
     }
 
     void setElements(View v){
@@ -258,16 +267,20 @@ public class MasterGameplayAttackEnemyFragment extends Fragment implements Adapt
     }
 
     private void getParty() {
+
         db.collection("parties").document(partyCode).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     actualParty = task.getResult().toObject(Party.class);
                     for (Enemy enemyTurnList: actualParty.getEnemiesFight()) {
-                        if(enemyTurnList.getID().equals(actualParty.getTurn())){
+                        if(enemyTurnList.getID().equals(actualParty.getTurn().split("/")[1])){
                             enemyTurn = enemyTurnList;
+                            break;
                         }
                     }
+                    getAllAttacks();
+
                 }
             }
         });

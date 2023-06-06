@@ -17,6 +17,7 @@ import com.claudiomaiorana.tfg_dnd.R;
 import com.claudiomaiorana.tfg_dnd.usecases.game.fragments.GameplayAttackOptionsFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.game.fragments.GameplayFightFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.game.fragments.GameplaySafeFragment;
+import com.claudiomaiorana.tfg_dnd.usecases.home.MainActivity;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterCreatePartyFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterGameplayFragment;
 import com.claudiomaiorana.tfg_dnd.usecases.master.fragments.MasterListFragment;
@@ -108,9 +109,9 @@ public class GameplayActivity extends AppCompatActivity {
     }
 
     public void backToMainActivity(int result){
-        Intent intent = new Intent();
-        intent.putExtra("source","parties");
-        setResult(result,intent);
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("source","master");
+        startActivity(intent);
         finish();
     }
 

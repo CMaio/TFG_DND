@@ -720,7 +720,6 @@ public class MasterGameplayFragment extends Fragment implements AdapterPlayers.O
             }
         }
         character.setItems(characterItems);
-        System.out.println("ItemsVoid----" + character.getItems().get(0));
 
         updateCharacter(character);
     }

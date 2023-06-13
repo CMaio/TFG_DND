@@ -23,7 +23,7 @@
     <string name="createNewParty">Acceder a una nueva party</string>
     <string name="cancelButton">Cancelar</string>
     <string name="continueButton">Continuar</string>
-    <string name="acceptButton">Acceptar</string>
+    <string name="acceptButton">Aceptar</string>
 
     <string name="addStat">Lanza un D20 \n y escribe el resultado para el stat de @sTat@.</string>
     <string name="errorStat">Tienes que escribir un numero entre 1 y 20</string>

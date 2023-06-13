@@ -149,7 +149,6 @@ public class GameplaySafeFragment extends Fragment implements AdapterSpellsGame.
                 .document(partyCode)
                 .addSnapshotListener((documentSnapshot, error) -> {
                     if (error != null) {
-                        System.out.println("error estamos");
                         return;
                     }
                     Party newParty = documentSnapshot.toObject(Party.class);
